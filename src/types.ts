@@ -1,6 +1,9 @@
+import type { SlashCommandBuilder } from "@discordjs/builders";
+import type { Awaitable, CommandInteraction } from "discord.js";
 import type { IncomingHttpHeaders, OutgoingHttpHeaders } from "http";
 import type { URLSearchParams } from "url";
-import type { APIRequest } from "./rest";
+import type { APIRequest } from "./ClientRoyale/rest";
+import type { Command } from "./util";
 
 /**
  * Options to instantiate a client
@@ -11,6 +14,23 @@ export type ClientOptions = {
 	 * This defaults to `process.env.CLASH_ROYALE_TOKEN` if none is provided
 	 */
 	token?: Token;
+};
+
+/**
+ * Options to create a command
+ */
+export type CommandOptions = {
+	/**
+	 * The data for this command
+	 */
+	data: SlashCommandBuilder;
+
+	/**
+	 * A function to run when this command is received by Discord.
+	 * @param this - The command object that called this
+	 * @param interaction - The interaction received
+	 */
+	run(this: Command, interaction: CommandInteraction): Awaitable<void>;
 };
 
 export const enum Constants {

@@ -1,6 +1,6 @@
 import { AsyncQueue } from "@sapphire/async-queue";
-import type { ClientRoyale } from "../Client";
-import type { Json, Path, RequestOptions } from "../types";
+import type { ClientRoyale } from "..";
+import type { Json, Path, RequestOptions } from "../../types";
 import APIRequest from "./APIRequest";
 import ErrorRoyale from "./ErrorRoyale";
 
@@ -39,11 +39,10 @@ export class Rest {
 	 * Make a request to the API.
 	 * @param path - The path to request
 	 * @param options - Other options for this request
-	 * @param retry - If the request should be retried in case of a 5xx response
 	 * @template T The return type that should be used by the function
 	 * @returns The JSON data received from the API or null if no data was received
 	 */
-	async request<T extends Json | null = Json | null>(
+	async get<T extends Json | null = Json | null>(
 		path: Path,
 		options?: RequestOptions & { retry?: boolean; force?: boolean }
 	): Promise<T | null> {
@@ -77,7 +76,7 @@ export class Rest {
 		else if (res.statusCode >= 500 && options?.retry === true) {
 			// If there's a server error retry just one time
 			this.queue.shift();
-			return this.request(path, { ...options, retry: false });
+			return this.get(path, { ...options, retry: false });
 		}
 
 		this.queue.shift();

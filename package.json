@@ -1,17 +1,22 @@
 {
   "name": "clash-royale-stats",
   "version": "0.0.1",
-  "description": "A Discord Bot that interacts with the Clash Royale API to provide statistics.\nDiscord invite: https://discord.com/api/oauth2/authorize?client_id=903267050775007283&scope=applications.commands\nThis content is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy (http://www.supercell.com/fan-content-policy).",
+  "description": "A Discord Bot that interacts with the Clash Royale API to provide statistics. \nDiscord invite: https://discord.com/api/oauth2/authorize?client_id=903267050775007283&scope=applications.commands \nThis content is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy (http://www.supercell.com/fan-content-policy).",
   "main": "dist/index.js",
   "scripts": {
-    "test": "tsc --noEmit",
-    "start": "tsc && node .",
-    "lint": "eslint src --fix && prettier --write src/*/**.ts"
+    "build": "tsc",
+    "commands": "node dist/registerCommands.js",
+    "lint": "eslint src --fix && prettier --write src/*/**.ts",
+    "start": "npm run build && node .",
+    "test": "tsc --noEmit"
   },
   "author": "DTrombett",
   "license": "ISC",
   "keywords": [],
   "dependencies": {
+    "@discordjs/builders": "^0.7.0",
+    "@discordjs/collection": "^0.2.4",
+    "@discordjs/rest": "^0.1.0-canary.0",
     "bufferutil": "^4.0.5",
     "discord.js": "^13.2.0",
     "dotenv": "^10.0.0",

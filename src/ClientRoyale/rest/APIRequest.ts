@@ -1,8 +1,8 @@
 import type { IncomingMessage, OutgoingHttpHeaders } from "node:http";
 import { Agent, get } from "node:https";
 import { URL, URLSearchParams } from "node:url";
-import type { Path, RequestOptions, Response } from "../types";
-import { Constants, RequestStatus } from "../types";
+import type { Path, RequestOptions, Response } from "../../types";
+import { Constants, RequestStatus } from "../../types";
 import type Rest from "./Rest";
 
 const agent = new Agent({ keepAlive: true });

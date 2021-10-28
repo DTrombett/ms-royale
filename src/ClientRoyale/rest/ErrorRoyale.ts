@@ -1,5 +1,5 @@
 import type { OutgoingHttpHeaders } from "http";
-import type { Path, Response } from "../types";
+import type { Path, Response } from "../../types";
 import type APIRequest from "./APIRequest";
 
 /**
