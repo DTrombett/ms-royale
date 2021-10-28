@@ -19,6 +19,11 @@ export class Rest {
 	queue = new AsyncQueue();
 
 	/**
+	 * If we got ratelimited
+	 */
+	rateLimited = false;
+
+	/**
 	 * All requests that have been made so far
 	 */
 	requests: APIRequest[] = [];
@@ -40,10 +45,14 @@ export class Rest {
 	 */
 	async request<T extends Json | null = Json | null>(
 		path: Path,
-		options?: RequestOptions,
-		retry = true
+		options?: RequestOptions & { retry?: boolean; force?: boolean }
 	): Promise<T | null> {
 		await this.queue.wait();
+
+		if (this.rateLimited && options?.force !== true)
+			throw new Error(
+				"The rest is ratelimited so no other requests are allowed until you set the force option to true"
+			);
 
 		// The `as post` is just to suppress the error
 		const request = new APIRequest(this, path, options);
@@ -53,21 +62,22 @@ export class Rest {
 		let data;
 		const res = await request.send();
 
-		if (res.statusCode === 429)
+		if (res.statusCode === 429) {
 			// If we encountered a ratelimit... well, this is a problem!
-			// DON'T shift the queue so that other requests cannot be made as they may result in an other ratelimit
-			// this.queue.shift();
+			this.rateLimited = true;
+			this.queue.shift();
 			throw new ErrorRoyale(request, res);
+		}
 		if (res.statusCode >= 200 && res.statusCode < 300)
 			// If the request is ok parse the data received
 			data = JSON.parse(res.data!) as T;
 		else if (res.statusCode >= 300 && res.statusCode < 400)
 			// In this case we have no data
 			data = null;
-		else if (res.statusCode >= 500 && retry) {
+		else if (res.statusCode >= 500 && options?.retry === true) {
 			// If there's a server error retry just one time
 			this.queue.shift();
-			return this.request(path, options, false);
+			return this.request(path, { ...options, retry: false });
 		}
 
 		this.queue.shift();

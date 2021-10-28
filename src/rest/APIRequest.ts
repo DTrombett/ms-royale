@@ -48,22 +48,19 @@ export class APIRequest {
 	 * @param options - Options for this request
 	 */
 	constructor(rest: Rest, path: Path, options: RequestOptions = {}) {
-		const {
-			url = Constants.APIUrl,
-			query = new URLSearchParams(),
-			headers,
-		} = options;
+		const { url = Constants.APIUrl, query, headers } = options;
 
 		this.path = path;
 		this.rest = rest;
 
 		this.baseUrl = url;
-		this.query = query;
+		this.query =
+			query instanceof URLSearchParams ? query : new URLSearchParams(query);
 
 		this.headers = {
-			...headers,
 			Accept: "application/json",
 			Authorization: `Bearer ${rest.client.tokenRoyale}`,
+			...headers,
 		};
 	}
 
@@ -112,14 +109,16 @@ export class APIRequest {
 		let data = "";
 
 		const timeout = setTimeout(() => {
-			// Abort the request if it takes more than 10 sec
+			// Abort the request if it takes more than Constants.AbortTimeout
 			// eslint-disable-next-line @typescript-eslint/no-use-before-define
 			req.destroy(
 				new Error(
-					`Request to path ${this.path} took more than 10 seconds and was aborted before ending.`
+					`Request to path ${this.path} took more than ${
+						Constants.AbortTimeout / 1_000
+					} seconds and was aborted before ending.`
 				)
 			);
-		}, 10_000).unref();
+		}, Constants.AbortTimeout).unref();
 		const callback = (res: IncomingMessage) => {
 			if (
 				[301, 302].includes(res.statusCode!) &&

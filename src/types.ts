@@ -13,7 +13,8 @@ export type ClientOptions = {
 	token?: Token;
 };
 
-export enum Constants {
+export const enum Constants {
+	AbortTimeout = 10_000,
 	APIUrl = "https://api.clashroyale.com/v1",
 }
 
@@ -33,7 +34,7 @@ export type Json =
 export type Path = `/${string}`;
 
 /**
- * The options for this request
+ * The options for a request
  */
 export type RequestOptions = {
 	/**
@@ -44,7 +45,12 @@ export type RequestOptions = {
 	/**
 	 * The query of this request
 	 */
-	query?: URLSearchParams;
+	query?:
+		| Iterable<[string, string]>
+		| Record<string, string | readonly string[]>
+		| URLSearchParams
+		| string
+		| readonly [string, string][];
 
 	/**
 	 * The base url for this request
