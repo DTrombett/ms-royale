@@ -45,7 +45,7 @@ export class Rest {
 	async get<T extends Json | null = Json | null>(
 		path: Path,
 		options?: RequestOptions & { retry?: boolean; force?: boolean }
-	): Promise<T | null> {
+	): Promise<T> {
 		await this.queue.wait();
 
 		if (this.rateLimited && options?.force !== true)
@@ -58,7 +58,7 @@ export class Rest {
 
 		this.requests.push(request);
 
-		let data;
+		let data: T | null | undefined;
 		const res = await request.send();
 
 		if (res.statusCode === 429) {
@@ -80,7 +80,7 @@ export class Rest {
 		}
 
 		this.queue.shift();
-		if (data !== undefined) return data;
+		if (data !== undefined) return data!;
 
 		// If we didn't receive a succesful response, throw an error
 		throw new ErrorRoyale(request, res);

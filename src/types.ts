@@ -23,7 +23,9 @@ export type CommandOptions = {
 	/**
 	 * The data for this command
 	 */
-	data: SlashCommandBuilder;
+	data:
+		| Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
+		| SlashCommandBuilder;
 
 	/**
 	 * A function to run when this command is received by Discord.
