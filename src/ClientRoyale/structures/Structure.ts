@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import type { ClientRoyale } from "..";
-import type { Json } from "../../types";
+import type { Json } from "../util";
 
 export type JsonObject = {
 	[property: string]: Json;
@@ -14,6 +14,11 @@ export class Structure<T extends JsonObject = JsonObject> {
 	 * The id's key of the structure.
 	 */
 	static id = "tag";
+
+	/**
+	 * When this structure was last updated.
+	 */
+	updatedAt = new Date();
 
 	/**
 	 * The client that instantiated this structure.
@@ -55,6 +60,8 @@ export class Structure<T extends JsonObject = JsonObject> {
 	 * @returns The patched structure.
 	 */
 	patch(_data: Partial<T>): this {
+		this.updatedAt = new Date();
+
 		return this;
 	}
 

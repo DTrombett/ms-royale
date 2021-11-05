@@ -1,8 +1,8 @@
 import type { IncomingMessage, OutgoingHttpHeaders } from "node:http";
 import { Agent, get } from "node:https";
-import { URL, URLSearchParams } from "node:url";
-import type { Path, RequestOptions, Response } from "../../types";
-import { Constants, RequestStatus } from "../../types";
+import { URL } from "node:url";
+import type { Path, RequestOptions, Response } from "../util";
+import { Constants, RequestStatus } from "../util";
 import type Rest from "./Rest";
 
 const agent = new Agent({ keepAlive: true });
@@ -47,9 +47,11 @@ export class APIRequest {
 	 * @param method - The method of the request
 	 * @param options - Options for this request
 	 */
-	constructor(rest: Rest, path: Path, options: RequestOptions = {}) {
-		const { url = Constants.APIUrl, query, headers } = options;
-
+	constructor(
+		rest: Rest,
+		path: Path,
+		{ url = Constants.APIUrl, query, headers }: RequestOptions = {}
+	) {
 		this.path = path;
 		this.rest = rest;
 

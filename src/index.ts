@@ -11,26 +11,30 @@ const client = new ClientRoyale();
 
 console.time("Client online");
 client.on(Constants.Events.CLIENT_READY, async (onlineClient) => {
-	await onlineClient.application.fetch().catch(console.error);
-	await promises
-		.readdir(join(__dirname, "commands"))
-		.then((fileNames) =>
-			Promise.all(
-				fileNames
-					.filter((fileName) => fileName.endsWith(".js"))
-					.map(
-						(fileName) =>
-							import(join(__dirname, "commands", fileName)) as Promise<{
-								command: CommandOptions;
-							}>
-					)
+	await Promise.all([
+		onlineClient.application.fetch(),
+		promises
+			.readdir(join(__dirname, "commands"))
+			.then((fileNames) =>
+				Promise.all(
+					fileNames
+						.filter((fileName) => fileName.endsWith(".js"))
+						.map(
+							(fileName) =>
+								import(join(__dirname, "commands", fileName)) as Promise<{
+									command: CommandOptions;
+								}>
+						)
+				)
 			)
-		)
-		.then((files) => files.map((file) => file.command))
-		.then((commands) => {
-			for (const command of commands)
-				client.commands.set(command.data.name, new Command(client, command));
-		});
+			.then((files) => files.map((file) => file.command))
+			.then((commands) => {
+				for (const command of commands)
+					client.commands.set(command.data.name, new Command(client, command));
+			}),
+		client.clans.fetch("#L2Y2L2PC"),
+	]);
+
 	console.timeEnd("Client online");
 });
 client.on(Constants.Events.INTERACTION_CREATE, (interaction) => {

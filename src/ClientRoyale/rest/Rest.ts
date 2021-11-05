@@ -1,6 +1,6 @@
 import { AsyncQueue } from "@sapphire/async-queue";
 import type { ClientRoyale } from "..";
-import type { Json, Path, RequestOptions } from "../../types";
+import type { Json, Path, RequestOptions } from "../util";
 import APIRequest from "./APIRequest";
 import ErrorRoyale from "./ErrorRoyale";
 

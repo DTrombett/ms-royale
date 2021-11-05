@@ -1,7 +1,7 @@
 import type { ClientRoyale } from "..";
-import type { Path } from "../../types";
+import type { Path, FetchOptions } from "../util";
 import type { APIClan, APIMember, APITag } from "../APITypes";
-import { getEnumString } from "../util/enums";
+import { getEnumString } from "../util";
 import { FetchableStructure } from "./FetchableStructure";
 import { Location } from "./Location";
 
@@ -143,6 +143,11 @@ export class Clan extends FetchableStructure<APIClan> {
 		return this.name;
 	}
 
+	/**
+	 * Patches this structure.
+	 * @param data The new data of this structure.
+	 * @returns The new instance of this structure.
+	 */
 	patch(data: Partial<APIClan>): this {
 		super.patch(data);
 
@@ -160,5 +165,13 @@ export class Clan extends FetchableStructure<APIClan> {
 		if (data.memberList) this.members = data.memberList;
 
 		return this;
+	}
+
+	/**
+	 * Fetches this structure.
+	 * @returns A promise that resolves with this structure.
+	 */
+	fetch(options?: FetchOptions): Promise<this> {
+		return this.client.clans.fetch(this.tag, options) as Promise<this>;
 	}
 }

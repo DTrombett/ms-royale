@@ -1,16 +1,11 @@
-import type { ClientRoyale } from "..";
-import type { FetchableStructure } from "../structures/FetchableStructure";
+import type { ConstructableFetchableStructure, FetchOptions } from "../util";
+import { Constants } from "../util";
 import type { StructureType } from "./Manager";
 import { Manager } from "./Manager";
 
-export type ConstructableFetchableStructure = Omit<
-	typeof FetchableStructure,
-	"constructor"
-> & {
-	prototype: FetchableStructure;
-	new (client: ClientRoyale, data: any, ...args: any[]): FetchableStructure;
-};
-
+/**
+ * A manager that can fetch structures.
+ */
 export class FetchableManager<
 	T extends ConstructableFetchableStructure = ConstructableFetchableStructure
 > extends Manager<T> {
@@ -21,10 +16,12 @@ export class FetchableManager<
 	 */
 	async fetch(
 		id: string,
-		force?: boolean
+		{ force = false, maxAge = Constants.maxAge }: FetchOptions = {}
 	): Promise<this["structure"]["prototype"]> {
 		const data = this.get(id);
-		if (data && force === true) return data;
+
+		if (data && !force && Date.now() - data.updatedAt.getTime() < maxAge)
+			return data;
 		return this.add(
 			await this.client.rapi.get<StructureType<T>>(this.structure.path(id))
 		);

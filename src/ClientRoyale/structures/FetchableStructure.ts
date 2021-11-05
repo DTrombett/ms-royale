@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
-import type { Path } from "../../types";
+import type { Path, FetchOptions } from "../util";
+import Constants from "../util";
 import type { JsonObject } from "./Structure";
 import { Structure } from "./Structure";
 
@@ -25,7 +26,13 @@ export class FetchableStructure<
 	 * Fetches the structure from the API.
 	 * @returns The new structure.
 	 */
-	fetch(): Promise<this> {
+	fetch({
+		force = false,
+		maxAge = Constants.maxAge,
+	}: FetchOptions = {}): Promise<this> {
+		if (!force && Date.now() - this.updatedAt.getTime() < maxAge)
+			return Promise.resolve(this);
+
 		return this.client.rapi
 			.get<T>((this.constructor as typeof FetchableStructure).path(this.id))
 			.then(this.patch.bind(this));

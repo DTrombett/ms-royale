@@ -1,11 +1,12 @@
 import Collection from "@discordjs/collection";
 import type { ClientOptions as DiscordClientOptions } from "discord.js";
 import { Client, Constants, Options } from "discord.js";
-import type { ClientOptions } from "../types";
 import type { Command } from "../util";
 import { FetchableManager } from "./managers/FetchableManager";
 import Rest from "./rest";
 import { Clan } from "./structures/Clan";
+import { Location } from "./structures/Location";
+import type { ClientOptions } from "./util";
 
 /**
  * A class to connect to both Discord and Clash Royale API
@@ -20,6 +21,11 @@ export class ClientRoyale extends Client {
 	 * A manager for clans
 	 */
 	clans = new FetchableManager<typeof Clan>(this, Clan);
+
+	/**
+	 * A manager for locations
+	 */
+	locations = new FetchableManager<typeof Location>(this, Location);
 
 	/**
 	 * The Clash Royale API
@@ -42,7 +48,7 @@ export class ClientRoyale extends Client {
 			allowedMentions: { parse: [], repliedUser: false, roles: [], users: [] },
 			failIfNotExists: false,
 			http: { api: "https://canary.discord.com/api" },
-			invalidRequestWarningInterval: 9999,
+			invalidRequestWarningInterval: 9_999,
 			makeCache: Options.cacheWithLimits({
 				...Options.defaultMakeCacheSettings,
 				BaseGuildEmojiManager: 0,

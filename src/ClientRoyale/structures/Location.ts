@@ -1,5 +1,5 @@
 import type { ClientRoyale } from "..";
-import type { Path } from "../../types";
+import type { Path, FetchOptions } from "../util";
 import type { APILocation } from "../APITypes";
 import { FetchableStructure } from "./FetchableStructure";
 
@@ -58,11 +58,26 @@ export class Location extends FetchableStructure<APILocation> {
 		};
 	}
 
+	/**
+	 * Patch the location.
+	 * @param data The data to update this location with
+	 * @returns The updated location
+	 */
 	patch(data: Partial<APILocation>) {
+		super.patch(data);
+
 		if (data.name != null) this.name = data.name;
 		if (data.countryCode != null) this.countryCode = data.countryCode;
 		if (data.isCountry != null) this._isCountry = data.isCountry;
 
 		return this;
+	}
+
+	/**
+	 * Fetches this location.
+	 * @returns A promise that resolves with this location
+	 */
+	fetch(options: FetchOptions): Promise<this> {
+		return this.client.locations.fetch(this.id, options) as Promise<this>;
 	}
 }
