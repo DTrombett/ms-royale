@@ -1,6 +1,6 @@
 import type { IncomingMessage, OutgoingHttpHeaders } from "node:http";
 import { Agent, get } from "node:https";
-import { URL } from "node:url";
+import { URL, URLSearchParams } from "node:url";
 import type { Path, RequestOptions, Response } from "../util";
 import { Constants, RequestStatus } from "../util";
 import type Rest from "./Rest";

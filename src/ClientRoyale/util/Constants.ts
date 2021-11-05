@@ -1,4 +1,5 @@
 import type { IncomingHttpHeaders, OutgoingHttpHeaders } from "node:http";
+import type { URLSearchParams } from "node:url";
 import type { ClientRoyale } from "..";
 import type { APIRequest } from "../rest";
 import type { FetchableStructure } from "../structures/FetchableStructure";
