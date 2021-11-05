@@ -1,6 +1,6 @@
-import Structure from ".";
 import type { ClientRoyale } from "..";
 import type { APIArena } from "../APITypes";
+import { Structure } from "./Structure";
 
 /**
  * A class representing an arena.
