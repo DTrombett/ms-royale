@@ -1,6 +1,6 @@
 import { Collection } from "@discordjs/collection";
 import type { ClientRoyale } from "..";
-import type { Structure } from "../structures/Structure";
+import type { Structure } from "../structures";
 
 export type ConstructableStructure = Omit<typeof Structure, "constructor"> & {
 	prototype: Structure;
@@ -34,8 +34,14 @@ export class Manager<
 	/**
 	 * @param client The client this manager is for.
 	 */
-	constructor(client: ClientRoyale, structure: T) {
-		super();
+	constructor(client: ClientRoyale, structure: T, data?: StructureType<T>[]) {
+		super(
+			data?.map((APIInstance) => {
+				const instance = new structure(client, APIInstance);
+
+				return [instance.id, instance];
+			})
+		);
 
 		this.client = client;
 		this.structure = structure;

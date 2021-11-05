@@ -2,7 +2,7 @@ import type { IncomingHttpHeaders, OutgoingHttpHeaders } from "node:http";
 import type { URLSearchParams } from "node:url";
 import type { ClientRoyale } from "..";
 import type { APIRequest } from "../rest";
-import type { FetchableStructure } from "../structures/FetchableStructure";
+import type { FetchableStructure } from "../structures";
 
 export const enum Constants {
 	/**
@@ -149,5 +149,30 @@ export type ClientOptions = {
  * A valid token for the API
  */
 export type Token = `${string}.${string}.${string}`;
+
+/**
+ * The role of a clan member
+ */
+export enum ClanMemberRole {
+	/**
+	 * The member is a member of the clan
+	 */
+	member,
+
+	/**
+	 * The member is an elder of the clan
+	 */
+	elder,
+
+	/**
+	 * The member is a co-leader of the clan
+	 */
+	coLeader,
+
+	/**
+	 * The member is the leader of the clan
+	 */
+	leader,
+}
 
 export default Constants;

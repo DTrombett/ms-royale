@@ -1,8 +1,9 @@
 import type { ClientRoyale } from "..";
 import type { Path, FetchOptions } from "../util";
-import type { APIClan, APIMember, APITag } from "../APITypes";
+import type { APIClan, APITag } from "../APITypes";
 import { getEnumString } from "../util";
 import { FetchableStructure } from "./FetchableStructure";
+import { ClanMemberManager } from "../managers";
 import { Location } from "./Location";
 
 /**
@@ -82,7 +83,7 @@ export class Clan extends FetchableStructure<APIClan> {
 	/**
 	 * The members of the clan.
 	 */
-	members: APIMember[];
+	members: ClanMemberManager;
 
 	/**
 	 * @param data The data of this structure.
@@ -100,15 +101,14 @@ export class Clan extends FetchableStructure<APIClan> {
 		this.location = new Location(client, data.location);
 		this.requiredTrophies = data.requiredTrophies;
 		this.donationsPerWeek = data.donationsPerWeek;
-		// TODO: Create a ClanMember manager
-		this.members = data.memberList;
+		this.members = new ClanMemberManager(client, this, data.memberList);
 	}
 
 	/**
 	 * The clan's member count.
 	 */
 	get memberCount(): number {
-		return this.members.length;
+		return this.members.size;
 	}
 
 	/**
@@ -127,11 +127,11 @@ export class Clan extends FetchableStructure<APIClan> {
 			requiredTrophies: this.requiredTrophies,
 			tag: this.tag,
 			type: getEnumString(ClanType, this.type),
-			memberList: this.members,
+			memberList: this.members.map((member) => member.toJson()),
 			clanChestLevel: 1,
 			clanChestMaxLevel: 0,
 			clanChestStatus: "inactive",
-			members: this.members.length,
+			members: this.memberCount,
 		};
 	}
 
@@ -151,18 +151,20 @@ export class Clan extends FetchableStructure<APIClan> {
 	patch(data: Partial<APIClan>): this {
 		super.patch(data);
 
-		if (data.name != null) this.name = data.name;
+		if (data.name !== undefined) this.name = data.name;
 		if (data.type) this.type = ClanType[data.type];
-		if (data.description != null) this.description = data.description;
-		if (data.badgeId != null) this.badge = data.badgeId;
-		if (data.clanScore != null) this.score = data.clanScore;
-		if (data.clanWarTrophies != null) this.warTrophies = data.clanWarTrophies;
+		if (data.description !== undefined) this.description = data.description;
+		if (data.badgeId !== undefined) this.badge = data.badgeId;
+		if (data.clanScore !== undefined) this.score = data.clanScore;
+		if (data.clanWarTrophies !== undefined)
+			this.warTrophies = data.clanWarTrophies;
 		if (data.location) this.location = new Location(this.client, data.location);
-		if (data.requiredTrophies != null)
+		if (data.requiredTrophies !== undefined)
 			this.requiredTrophies = data.requiredTrophies;
-		if (data.donationsPerWeek != null)
+		if (data.donationsPerWeek !== undefined)
 			this.donationsPerWeek = data.donationsPerWeek;
-		if (data.memberList) this.members = data.memberList;
+		if (data.memberList)
+			this.members = new ClanMemberManager(this.client, this, data.memberList);
 
 		return this;
 	}

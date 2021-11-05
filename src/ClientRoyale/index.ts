@@ -2,10 +2,8 @@ import Collection from "@discordjs/collection";
 import type { ClientOptions as DiscordClientOptions } from "discord.js";
 import { Client, Constants, Options } from "discord.js";
 import type { Command } from "../util";
-import { FetchableManager } from "./managers/FetchableManager";
+import { ArenaManager, ClanManager, LocationManager } from "./managers";
 import Rest from "./rest";
-import { Clan } from "./structures/Clan";
-import { Location } from "./structures/Location";
 import type { ClientOptions } from "./util";
 
 /**
@@ -20,12 +18,17 @@ export class ClientRoyale extends Client {
 	/**
 	 * A manager for clans
 	 */
-	clans = new FetchableManager<typeof Clan>(this, Clan);
+	clans = new ClanManager(this);
 
 	/**
 	 * A manager for locations
 	 */
-	locations = new FetchableManager<typeof Location>(this, Location);
+	locations = new LocationManager(this);
+
+	/**
+	 * A manager for arenas
+	 */
+	arenas = new ArenaManager(this);
 
 	/**
 	 * The Clash Royale API

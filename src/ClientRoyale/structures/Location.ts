@@ -66,11 +66,19 @@ export class Location extends FetchableStructure<APILocation> {
 	patch(data: Partial<APILocation>) {
 		super.patch(data);
 
-		if (data.name != null) this.name = data.name;
-		if (data.countryCode != null) this.countryCode = data.countryCode;
-		if (data.isCountry != null) this._isCountry = data.isCountry;
+		if (data.name !== undefined) this.name = data.name;
+		if (data.countryCode !== undefined) this.countryCode = data.countryCode;
+		if (data.isCountry !== undefined) this._isCountry = data.isCountry;
 
 		return this;
+	}
+
+	/**
+	 * Gets a string representation of this location.
+	 * @returns The name of this location
+	 */
+	toString() {
+		return this.name;
 	}
 
 	/**
