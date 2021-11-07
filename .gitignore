@@ -1,7 +1,7 @@
 node_modules/
-.vscode/
 *.map
 .env
 coverage/
 *.log
 dist/
+.vscode/settings.json
