@@ -44,6 +44,27 @@ export class Location extends FetchableStructure<APILocation> {
 	}
 
 	/**
+	 * Clone this location.
+	 */
+	clone(): Location {
+		return new Location(this.client, this.toJson());
+	}
+
+	/**
+	 * Checks whether this location is equal to another location, comparing all properties.
+	 * @param other - The location to compare to
+	 * @returns Whether the locations are equal
+	 */
+	equals(other: Location): boolean {
+		return (
+			super.equals(other) &&
+			this.name === other.name &&
+			this.countryCode === other.countryCode &&
+			this._isCountry === other._isCountry
+		);
+	}
+
+	/**
 	 * Checks if the location is a country.
 	 * @returns Whether this location is a country
 	 */
@@ -57,12 +78,14 @@ export class Location extends FetchableStructure<APILocation> {
 	 * @returns The updated location
 	 */
 	patch(data: Partial<APILocation>) {
+		const old = this.clone();
 		super.patch(data);
 
 		if (data.name !== undefined) this.name = data.name;
 		if (data.countryCode !== undefined) this.countryCode = data.countryCode;
 		if (data.isCountry !== undefined) this._isCountry = data.isCountry;
 
+		if (!this.equals(old)) this.client.emit("locationUpdate", old, this);
 		return this;
 	}
 

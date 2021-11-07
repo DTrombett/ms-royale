@@ -116,11 +116,40 @@ export class ClanMember extends Structure<APIMember> {
 	}
 
 	/**
+	 * Clone this member.
+	 */
+	clone(): ClanMember {
+		return new ClanMember(this.client, this.toJson(), this.clan);
+	}
+
+	/**
+	 * Checks whether this member is equal to another member, comparing all properties.
+	 * @param member - The member to compare to
+	 * @returns Whether the members are equal
+	 */
+	equals(member: ClanMember): boolean {
+		return (
+			super.equals(member) &&
+			this.arena.equals(member.arena) &&
+			this.donationsPerWeek === member.donationsPerWeek &&
+			this.donationsReceived === member.donationsReceived &&
+			this.expLevel === member.expLevel &&
+			this.lastSeen.getTime() === member.lastSeen.getTime() &&
+			this.name === member.name &&
+			this.previousRank === member.previousRank &&
+			this.rank === member.rank &&
+			this.role === member.role &&
+			this.trophies === member.trophies
+		);
+	}
+
+	/**
 	 * Patches this clan member.
 	 * @param data - The data to update this clan member with
 	 * @returns The updated clan member
 	 */
 	patch(data: Partial<APIMember>): this {
+		const old = this.clone();
 		super.patch(data);
 
 		if (data.name !== undefined) this.name = data.name;
@@ -149,6 +178,7 @@ export class ClanMember extends Structure<APIMember> {
 		if (data.arena !== undefined)
 			this.arena = this.client.arenas.add(data.arena);
 
+		if (!this.equals(old)) this.client.emit("clanMemberUpdate", old, this);
 		return this;
 	}
 

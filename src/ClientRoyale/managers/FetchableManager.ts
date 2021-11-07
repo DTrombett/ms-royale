@@ -24,7 +24,7 @@ export class FetchableManager<
 	): Promise<this["structure"]["prototype"]> {
 		const data = this.get(id);
 
-		if (data && !force && Date.now() - data.updatedAt.getTime() < maxAge)
+		if (data && !force && Date.now() - data.lastUpdate.getTime() < maxAge)
 			return data;
 		return this.add(
 			await this.client.rapi.get<StructureType<T>>(this.structure.path(id))

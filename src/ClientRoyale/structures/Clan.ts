@@ -5,6 +5,8 @@ import { getEnumString, ClanType } from "../util";
 import { FetchableStructure } from "./FetchableStructure";
 import { ClanMemberManager } from "../managers";
 import { Location } from "./Location";
+import { Constants, MessageEmbed } from "discord.js";
+import { CustomEmojis } from "../../types";
 
 /**
  * A class representing a clan
@@ -88,6 +90,30 @@ export class Clan extends FetchableStructure<APIClan> {
 	}
 
 	/**
+	 * A Discord embed representation of this clan
+	 */
+	get embed(): MessageEmbed {
+		return new MessageEmbed()
+			.setTitle(this.name)
+			.setDescription(this.description)
+			.addField(
+				"Trofei guerra tra clan",
+				`${CustomEmojis.warTrophy} ${this.warTrophies}`
+			)
+			.addField("Posizione", this.locationName, true)
+			.addField("Trofei richiesti", this.requiredTrophies.toString(), true)
+			.addField("Donazioni a settimana", this.donationsPerWeek.toString(), true)
+			.addField("Punteggio del clan", this.score.toString(), true)
+			.addField("Tipo", ClanType[this.type], true)
+			.addField("Tag del clan", this.tag, true)
+			.addField("Membri", `${this.memberCount.toString()}/50`)
+			.setColor(Constants.Colors.BLUE)
+			.setFooter("Ultimo aggiornamento")
+			.setTimestamp(this.lastUpdate)
+			.setURL(`https://royaleapi.com/clan/${this.tag.slice(1)}`);
+	}
+
+	/**
 	 * The location name of this clan
 	 */
 	get locationName(): string {
@@ -97,8 +123,35 @@ export class Clan extends FetchableStructure<APIClan> {
 	/**
 	 * The clan's member count
 	 */
-	get membersCount(): number {
+	get memberCount(): number {
 		return this.members.size;
+	}
+
+	/**
+	 * Clone this clan.
+	 */
+	clone(): Clan {
+		return new Clan(this.client, this.toJson());
+	}
+
+	/**
+	 * Checks whether this clan is equal to another clan, comparing all properties.
+	 * @param other - The clan to compare to
+	 * @returns Whether the clans are equal
+	 */
+	equals(other: Clan): boolean {
+		return (
+			super.equals(other) &&
+			this.name === other.name &&
+			this.type === other.type &&
+			this.description === other.description &&
+			this.badge === other.badge &&
+			this.score === other.score &&
+			this.warTrophies === other.warTrophies &&
+			this.location.equals(other.location) &&
+			this.requiredTrophies === other.requiredTrophies &&
+			this.donationsPerWeek === other.donationsPerWeek
+		);
 	}
 
 	/**
@@ -107,6 +160,7 @@ export class Clan extends FetchableStructure<APIClan> {
 	 * @returns The updated clan
 	 */
 	patch(data: Partial<APIClan>): this {
+		const old = this.clone();
 		super.patch(data);
 
 		if (data.name !== undefined) this.name = data.name;
@@ -124,6 +178,7 @@ export class Clan extends FetchableStructure<APIClan> {
 		if (data.memberList)
 			this.members = new ClanMemberManager(this.client, this, data.memberList);
 
+		if (!this.equals(old)) this.client.emit("clanUpdate", old, this);
 		return this;
 	}
 
@@ -148,7 +203,7 @@ export class Clan extends FetchableStructure<APIClan> {
 			clanChestLevel: 1,
 			clanChestMaxLevel: 0,
 			clanChestStatus: "inactive",
-			members: this.membersCount,
+			members: this.memberCount,
 		};
 	}
 

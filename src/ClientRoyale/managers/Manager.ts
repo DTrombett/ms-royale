@@ -46,6 +46,7 @@ export class Manager<
 		if (existing != null) return existing.patch(data);
 		const instance = new this.structure(this.client, data);
 		this.set(instance.id, instance);
+		this.client.emit("structureAdd", instance);
 		return instance;
 	}
 
@@ -59,6 +60,7 @@ export class Manager<
 
 		if (existing == null) return undefined;
 		this.delete(id);
+		this.client.emit("structureRemove", existing);
 		return existing;
 	}
 }

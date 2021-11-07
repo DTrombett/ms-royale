@@ -35,7 +35,7 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 		force = false,
 		maxAge = Constants.maxAge,
 	}: FetchOptions = {}): Promise<this> {
-		if (!force && Date.now() - this.clan.updatedAt.getTime() < maxAge)
+		if (!force && Date.now() - this.clan.lastUpdate.getTime() < maxAge)
 			return Promise.resolve(this);
 		return this.client.rapi
 			.get<APIMember[]>(`/clans/${this.clan.tag}/members`)

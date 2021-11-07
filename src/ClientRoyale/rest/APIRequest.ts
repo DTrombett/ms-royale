@@ -1,8 +1,9 @@
 import type { IncomingMessage, OutgoingHttpHeaders } from "node:http";
 import { get } from "node:https";
 import { URL, URLSearchParams } from "node:url";
-import type { Path, RequestOptions, Response } from "../util";
+import type { Path, RequestOptions } from "../util";
 import { Constants, RequestStatus } from "../util";
+import { Response } from "./Response";
 import type Rest from "./Rest";
 
 /**
@@ -88,8 +89,9 @@ export class APIRequest {
 	 * @returns A promise that resolves with the response
 	 */
 	send() {
+		this.rest.client.emit("requestStart", this);
+		this.status = RequestStatus.InProgress;
 		return new Promise<Response>((resolve, reject) => {
-			this.status = RequestStatus.InProgress;
 			this.make(resolve, reject);
 		});
 	}
@@ -130,8 +132,9 @@ export class APIRequest {
 			}
 
 			// Handle the data received
-			res.on("data", (d) => {
+			res.on("data", (d: string) => {
 				data += d;
+				this.rest.client.emit("chunk", d);
 			});
 			res.once("end", () => {
 				if (!res.complete)
@@ -139,14 +142,11 @@ export class APIRequest {
 						`Request to path ${this.path} ended before all data was transferred.`
 					);
 				clearTimeout(timeout);
-				resolve({
-					data: data || null,
-					statusCode: res.statusCode!,
-					headers: res.headers,
-					status: res.statusMessage!,
-					request: this,
-				});
+				const response = new Response(data, res, this);
+
+				resolve(response);
 				this.status = RequestStatus.Finished;
+				this.rest.client.emit("requestEnd", response);
 			});
 		};
 		const req = get(

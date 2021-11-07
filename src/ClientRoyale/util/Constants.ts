@@ -2,7 +2,15 @@ import type { IncomingHttpHeaders, OutgoingHttpHeaders } from "node:http";
 import type { URLSearchParams } from "node:url";
 import type { ClientRoyale } from "..";
 import type { APIRequest } from "../rest";
-import type { FetchableStructure, Structure } from "../structures";
+import type {
+	Arena,
+	Clan,
+	ClanMember,
+	FetchableStructure,
+	Location,
+	Structure,
+} from "../structures";
+import type { ClientEvents as DiscordEvents } from "discord.js";
 
 export const enum Constants {
 	/**
@@ -20,6 +28,21 @@ export const enum Constants {
 	 */
 	APIUrl = "https://proxy.royaleapi.dev/v1",
 }
+
+/**
+ * Events that can be emitted by the client
+ */
+export type ClientEvents = DiscordEvents & {
+	structureAdd: [structure: Structure];
+	structureRemove: [structure: Structure];
+	requestStart: [request: APIRequest];
+	chunk: [chunk: string];
+	requestEnd: [request: Response];
+	arenaUpdate: [oldArena: Arena, newArena: Arena];
+	clanUpdate: [oldClan: Clan, newClan: Clan];
+	clanMemberUpdate: [oldMember: ClanMember, newMember: ClanMember];
+	locationUpdate: [oldLocation: Location, newLocation: Location];
+};
 
 /**
  * Any JSON data

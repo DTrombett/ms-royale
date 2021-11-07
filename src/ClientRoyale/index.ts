@@ -1,9 +1,22 @@
 import Collection from "@discordjs/collection";
+import type { Awaitable } from "discord.js";
 import { Client, Constants, Options } from "discord.js";
 import type { Command } from "../util";
 import { ArenaManager, ClanManager, LocationManager } from "./managers";
 import Rest from "./rest";
-import type { ClientOptions } from "./util";
+import type { ClientEvents, ClientOptions } from "./util";
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export interface ClientRoyale extends Client {
+	on<T extends keyof ClientEvents>(
+		event: T,
+		listener: (...args: ClientEvents[T]) => Awaitable<void>
+	): this;
+	emit<T extends keyof ClientEvents>(
+		event: T,
+		...args: ClientEvents[T]
+	): boolean;
+}
 
 /**
  * A class to connect to both Discord and Clash Royale API

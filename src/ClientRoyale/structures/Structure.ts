@@ -24,7 +24,7 @@ export class Structure<T extends JsonObject = JsonObject> {
 	/**
 	 * When this structure was last updated
 	 */
-	updatedAt = new Date();
+	lastUpdate = new Date();
 
 	/**
 	 * @param client - The client that instantiated this structure
@@ -36,12 +36,31 @@ export class Structure<T extends JsonObject = JsonObject> {
 	}
 
 	/**
+	 * Clone this structure.
+	 */
+	clone() {
+		return new (this.constructor as typeof Structure)(
+			this.client,
+			this.toJson()
+		);
+	}
+
+	/**
+	 * Checks whether this structure is equal to another structure, comparing all properties.
+	 * @param other - The structure to compare to
+	 * @returns Whether the structures are equal
+	 */
+	equals(other: Structure): boolean {
+		return this.id === other.id;
+	}
+
+	/**
 	 * Patches this structure.
 	 * @param _data - The data to update this structure with
 	 * @returns The updated structure
 	 */
 	patch(_data: Partial<T>): this {
-		this.updatedAt = new Date();
+		this.lastUpdate = new Date();
 
 		return this;
 	}
@@ -60,14 +79,5 @@ export class Structure<T extends JsonObject = JsonObject> {
 	 */
 	toString(): string {
 		return JSON.stringify(this);
-	}
-
-	/**
-	 * Checks whether this structure is equal to another structure.
-	 * @param other - The structure to compare to
-	 * @returns Whether the structures are equal
-	 */
-	equals(other: this): boolean {
-		return this.id === other.id;
 	}
 }

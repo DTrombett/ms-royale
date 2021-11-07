@@ -32,7 +32,7 @@ export class FetchableStructure<
 		force = false,
 		maxAge = Constants.maxAge,
 	}: FetchOptions = {}): Promise<this> {
-		if (!force && Date.now() - this.updatedAt.getTime() < maxAge)
+		if (!force && Date.now() - this.lastUpdate.getTime() < maxAge)
 			return Promise.resolve(this);
 
 		return this.client.rapi

@@ -31,14 +31,32 @@ export class Arena extends Structure<APIArena> {
 	}
 
 	/**
+	 * Clone this arena.
+	 */
+	clone(): Arena {
+		return new Arena(this.client, this.toJson());
+	}
+
+	/**
+	 * Checks whether this arena is equal to another arena, comparing all properties.
+	 * @param other - The arena to compare to
+	 * @returns Whether the arenas are equal
+	 */
+	equals(other: Arena): boolean {
+		return super.equals(other) && this.name === other.name;
+	}
+
+	/**
 	 * Patches this arena.
 	 * @param data - The data to update this arena with
 	 * @returns The updated arena
 	 */
 	patch(data: APIArena): this {
+		const old = this.clone();
 		super.patch(data);
 
 		this.name = data.name;
+		if (!this.equals(old)) this.client.emit("arenaUpdate", old, this);
 		return this;
 	}
 
