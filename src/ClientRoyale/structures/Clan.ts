@@ -7,6 +7,7 @@ import { ClanMemberManager } from "../managers";
 import { Location } from "./Location";
 import { Constants, MessageEmbed } from "discord.js";
 import { CustomEmojis } from "../../types";
+import type { ClanMember } from ".";
 
 /**
  * A class representing a clan
@@ -140,6 +141,8 @@ export class Clan extends FetchableStructure<APIClan> {
 	 * @returns Whether the clans are equal
 	 */
 	equals(other: Clan): boolean {
+		const mapMembers = (member: ClanMember): APITag => member.tag;
+
 		return (
 			super.equals(other) &&
 			this.name === other.name &&
@@ -150,7 +153,10 @@ export class Clan extends FetchableStructure<APIClan> {
 			this.warTrophies === other.warTrophies &&
 			this.location.equals(other.location) &&
 			this.requiredTrophies === other.requiredTrophies &&
-			this.donationsPerWeek === other.donationsPerWeek
+			this.donationsPerWeek === other.donationsPerWeek &&
+			this.members
+				.mapValues(mapMembers)
+				.equals(other.members.mapValues(mapMembers))
 		);
 	}
 

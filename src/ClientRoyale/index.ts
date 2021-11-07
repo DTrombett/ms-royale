@@ -57,7 +57,7 @@ export class ClientRoyale extends Client {
 	 */
 	constructor({ token }: ClientOptions = {}) {
 		super({
-			intents: 0,
+			intents: 1 << 0,
 			allowedMentions: { parse: [], repliedUser: false, roles: [], users: [] },
 			failIfNotExists: false,
 			http: { api: "https://canary.discord.com/api" },
