@@ -19,7 +19,7 @@ export class Rest {
 	queue = new AsyncQueue();
 
 	/**
-	 * If we got ratelimited
+	 * If we are ratelimited
 	 */
 	rateLimited = false;
 
@@ -53,13 +53,12 @@ export class Rest {
 				"The rest is ratelimited so no other requests are allowed until you set the force option to true"
 			);
 
-		// The `as post` is just to suppress the error
 		const request = new APIRequest(this, path, options);
 
 		this.requests.push(request);
 
-		let data: T | null | undefined;
 		const res = await request.send();
+		let data: T | null | undefined;
 
 		if (res.statusCode === 429) {
 			// If we encountered a ratelimit... well, this is a problem!

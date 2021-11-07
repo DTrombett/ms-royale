@@ -7,18 +7,18 @@ import Constants from "../util";
 import { Manager } from "./Manager";
 
 /**
- * A manager for clan members.
+ * A manager for clan members
  */
 export class ClanMemberManager extends Manager<typeof ClanMember> {
 	/**
-	 * The clan this manager is for.
+	 * The clan this manager is for
 	 */
 	clan: Clan;
 
 	/**
-	 * @param client The client this manager is for.
-	 * @param clan The clan this manager is for.
-	 * @param data The data to create the clan members from.
+	 * @param client - The client that instantiated this manager
+	 * @param clan - The clan this manager is for
+	 * @param data - The data to initialize this manager with
 	 */
 	constructor(client: ClientRoyale, clan: Clan, data?: APIMember[]) {
 		super(client, ClanMember, data);
@@ -27,8 +27,9 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 	}
 
 	/**
-	 * Fetches the clan members.
-	 * @param options The options for the fetch.
+	 * Fetches the members of this clan.
+	 * @param options - The options for the fetch
+	 * @returns A promise that resolves with the fetched members
 	 */
 	async fetch({
 		force = false,

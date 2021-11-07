@@ -1,39 +1,45 @@
 import type { ClientRoyale } from "..";
-import type { Path, FetchOptions } from "../util";
+import type { Path, FetchOptions, StringId } from "../util";
 import type { APILocation } from "../APITypes";
 import { FetchableStructure } from "./FetchableStructure";
 
 /**
- * Represents a Clash Royale location.
+ * Represents a location
  */
 export class Location extends FetchableStructure<APILocation> {
 	static id = "id";
 	static route: Path = "/locations/:id";
 
 	/**
-	 * The location's name.
-	 */
-	name: string;
-
-	/**
-	 * The location's country code.
+	 * The location's country code, if it is a country
 	 */
 	countryCode?: string;
 
 	/**
-	 * If the location is a country.
+	 * The id of this location
+	 */
+	readonly id: StringId;
+
+	/**
+	 * The location's name
+	 */
+	name: string;
+
+	/**
+	 * If the location is a country
 	 */
 	private _isCountry: boolean;
 
 	/**
-	 * @param client The client that instantiated this location
-	 * @param data The data of this location
+	 * @param client - The client that instantiated this location
+	 * @param data - The data of the location
 	 */
 	constructor(client: ClientRoyale, data: APILocation) {
 		super(client, data);
 
 		this.name = data.name;
 		this.countryCode = data.countryCode;
+		this.id = data.id.toString() as StringId;
 		this._isCountry = data.isCountry;
 	}
 
@@ -46,21 +52,8 @@ export class Location extends FetchableStructure<APILocation> {
 	}
 
 	/**
-	 * Gets the JSON of this location.
-	 * @returns The JSON representation of this location
-	 */
-	toJson(): APILocation {
-		return {
-			id: Number(this.id),
-			name: this.name,
-			countryCode: this.countryCode,
-			isCountry: this._isCountry,
-		};
-	}
-
-	/**
-	 * Patch the location.
-	 * @param data The data to update this location with
+	 * Patches this location.
+	 * @param data - The data to update this location with
 	 * @returns The updated location
 	 */
 	patch(data: Partial<APILocation>) {
@@ -74,6 +67,20 @@ export class Location extends FetchableStructure<APILocation> {
 	}
 
 	/**
+	 * Gets a JSON representation of this location.
+	 * @returns The JSON representation of this location
+	 */
+	toJson(): APILocation {
+		return {
+			...super.toJson(),
+			id: Number(this.id),
+			name: this.name,
+			countryCode: this.countryCode,
+			isCountry: this._isCountry,
+		};
+	}
+
+	/**
 	 * Gets a string representation of this location.
 	 * @returns The name of this location
 	 */
@@ -83,7 +90,8 @@ export class Location extends FetchableStructure<APILocation> {
 
 	/**
 	 * Fetches this location.
-	 * @returns A promise that resolves with this location
+	 * @param options - The options for the fetch
+	 * @returns A promise that resolves with the new location
 	 */
 	fetch(options: FetchOptions): Promise<this> {
 		return this.client.locations.fetch(this.id, options) as Promise<this>;

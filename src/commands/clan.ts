@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import type { APITag } from "../ClientRoyale/APITypes";
 import type { CommandOptions } from "../types";
 
 export const command: CommandOptions = {
@@ -18,7 +19,7 @@ export const command: CommandOptions = {
 
 		if (!tag.startsWith("#")) tag = `#${tag}`;
 		this.client.clans
-			.fetch(tag)
+			.fetch(tag as APITag)
 			.then((clan) =>
 				interaction.reply(`${clan.name} (${clan.tag}) - ${clan.description}`)
 			)

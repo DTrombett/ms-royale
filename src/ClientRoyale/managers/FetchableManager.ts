@@ -1,18 +1,22 @@
-import type { ConstructableFetchableStructure, FetchOptions } from "../util";
+import type {
+	ConstructableFetchableStructure,
+	FetchOptions,
+	StructureType,
+} from "../util";
 import { Constants } from "../util";
-import type { StructureType } from "./Manager";
 import { Manager } from "./Manager";
 
 /**
- * A manager that can fetch structures.
+ * A manager that can fetch structures
  */
 export class FetchableManager<
 	T extends ConstructableFetchableStructure = ConstructableFetchableStructure
 > extends Manager<T> {
 	/**
-	 * Fetches a structure from this manager.
-	 * @param id The ID of the structure to fetch.
-	 * @param force Whether to skip the cache and fetch from the API.
+	 * Fetches a structure from the API.
+	 * @param id - The id of the structure to fetch
+	 * @param options - The options for the fetch
+	 * @returns A promise that resolves with the fetched structure
 	 */
 	async fetch(
 		id: string,

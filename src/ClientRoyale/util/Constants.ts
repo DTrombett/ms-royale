@@ -2,7 +2,7 @@ import type { IncomingHttpHeaders, OutgoingHttpHeaders } from "node:http";
 import type { URLSearchParams } from "node:url";
 import type { ClientRoyale } from "..";
 import type { APIRequest } from "../rest";
-import type { FetchableStructure } from "../structures";
+import type { FetchableStructure, Structure } from "../structures";
 
 export const enum Constants {
 	/**
@@ -16,7 +16,7 @@ export const enum Constants {
 	AbortTimeout = 10_000,
 
 	/**
-	 * The base URL for the API.
+	 * The base URL for the API
 	 */
 	APIUrl = "https://proxy.royaleapi.dev/v1",
 }
@@ -32,20 +32,30 @@ export type Json =
 	| { [property: string]: Json };
 
 /**
- * Options to fetch a structure.
+ * A JSON object
+ */
+export type JsonObject = {
+	[property: string]: Json;
+};
+
+/**
+ * Options to fetch a structure
  */
 export type FetchOptions = {
 	/**
-	 * Whether to skip the cache and fetch from the API.
+	 * Whether to skip the cache and fetch from the API
 	 */
 	force?: boolean;
 
 	/**
-	 * Maximum time (in milliseconds) passed after the structure was last fetched before fetching again.
+	 * Maximum time (in milliseconds) passed after the structure was last fetched before fetching again
 	 */
 	maxAge?: number;
 };
 
+/**
+ * The class of a fetchable structure
+ */
 export type ConstructableFetchableStructure = Omit<
 	typeof FetchableStructure,
 	"constructor"
@@ -173,6 +183,60 @@ export enum ClanMemberRole {
 	 * The member is the leader of the clan
 	 */
 	leader,
+}
+
+/**
+ * A stringified id from the API
+ */
+export type StringId = `${number}`;
+
+/**
+ * The class of a structure
+ */
+export type ConstructableStructure = Omit<typeof Structure, "constructor"> & {
+	prototype: Structure;
+	new (client: ClientRoyale, data: any, ...args: any[]): Structure;
+};
+
+/**
+ * The API type of a structure
+ */
+export type StructureType<T extends ConstructableStructure> = T extends new (
+	client: ClientRoyale,
+	data: infer R,
+	...args: any[]
+) => Structure
+	? R
+	: never;
+
+/**
+ * A JSON error received from the API
+ */
+export type ClashRoyaleError = {
+	reason: string;
+	message?: string;
+	type?: string;
+	detail?: Record<string, unknown>;
+};
+
+/**
+ * Represents the type of a clan
+ */
+export enum ClanType {
+	/**
+	 * Clan is closed
+	 */
+	closed,
+
+	/**
+	 * The clan is invite only
+	 */
+	inviteOnly,
+
+	/**
+	 * The clan is open
+	 */
+	open,
 }
 
 export default Constants;

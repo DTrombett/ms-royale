@@ -1,5 +1,4 @@
 import Collection from "@discordjs/collection";
-import type { ClientOptions as DiscordClientOptions } from "discord.js";
 import { Client, Constants, Options } from "discord.js";
 import type { Command } from "../util";
 import { ArenaManager, ClanManager, LocationManager } from "./managers";
@@ -11,9 +10,9 @@ import type { ClientOptions } from "./util";
  */
 export class ClientRoyale extends Client {
 	/**
-	 * A list of Discord commands
+	 * A manager for arenas
 	 */
-	commands = new Collection<string, Command>();
+	arenas = new ArenaManager(this);
 
 	/**
 	 * A manager for clans
@@ -21,32 +20,30 @@ export class ClientRoyale extends Client {
 	clans = new ClanManager(this);
 
 	/**
+	 * A list of Discord commands
+	 */
+	commands = new Collection<string, Command>();
+
+	/**
 	 * A manager for locations
 	 */
 	locations = new LocationManager(this);
 
 	/**
-	 * A manager for arenas
-	 */
-	arenas = new ArenaManager(this);
-
-	/**
-	 * The Clash Royale API
+	 * The rest client
 	 */
 	rapi = new Rest(this);
 
 	/**
-	 * The token used for Clash Royale
+	 * The token used for the API
 	 */
 	tokenRoyale: string = process.env.CLASH_ROYALE_TOKEN!;
 
 	/**
-	 * @param param0 - Options for the client
-	 * @param discordOptions Options for the Discord client
+	 * @param options - Options for the client
 	 */
-	constructor(
-		{ token }: ClientOptions = {},
-		discordOptions: DiscordClientOptions = {
+	constructor({ token }: ClientOptions = {}) {
+		super({
 			intents: 0,
 			allowedMentions: { parse: [], repliedUser: false, roles: [], users: [] },
 			failIfNotExists: false,
@@ -78,9 +75,7 @@ export class ClientRoyale extends Client {
 			restGlobalRateLimit: 50,
 			restTimeOffset: 1000,
 			shards: "auto",
-		}
-	) {
-		super(discordOptions);
+		});
 
 		if (token != null) this.tokenRoyale = token;
 		if (!this.tokenRoyale)

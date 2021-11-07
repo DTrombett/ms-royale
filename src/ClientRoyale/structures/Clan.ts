@@ -1,92 +1,75 @@
 import type { ClientRoyale } from "..";
 import type { Path, FetchOptions } from "../util";
 import type { APIClan, APITag } from "../APITypes";
-import { getEnumString } from "../util";
+import { getEnumString, ClanType } from "../util";
 import { FetchableStructure } from "./FetchableStructure";
 import { ClanMemberManager } from "../managers";
 import { Location } from "./Location";
 
 /**
- * Represents the type of a clan.
- */
-export enum ClanType {
-	/**
-	 * Clan is closed.
-	 */
-	closed,
-	/**
-	 * The clan is invite only.
-	 */
-	inviteOnly,
-	/**
-	 * The clan is open.
-	 */
-	open,
-}
-
-/**
- * Represents a clan.
+ * A class representing a clan
  */
 export class Clan extends FetchableStructure<APIClan> {
 	static route: Path = "/clans/:id";
 
 	/**
-	 * The tag of the clan.
-	 */
-	tag: APITag;
-
-	/**
-	 * The name of the clan.
-	 */
-	name: string;
-
-	/**
-	 * The type of the clan.
-	 */
-	type: ClanType;
-
-	/**
-	 * The description of the clan.
-	 */
-	description: string;
-
-	/**
-	 * The badge ID of the clan.
+	 * The badge ID of the clan
 	 */
 	badge: number;
 
 	/**
-	 * The clan's score.
+	 * The description of the clan
 	 */
-	score: number;
+	description: string;
 
 	/**
-	 * The clan's trophies in the war.
-	 */
-	warTrophies: number;
-
-	/**
-	 * The location of the clan.
-	 */
-	location: Location;
-
-	/**
-	 * The required trophies to join the clan.
-	 */
-	requiredTrophies: number;
-
-	/**
-	 * The clan's donations per week.
+	 * The clan's donations per week
 	 */
 	donationsPerWeek: number;
 
 	/**
-	 * The members of the clan.
+	 * The location of the clan
+	 */
+	location: Location;
+
+	/**
+	 * The members of the clan
 	 */
 	members: ClanMemberManager;
 
 	/**
-	 * @param data The data of this structure.
+	 * The name of the clan
+	 */
+	name: string;
+
+	/**
+	 * The required trophies to join the clan
+	 */
+	requiredTrophies: number;
+
+	/**
+	 * The clan's score
+	 */
+	score: number;
+
+	/**
+	 * The tag of the clan
+	 */
+	tag: APITag;
+
+	/**
+	 * The type of the clan
+	 */
+	type: ClanType;
+
+	/**
+	 * The clan's trophies in the war
+	 */
+	warTrophies: number;
+
+	/**
+	 * @param client - The client that instantiated this clan
+	 * @param data - The data of the clan
 	 */
 	constructor(client: ClientRoyale, data: APIClan) {
 		super(client, data);
@@ -105,48 +88,16 @@ export class Clan extends FetchableStructure<APIClan> {
 	}
 
 	/**
-	 * The clan's member count.
+	 * The clan's member count
 	 */
 	get memberCount(): number {
 		return this.members.size;
 	}
 
 	/**
-	 * Gets the API data of this structure.
-	 * @returns The JSON representation of this structure.
-	 */
-	toJson(): APIClan {
-		return {
-			badgeId: this.badge,
-			clanScore: this.score,
-			clanWarTrophies: this.warTrophies,
-			description: this.description,
-			donationsPerWeek: this.donationsPerWeek,
-			location: this.location.toJson(),
-			name: this.name,
-			requiredTrophies: this.requiredTrophies,
-			tag: this.tag,
-			type: getEnumString(ClanType, this.type),
-			memberList: this.members.map((member) => member.toJson()),
-			clanChestLevel: 1,
-			clanChestMaxLevel: 0,
-			clanChestStatus: "inactive",
-			members: this.memberCount,
-		};
-	}
-
-	/**
-	 * Gets the string representation of this structure.
-	 * @returns A string representation of this structure.
-	 */
-	toString(): string {
-		return this.name;
-	}
-
-	/**
-	 * Patches this structure.
-	 * @param data The new data of this structure.
-	 * @returns The new instance of this structure.
+	 * Patches this clan.
+	 * @param data - The data to update this clan with
+	 * @returns The updated clan
 	 */
 	patch(data: Partial<APIClan>): this {
 		super.patch(data);
@@ -170,8 +121,42 @@ export class Clan extends FetchableStructure<APIClan> {
 	}
 
 	/**
-	 * Fetches this structure.
-	 * @returns A promise that resolves with this structure.
+	 * Gets a JSON representation of this clan.
+	 * @returns The JSON representation of this clan
+	 */
+	toJson(): APIClan {
+		return {
+			...super.toJson(),
+			badgeId: this.badge,
+			clanScore: this.score,
+			clanWarTrophies: this.warTrophies,
+			description: this.description,
+			donationsPerWeek: this.donationsPerWeek,
+			location: this.location.toJson(),
+			name: this.name,
+			requiredTrophies: this.requiredTrophies,
+			tag: this.tag,
+			type: getEnumString(ClanType, this.type),
+			memberList: this.members.map((member) => member.toJson()),
+			clanChestLevel: 1,
+			clanChestMaxLevel: 0,
+			clanChestStatus: "inactive",
+			members: this.memberCount,
+		};
+	}
+
+	/**
+	 * Gets a string representation of this clan.
+	 * @returns The name of this clan
+	 */
+	toString(): string {
+		return this.name;
+	}
+
+	/**
+	 * Fetches this clan.
+	 * @param options - The options for the fetch
+	 * @returns A promise that resolves with the new clan
 	 */
 	fetch(options?: FetchOptions): Promise<this> {
 		return this.client.clans.fetch(this.tag, options) as Promise<this>;

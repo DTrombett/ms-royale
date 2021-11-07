@@ -6,72 +6,73 @@ import type { Clan } from "./Clan";
 import { Structure } from "./Structure";
 
 /**
- * A class representing a clan member.
+ * A class representing a clan member
  */
 export class ClanMember extends Structure<APIMember> {
 	/**
-	 * The clan of the member.
-	 */
-	clan: Clan;
-
-	/**
-	 * The tag of the clan member.
-	 */
-	tag: APITag;
-
-	/**
-	 * The name of the clan member.
-	 */
-	name: string;
-
-	/**
-	 * The role of the clan member.
-	 */
-	role: ClanMemberRole;
-
-	/**
-	 * The last time the clan member was seen.
-	 */
-	lastSeen: Date;
-
-	/**
-	 * The exp level of the clan member.
-	 */
-	expLevel: number;
-
-	/**
-	 * The number of trophies the clan member has.
-	 */
-	trophies: number;
-
-	/**
-	 * The rank of the clan member.
-	 */
-	rank: number;
-
-	/**
-	 * The previous rank of the clan member.
-	 */
-	previousRank: number;
-
-	/**
-	 * The number of donations the clan member has made.
-	 */
-	donations: number;
-
-	/**
-	 * The number of donations the clan member has received.
-	 */
-	donationsReceived: number;
-
-	/**
-	 * The arena the clan member is currently in.
+	 * The arena this member is currently in
 	 */
 	arena: Arena;
 
 	/**
-	 * @param client The client instance.
-	 * @param data The data of the clan member.
+	 * The clan of this member
+	 */
+	clan: Clan;
+
+	/**
+	 * The number of donations this member has made
+	 */
+	donations: number;
+
+	/**
+	 * The number of donations this member has received
+	 */
+	donationsReceived: number;
+
+	/**
+	 * The experience level of this member
+	 */
+	expLevel: number;
+
+	/**
+	 * The last time this member was online
+	 */
+	lastSeen: Date;
+
+	/**
+	 * The name of this member
+	 */
+	name: string;
+
+	/**
+	 * The previous rank of this member
+	 */
+	previousRank: number;
+
+	/**
+	 * The rank of this member in the clan
+	 */
+	rank: number;
+
+	/**
+	 * The role of this member
+	 */
+	role: ClanMemberRole;
+
+	/**
+	 * The tag of this member
+	 */
+	tag: APITag;
+
+	/**
+	 * The number of trophies this member has
+	 */
+	trophies: number;
+
+	/**
+	 * @param client - The client that instantiated this clan member
+	 * @param data - The data of the clan member
+	 * @param clan - The clan of the member
 	 */
 	constructor(client: ClientRoyale, data: APIMember, clan: Clan) {
 		super(client, data);
@@ -101,9 +102,9 @@ export class ClanMember extends Structure<APIMember> {
 	}
 
 	/**
-	 * Patches the clan member.
-	 * @param data The data to update.
-	 * @returns The updated clan member.
+	 * Patches this clan member.
+	 * @param data - The data to update this clan member with
+	 * @returns The updated clan member
 	 */
 	patch(data: Partial<APIMember>): this {
 		super.patch(data);
@@ -138,10 +139,11 @@ export class ClanMember extends Structure<APIMember> {
 	}
 
 	/**
-	 * Returns a JSON representation of the clan member.
+	 * Gets a JSON representation of this member.
 	 */
 	toJson(): APIMember {
 		return {
+			...super.toJson(),
 			arena: this.arena.toJson(),
 			clanChestPoints: 0,
 			clanRank: this.rank,
@@ -172,8 +174,8 @@ export class ClanMember extends Structure<APIMember> {
 	}
 
 	/**
-	 * Returns a string representation of the clan member.
-	 * @returns The name of the clan member.
+	 * Gets the string representation of this member.
+	 * @returns The name of this member
 	 */
 	toString(): string {
 		return this.name;

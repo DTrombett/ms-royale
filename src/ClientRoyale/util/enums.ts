@@ -1,5 +1,14 @@
-export enum Enum {}
+/**
+ * An example of an enum
+ */
+enum Enum {}
 
+/**
+ * Gets the corresponding enum number value for a given string.
+ * @param enumType - The enum to get the values of
+ * @param enumValue - The enum value to get the name of
+ * @returns The correspondent number of the enum value
+ */
 export const getEnumNumber = <E extends typeof Enum>(
 	enumType: E,
 	enumValue: E[keyof E]
@@ -8,7 +17,17 @@ export const getEnumNumber = <E extends typeof Enum>(
 		? enumValue
 		: (enumType as unknown as Record<string, number>)[enumValue as string];
 
+/**
+ * All the string values of the enum
+ */
 export type EnumString<E extends typeof Enum> = Exclude<E[keyof E], number>;
+
+/**
+ * Gets the corresponding enum string value for a given number.
+ * @param enumType - The enum to get the values of
+ * @param enumValue - The enum value to get the name of
+ * @returns The correspondent string of the enum value
+ */
 export const getEnumString = <E extends typeof Enum>(
 	enumType: E,
 	enumValue: E[keyof E]

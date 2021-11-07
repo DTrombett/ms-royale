@@ -1,11 +1,9 @@
 import type { IncomingMessage, OutgoingHttpHeaders } from "node:http";
-import { Agent, get } from "node:https";
+import { get } from "node:https";
 import { URL, URLSearchParams } from "node:url";
 import type { Path, RequestOptions, Response } from "../util";
 import { Constants, RequestStatus } from "../util";
 import type Rest from "./Rest";
-
-const agent = new Agent({ keepAlive: true });
 
 /**
  * A class representing a request to the API
@@ -44,7 +42,6 @@ export class APIRequest {
 	/**
 	 * @param rest - The rest that instantiated this
 	 * @param path - The path to request
-	 * @param method - The method of the request
 	 * @param options - Options for this request
 	 */
 	constructor(
@@ -56,8 +53,7 @@ export class APIRequest {
 		this.rest = rest;
 
 		this.baseUrl = url;
-		this.query =
-			query instanceof URLSearchParams ? query : new URLSearchParams(query);
+		this.query = new URLSearchParams(query);
 
 		this.headers = {
 			Accept: "application/json",
@@ -78,18 +74,7 @@ export class APIRequest {
 	}
 
 	/**
-	 * Send the request to the api.
-	 * @returns A promise with the data received from the API or null if there is no data
-	 */
-	send() {
-		return new Promise<Response>((resolve, reject) => {
-			this.status = RequestStatus.InProgress;
-			this.make(resolve, reject);
-		});
-	}
-
-	/**
-	 * Edit headers for this request
+	 * Edit headers for this request.
 	 * @param headers - Headers to add/remove
 	 * @returns The new request
 	 */
@@ -99,9 +84,20 @@ export class APIRequest {
 	}
 
 	/**
+	 * Send the request to the api.
+	 * @returns A promise that resolves with the response
+	 */
+	send() {
+		return new Promise<Response>((resolve, reject) => {
+			this.status = RequestStatus.InProgress;
+			this.make(resolve, reject);
+		});
+	}
+
+	/**
 	 * Make the request to the API.
-	 * @param resolve A function to resolve the promise
-	 * @param reject A function to reject the promise
+	 * @param resolve - A function to resolve the promise
+	 * @param reject - A function to reject the promise
 	 */
 	private make(
 		resolve: (value: PromiseLike<Response> | Response) => void,
@@ -156,7 +152,6 @@ export class APIRequest {
 		const req = get(
 			this.url,
 			{
-				agent,
 				headers: this.headers,
 			},
 			callback
