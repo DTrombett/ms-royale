@@ -18,7 +18,7 @@ export const enum Constants {
 	/**
 	 * The base URL for the API.
 	 */
-	APIUrl = "https://api.clashroyale.com/v1",
+	APIUrl = "https://proxy.royaleapi.dev/v1",
 }
 
 /**
