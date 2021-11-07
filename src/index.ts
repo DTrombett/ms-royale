@@ -27,7 +27,6 @@ client
 	.on("clanUpdate", (oldClan, newClan) => {
 		const channel = client.channels.cache.get(process.env.CLAN_CHANNEL_ID!);
 		if (!channel) return;
-		console.log(oldClan, newClan);
 		const embed = new MessageEmbed()
 			.setTitle("Clan aggiornato!")
 			.setURL(`https://royaleapi.com/clan/${newClan.tag.slice(1)}`)
