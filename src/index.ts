@@ -29,46 +29,45 @@ client
 		if (!channel) return;
 		console.log(oldClan, newClan);
 		const embed = new MessageEmbed()
-			.setTitle("Clan Update")
+			.setTitle("Clan aggiornato!")
+			.setURL(`https://royaleapi.com/clan/${newClan.tag.slice(1)}`)
 			.setAuthor(newClan.name);
 
 		if (oldClan.name !== newClan.name)
-			embed.addField("Name", `${oldClan.name} => ${newClan.name}`);
-		if (oldClan.tag !== newClan.tag)
-			embed.addField("Tag", `${oldClan.tag} => ${newClan.tag}`);
+			embed.addField("Nome", `**${oldClan.name}** => **${newClan.name}**`);
 		if (oldClan.description !== newClan.description)
 			embed.addField(
-				"Description",
-				`${oldClan.description} => ${newClan.description}`
+				"Descrizione",
+				`__${oldClan.description}__\n=> __${newClan.description}__`
 			);
 		if (oldClan.badge !== newClan.badge)
-			embed.addField("Badge", `${oldClan.badge} => ${newClan.badge}`);
+			embed.addField("ID decorazione", `${oldClan.badge} => ${newClan.badge}`);
 		if (oldClan.locationName !== newClan.locationName)
 			embed.addField(
-				"Location",
-				`${oldClan.locationName} => ${newClan.locationName}`
+				"Posizione",
+				`_${oldClan.locationName}_ => _${newClan.locationName}_`
 			);
 		if (oldClan.requiredTrophies !== newClan.requiredTrophies)
 			embed.addField(
-				"Required Trophies",
-				`${oldClan.requiredTrophies} => ${newClan.requiredTrophies}`
+				"Trofei richiesti",
+				`🏆 ${oldClan.requiredTrophies} => 🏆 ${newClan.requiredTrophies}`
 			);
 		if (oldClan.type !== newClan.type)
 			embed.addField(
-				"Type",
+				"Tipo",
 				`${ClanType[oldClan.type]} => ${ClanType[newClan.type]}`
 			);
 		for (const [tag, member] of oldClan.members)
 			if (!newClan.members.has(tag))
 				embed.addField(
-					"Member Left",
-					`${member.name} (${member.tag}) - ${member.trophies} (${member.rank})`
+					`${member.role} left`,
+					`${member.name} (${member.tag}) - 🏆 ${member.trophies} (#${member.rank})`
 				);
 		for (const [tag, member] of newClan.members)
 			if (!oldClan.members.has(tag))
 				embed.addField(
-					"Member Joined",
-					`${member.name} (${member.tag}) - ${member.trophies} (${member.rank})`
+					`New ${member.role}`,
+					`${member.name} (${member.tag}) - 🏆 ${member.trophies} (#${member.rank})`
 				);
 
 		cast<TextChannel>(channel);
@@ -77,7 +76,7 @@ client
 	});
 
 setInterval(() => {
-	client.clans.fetch("#L2Y2L2PC", { maxAge: 1000 * 59 }).catch(console.error);
-}, 1000 * 60);
+	client.clans.fetch("#L2Y2L2PC", { maxAge: 1000 * 60 }).catch(console.error);
+}, 1000 * 60 * 2);
 
 void client.login();
