@@ -26,7 +26,6 @@ client
 	})
 	.on("clanUpdate", (oldClan, newClan) => {
 		const channel = client.channels.cache.get(process.env.CLAN_CHANNEL_ID!);
-		console.log(oldClan, newClan);
 		if (!channel) return;
 		console.log(oldClan, newClan);
 		const embed = new MessageEmbed()
