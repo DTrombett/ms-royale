@@ -22,7 +22,7 @@ export class ClanMember extends Structure<APIMember> {
 	/**
 	 * The number of donations this member has made
 	 */
-	donations: number;
+	donationsPerWeek: number;
 
 	/**
 	 * The number of donations this member has received
@@ -62,7 +62,7 @@ export class ClanMember extends Structure<APIMember> {
 	/**
 	 * The tag of this member
 	 */
-	tag: APITag;
+	readonly tag: APITag;
 
 	/**
 	 * The number of trophies this member has
@@ -97,8 +97,22 @@ export class ClanMember extends Structure<APIMember> {
 		this.arena = client.arenas.add(data.arena);
 		this.rank = data.clanRank;
 		this.previousRank = data.previousClanRank;
-		this.donations = data.donations;
+		this.donationsPerWeek = data.donations;
 		this.donationsReceived = data.donationsReceived;
+	}
+
+	/**
+	 * The difference between the old and the new rank of this member
+	 */
+	get rankDifference(): number {
+		return this.rank - this.previousRank;
+	}
+
+	/**
+	 * The contribution to the total donations of this member
+	 */
+	get donationPercentage(): number {
+		return (this.donationsPerWeek / this.clan.donationsPerWeek) * 100;
 	}
 
 	/**
@@ -114,7 +128,7 @@ export class ClanMember extends Structure<APIMember> {
 		if (data.clanRank !== undefined) this.rank = data.clanRank;
 		if (data.previousClanRank !== undefined)
 			this.previousRank = data.previousClanRank;
-		if (data.donations !== undefined) this.donations = data.donations;
+		if (data.donations !== undefined) this.donationsPerWeek = data.donations;
 		if (data.donationsReceived !== undefined)
 			this.donationsReceived = data.donationsReceived;
 		if (data.expLevel !== undefined) this.expLevel = data.expLevel;
@@ -147,7 +161,7 @@ export class ClanMember extends Structure<APIMember> {
 			arena: this.arena.toJson(),
 			clanChestPoints: 0,
 			clanRank: this.rank,
-			donations: this.donations,
+			donations: this.donationsPerWeek,
 			donationsReceived: this.donationsReceived,
 			expLevel: this.expLevel,
 			lastSeen: `${this.lastSeen.getFullYear()}${(this.lastSeen.getMonth() + 1)

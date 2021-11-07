@@ -55,7 +55,7 @@ export class Clan extends FetchableStructure<APIClan> {
 	/**
 	 * The tag of the clan
 	 */
-	tag: APITag;
+	readonly tag: APITag;
 
 	/**
 	 * The type of the clan
@@ -88,9 +88,16 @@ export class Clan extends FetchableStructure<APIClan> {
 	}
 
 	/**
+	 * The location name of this clan
+	 */
+	get locationName(): string {
+		return this.location.name;
+	}
+
+	/**
 	 * The clan's member count
 	 */
-	get memberCount(): number {
+	get membersCount(): number {
 		return this.members.size;
 	}
 
@@ -141,7 +148,7 @@ export class Clan extends FetchableStructure<APIClan> {
 			clanChestLevel: 1,
 			clanChestMaxLevel: 0,
 			clanChestStatus: "inactive",
-			members: this.memberCount,
+			members: this.membersCount,
 		};
 	}
 
