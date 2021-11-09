@@ -99,6 +99,25 @@ export const enum Emojis {
 }
 
 /**
+ * All the face emojis
+ */
+export const enum emojis {
+	":)" = "😊",
+	":D" = "😀",
+	":P" = "😛",
+	":O" = "😮",
+	":*" = "😗",
+	";)" = "😉",
+	":|" = "😐",
+	":/" = "😕",
+	":S" = "😖",
+	":$" = "😳",
+	":@" = "😡",
+	":^)" = "😛",
+	":\\" = "😕",
+}
+
+/**
  * Custom emojis for the bot
  */
 export const enum CustomEmojis {

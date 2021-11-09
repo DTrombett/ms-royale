@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { APITag } from "../ClientRoyale";
 import type { CommandOptions } from "../types";
-import { cast } from "../util";
+import { time, validateTag } from "../util";
 
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder()
@@ -19,14 +18,20 @@ export const command: CommandOptions = {
 		let tag = interaction.options.getString("tag", true).toUpperCase();
 
 		if (!tag.startsWith("#")) tag = `#${tag}`;
-		cast<APITag>(tag);
+		if (!validateTag(tag))
+			return interaction.reply({
+				content:
+					"Hai inserito un tag non valido!\nI caratteri validi nei tag sono: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V",
+				ephemeral: true,
+			});
 		this.client.clans
-			.fetch(tag)
+			.fetch(tag, { maxAge: time.millisecondsPerMinute * 5 })
 			.then((clan) =>
 				interaction.reply({
 					embeds: [clan.embed],
 				})
 			)
 			.catch((error: Error) => interaction.reply(error.message));
+		return undefined;
 	},
 };
