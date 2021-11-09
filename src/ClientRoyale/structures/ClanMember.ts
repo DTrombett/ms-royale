@@ -1,9 +1,7 @@
-import type { ClientRoyale } from "..";
-import type { APILastSeen, APIMember, APITag } from "../APITypes";
+import type ClientRoyale from "..";
+import type { APILastSeen, APIMember, APITag, Arena, Clan } from "..";
 import { ClanMemberRole, getEnumString } from "../util";
-import type { Arena } from "./Arena";
-import type { Clan } from "./Clan";
-import { Structure } from "./Structure";
+import Structure from "./Structure";
 
 /**
  * A class representing a clan member
@@ -225,3 +223,5 @@ export class ClanMember extends Structure<APIMember> {
 		return this.name;
 	}
 }
+
+export default ClanMember;

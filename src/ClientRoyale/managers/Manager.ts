@@ -1,6 +1,5 @@
 import { Collection } from "@discordjs/collection";
-import type { ClientRoyale } from "..";
-import type { ConstructableStructure, StructureType } from "../util";
+import type { ClientRoyale, ConstructableStructure, StructureType } from "..";
 
 /**
  * A manager to handle structures' data
@@ -64,3 +63,5 @@ export class Manager<
 		return existing;
 	}
 }
+
+export default Manager;

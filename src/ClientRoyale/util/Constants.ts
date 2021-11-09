@@ -1,22 +1,23 @@
-import type { IncomingHttpHeaders, OutgoingHttpHeaders } from "node:http";
+import type { ClientEvents as DiscordEvents } from "discord.js";
+import type { OutgoingHttpHeaders } from "node:http";
 import type { URLSearchParams } from "node:url";
-import type { ClientRoyale } from "..";
-import type { APIRequest } from "../rest";
+import type ClientRoyale from "..";
 import type {
+	APIRequest,
 	Arena,
 	Clan,
 	ClanMember,
 	FetchableStructure,
 	Location,
+	Response,
 	Structure,
-} from "../structures";
-import type { ClientEvents as DiscordEvents } from "discord.js";
+} from "..";
 
-export const enum Constants {
+export const enum Defaults {
 	/**
-	 * Default maximum time passed after the structure was last fetched before fetching again. (10 minutes)
+	 * Default maximum time passed after the structure was last fetched before fetching again. (2 minutes)
 	 */
-	maxAge = 600_000,
+	maxAge = 120_000,
 
 	/**
 	 * Default maximum time before cancelling a REST request. (10 seconds)
@@ -133,36 +134,6 @@ export enum RequestStatus {
 }
 
 /**
- * A response received from the API
- */
-export type Response = {
-	/**
-	 * The received data
-	 */
-	data: string | null;
-
-	/**
-	 * The status code received for this request
-	 */
-	statusCode: number;
-
-	/**
-	 * Headers received from the API
-	 */
-	headers: IncomingHttpHeaders;
-
-	/**
-	 * The status message received for this request
-	 */
-	status: string;
-
-	/**
-	 * The APIRequest object that instantiated this
-	 */
-	request: APIRequest;
-};
-
-/**
  * The path for a request to the API
  */
 export type Path = `/${string}`;
@@ -262,4 +233,4 @@ export enum ClanType {
 	open,
 }
 
-export default Constants;
+export default Defaults;

@@ -1,5 +1,5 @@
 import type { CommandInteraction } from "discord.js";
-import type { ClientRoyale } from "../ClientRoyale";
+import type ClientRoyale from "../ClientRoyale";
 import type { CommandOptions } from "../types";
 
 /**
@@ -52,3 +52,5 @@ export class Command {
 		}
 	}
 }
+
+export default Command;

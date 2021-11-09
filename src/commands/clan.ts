@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { APITag } from "../ClientRoyale/APITypes";
+import type { APITag } from "../ClientRoyale";
 import type { CommandOptions } from "../types";
 import { cast } from "../util";
 

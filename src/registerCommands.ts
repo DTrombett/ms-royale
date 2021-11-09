@@ -1,8 +1,8 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { config } from "dotenv";
-import { promises } from "fs";
-import { join } from "path";
+import { promises } from "node:fs";
+import { join } from "node:path";
 import type { CommandOptions } from "./types";
 
 console.time("Register slash commands");

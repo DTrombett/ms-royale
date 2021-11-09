@@ -1,6 +1,8 @@
 import type { SlashCommandBuilder } from "@discordjs/builders";
 import type { Awaitable, CommandInteraction } from "discord.js";
+import type { ClientEvents } from "./ClientRoyale/util";
 import type { Command } from "./util";
+import type { Event } from "./util/Event";
 
 /**
  * Options to create a command
@@ -105,3 +107,23 @@ export const enum CustomEmojis {
 	 */
 	warTrophy = "<:wartrophy:906920944868671498>",
 }
+
+/**
+ * The data for an event
+ */
+export type EventOptions<T extends keyof ClientEvents = keyof ClientEvents> = {
+	/**
+	 * The name of the event
+	 */
+	name: T;
+
+	/**
+	 * The function to execute when the event is received
+	 */
+	on?: (this: Event<T>, ...args: ClientEvents[T]) => Awaitable<void>;
+
+	/**
+	 * The function to execute when the event is received once
+	 */
+	once?: EventOptions<T>["on"];
+};

@@ -1,13 +1,17 @@
-import type { ClientRoyale } from "..";
-import type { Path, FetchOptions } from "../util";
-import type { APIClan, APITag } from "../APITypes";
-import { getEnumString, ClanType } from "../util";
-import { FetchableStructure } from "./FetchableStructure";
-import { ClanMemberManager } from "../managers";
-import { Location } from "./Location";
 import { Constants, MessageEmbed } from "discord.js";
+import type {
+	APIClan,
+	APITag,
+	ClanMember,
+	ClientRoyale,
+	FetchOptions,
+	Path,
+} from "..";
 import { CustomEmojis } from "../../types";
-import type { ClanMember } from ".";
+import { ClanMemberManager } from "../managers";
+import { ClanType, getEnumString } from "../util";
+import FetchableStructure from "./FetchableStructure";
+import Location from "./Location";
 
 /**
  * A class representing a clan
@@ -230,3 +234,5 @@ export class Clan extends FetchableStructure<APIClan> {
 		return this.client.clans.fetch(this.tag, options) as Promise<this>;
 	}
 }
+
+export default Clan;

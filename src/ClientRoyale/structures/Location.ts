@@ -1,7 +1,6 @@
-import type { ClientRoyale } from "..";
-import type { Path, FetchOptions, StringId } from "../util";
-import type { APILocation } from "../APITypes";
-import { FetchableStructure } from "./FetchableStructure";
+import type ClientRoyale from "..";
+import type { APILocation, FetchOptions, Path, StringId } from "..";
+import FetchableStructure from "./FetchableStructure";
 
 /**
  * Represents a location
@@ -120,3 +119,5 @@ export class Location extends FetchableStructure<APILocation> {
 		return this.client.locations.fetch(this.id, options) as Promise<this>;
 	}
 }
+
+export default Location;

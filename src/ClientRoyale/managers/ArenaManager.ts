@@ -1,8 +1,7 @@
-import type { ClientRoyale } from "..";
-import type { APIArena } from "../APITypes";
+import type ClientRoyale from "..";
+import type { APIArena, StringId } from "..";
 import { Arena } from "../structures";
-import type { StringId } from "../util";
-import { Manager } from "./Manager";
+import Manager from "./Manager";
 
 /**
  * A manager for arenas
@@ -34,3 +33,5 @@ export class ArenaManager extends Manager<typeof Arena> {
 		return super.remove(id);
 	}
 }
+
+export default ArenaManager;

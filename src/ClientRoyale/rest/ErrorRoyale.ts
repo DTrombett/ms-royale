@@ -1,6 +1,5 @@
-import type { OutgoingHttpHeaders } from "http";
-import type { ClashRoyaleError, Path, Response } from "../util";
-import type APIRequest from "./APIRequest";
+import type { OutgoingHttpHeaders } from "node:http";
+import type { APIRequest, ClashRoyaleError, Path, Response } from "..";
 
 /**
  * A class representing an error received from the API

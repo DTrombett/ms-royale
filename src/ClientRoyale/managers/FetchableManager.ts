@@ -2,9 +2,9 @@ import type {
 	ConstructableFetchableStructure,
 	FetchOptions,
 	StructureType,
-} from "../util";
-import { Constants } from "../util";
-import { Manager } from "./Manager";
+} from "..";
+import Defaults from "../util";
+import Manager from "./Manager";
 
 /**
  * A manager that can fetch structures
@@ -20,7 +20,7 @@ export class FetchableManager<
 	 */
 	async fetch(
 		id: string,
-		{ force = false, maxAge = Constants.maxAge }: FetchOptions = {}
+		{ force = false, maxAge = Defaults.maxAge }: FetchOptions = {}
 	): Promise<this["structure"]["prototype"]> {
 		const data = this.get(id);
 
@@ -31,3 +31,5 @@ export class FetchableManager<
 		);
 	}
 }
+
+export default FetchableManager;

@@ -1,7 +1,5 @@
-import type { ClientRoyale } from "..";
-import type { APILocation } from "../APITypes";
+import type { APILocation, ClientRoyale, FetchOptions, StringId } from "..";
 import { Location } from "../structures";
-import type { StringId, FetchOptions } from "../util";
 import { FetchableManager } from "./FetchableManager";
 
 /**
@@ -44,3 +42,5 @@ export class LocationManager extends FetchableManager<typeof Location> {
 		return super.remove(id);
 	}
 }
+
+export default LocationManager;

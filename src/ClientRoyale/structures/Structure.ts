@@ -1,6 +1,5 @@
-/* eslint-disable class-methods-use-this */
-import type { ClientRoyale } from "..";
-import type { JsonObject } from "../util";
+import type ClientRoyale from "..";
+import type { JsonObject } from "..";
 
 /**
  * Base class for all structures
@@ -81,3 +80,5 @@ export class Structure<T extends JsonObject = JsonObject> {
 		return JSON.stringify(this);
 	}
 }
+
+export default Structure;

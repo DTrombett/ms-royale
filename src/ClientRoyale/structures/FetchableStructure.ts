@@ -1,6 +1,5 @@
-/* eslint-disable class-methods-use-this */
 import type { Path, FetchOptions, JsonObject } from "../util";
-import Constants from "../util";
+import Defaults from "../util";
 import { Structure } from "./Structure";
 
 /**
@@ -30,7 +29,7 @@ export class FetchableStructure<
 	 */
 	fetch({
 		force = false,
-		maxAge = Constants.maxAge,
+		maxAge = Defaults.maxAge,
 	}: FetchOptions = {}): Promise<this> {
 		if (!force && Date.now() - this.lastUpdate.getTime() < maxAge)
 			return Promise.resolve(this);
@@ -40,3 +39,5 @@ export class FetchableStructure<
 			.then(this.patch.bind(this));
 	}
 }
+
+export default FetchableStructure;

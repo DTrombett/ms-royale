@@ -1,10 +1,8 @@
-import type { ClientRoyale } from "..";
-import type { APIMember } from "../APITypes";
-import type { Clan } from "../structures";
+import type ClientRoyale from "..";
+import type { APIMember, Clan, FetchOptions } from "..";
 import { ClanMember } from "../structures";
-import type { FetchOptions } from "../util";
-import Constants from "../util";
-import { Manager } from "./Manager";
+import Defaults from "../util";
+import Manager from "./Manager";
 
 /**
  * A manager for clan members
@@ -33,7 +31,7 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 	 */
 	async fetch({
 		force = false,
-		maxAge = Constants.maxAge,
+		maxAge = Defaults.maxAge,
 	}: FetchOptions = {}): Promise<this> {
 		if (!force && Date.now() - this.clan.lastUpdate.getTime() < maxAge)
 			return Promise.resolve(this);
@@ -43,3 +41,5 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 			.then(() => this);
 	}
 }
+
+export default ClanMemberManager;

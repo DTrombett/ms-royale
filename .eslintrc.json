@@ -87,7 +87,6 @@
 		"accessor-pairs": "warn",
 		"array-callback-return": "warn",
 		"arrow-body-style": "warn",
-		"class-methods-use-this": "warn",
 		"consistent-return": "warn",
 		"default-case-last": "warn",
 		"default-case": "warn",

@@ -1,10 +1,9 @@
 import type { IncomingMessage, OutgoingHttpHeaders } from "node:http";
 import { get } from "node:https";
 import { URL, URLSearchParams } from "node:url";
-import type { Path, RequestOptions } from "../util";
-import { Constants, RequestStatus } from "../util";
-import { Response } from "./Response";
-import type Rest from "./Rest";
+import type { Path, RequestOptions, Rest } from "..";
+import Defaults, { RequestStatus } from "../util";
+import Response from "./Response";
 
 /**
  * A class representing a request to the API
@@ -48,7 +47,7 @@ export class APIRequest {
 	constructor(
 		rest: Rest,
 		path: Path,
-		{ url = Constants.APIUrl, query, headers }: RequestOptions = {}
+		{ url = Defaults.APIUrl, query, headers }: RequestOptions = {}
 	) {
 		this.path = path;
 		this.rest = rest;
@@ -114,11 +113,11 @@ export class APIRequest {
 			req.destroy(
 				new Error(
 					`Request to path ${this.path} took more than ${
-						Constants.AbortTimeout / 1_000
+						Defaults.AbortTimeout / 1_000
 					} seconds and was aborted before ending.`
 				)
 			);
-		}, Constants.AbortTimeout).unref();
+		}, Defaults.AbortTimeout).unref();
 		const callback = (res: IncomingMessage) => {
 			if (
 				[301, 302].includes(res.statusCode!) &&

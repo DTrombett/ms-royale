@@ -1,5 +1,5 @@
 import type { IncomingHttpHeaders, IncomingMessage } from "node:http";
-import type { APIRequest } from ".";
+import type { APIRequest } from "..";
 
 /**
  * Represents a response from the API
@@ -43,3 +43,5 @@ export class Response {
 		this.request = request;
 	}
 }
+
+export default Response;

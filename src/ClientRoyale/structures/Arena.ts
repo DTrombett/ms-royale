@@ -1,7 +1,5 @@
-import type { ClientRoyale } from "..";
-import type { APIArena } from "../APITypes";
-import type { StringId } from "../util";
-import { Structure } from "./Structure";
+import type { APIArena, ClientRoyale, StringId } from "..";
+import Structure from "./Structure";
 
 /**
  * A class representing an arena
@@ -80,3 +78,5 @@ export class Arena extends Structure<APIArena> {
 		return this.name;
 	}
 }
+
+export default Arena;

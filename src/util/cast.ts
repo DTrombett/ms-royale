@@ -5,3 +5,5 @@
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export function cast<T>(_value: unknown): asserts _value is T {}
+
+export default cast;

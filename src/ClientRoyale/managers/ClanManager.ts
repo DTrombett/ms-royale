@@ -1,8 +1,7 @@
-import type { ClientRoyale } from "..";
-import type { APIClan, APITag } from "../APITypes";
+import type ClientRoyale from "..";
+import type { APIClan, APITag, FetchOptions } from "..";
 import { Clan } from "../structures";
-import type { FetchOptions } from "../util";
-import { FetchableManager } from "./FetchableManager";
+import FetchableManager from "./FetchableManager";
 
 /**
  * A manager for clans
@@ -43,3 +42,5 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 		return super.remove(tag);
 	}
 }
+
+export default ClanManager;

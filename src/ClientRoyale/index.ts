@@ -1,17 +1,41 @@
 import Collection from "@discordjs/collection";
 import type { Awaitable } from "discord.js";
 import { Client, Constants, Options } from "discord.js";
-import type { Command } from "../util";
+import type { Command, Event } from "../util";
 import { ArenaManager, ClanManager, LocationManager } from "./managers";
 import Rest from "./rest";
 import type { ClientEvents, ClientOptions } from "./util";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export interface ClientRoyale extends Client {
-	on<T extends keyof ClientEvents>(
+	on: <T extends keyof ClientEvents>(
 		event: T,
 		listener: (...args: ClientEvents[T]) => Awaitable<void>
-	): this;
+	) => this;
+	once: <T extends keyof ClientEvents>(
+		event: T,
+		listener: (...args: ClientEvents[T]) => Awaitable<void>
+	) => this;
+	addListener: <T extends keyof ClientEvents>(
+		event: T,
+		listener: (...args: ClientEvents[T]) => Awaitable<void>
+	) => this;
+	removeListener: <T extends keyof ClientEvents>(
+		event: T,
+		listener: (...args: ClientEvents[T]) => Awaitable<void>
+	) => this;
+	off: <T extends keyof ClientEvents>(
+		event: T,
+		listener: (...args: ClientEvents[T]) => Awaitable<void>
+	) => this;
+	prependOnListener: <T extends keyof ClientEvents>(
+		event: T,
+		listener: (...args: ClientEvents[T]) => Awaitable<void>
+	) => this;
+	prependOnceListener: <T extends keyof ClientEvents>(
+		event: T,
+		listener: (...args: ClientEvents[T]) => Awaitable<void>
+	) => this;
 	emit<T extends keyof ClientEvents>(
 		event: T,
 		...args: ClientEvents[T]
@@ -36,6 +60,11 @@ export class ClientRoyale extends Client {
 	 * A list of Discord commands
 	 */
 	commands = new Collection<string, Command>();
+
+	/**
+	 * A list of events for this client
+	 */
+	events = new Collection<string, Event>();
 
 	/**
 	 * A manager for locations
@@ -95,3 +124,10 @@ export class ClientRoyale extends Client {
 			throw new TypeError("No token provided for the client.");
 	}
 }
+
+export default ClientRoyale;
+export * from "./APITypes";
+export * from "./managers";
+export * from "./rest";
+export * from "./structures";
+export * from "./util";
