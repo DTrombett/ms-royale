@@ -1,6 +1,5 @@
 import { AsyncQueue } from "@sapphire/async-queue";
-import type { ClientRoyale } from "..";
-import type { Json, Path, RequestOptions } from "../../types";
+import type { ClientRoyale, Json, Path, RequestOptions } from "..";
 import APIRequest from "./APIRequest";
 import ErrorRoyale from "./ErrorRoyale";
 
@@ -19,7 +18,7 @@ export class Rest {
 	queue = new AsyncQueue();
 
 	/**
-	 * If we got ratelimited
+	 * If we are ratelimited
 	 */
 	rateLimited = false;
 
@@ -45,7 +44,7 @@ export class Rest {
 	async get<T extends Json | null = Json | null>(
 		path: Path,
 		options?: RequestOptions & { retry?: boolean; force?: boolean }
-	): Promise<T | null> {
+	): Promise<T> {
 		await this.queue.wait();
 
 		if (this.rateLimited && options?.force !== true)
@@ -53,13 +52,12 @@ export class Rest {
 				"The rest is ratelimited so no other requests are allowed until you set the force option to true"
 			);
 
-		// The `as post` is just to suppress the error
 		const request = new APIRequest(this, path, options);
 
 		this.requests.push(request);
 
-		let data;
 		const res = await request.send();
+		let data: T | null | undefined;
 
 		if (res.statusCode === 429) {
 			// If we encountered a ratelimit... well, this is a problem!
@@ -80,7 +78,7 @@ export class Rest {
 		}
 
 		this.queue.shift();
-		if (data !== undefined) return data;
+		if (data !== undefined) return data!;
 
 		// If we didn't receive a succesful response, throw an error
 		throw new ErrorRoyale(request, res);

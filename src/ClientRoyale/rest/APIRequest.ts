@@ -1,11 +1,9 @@
 import type { IncomingMessage, OutgoingHttpHeaders } from "node:http";
-import { Agent, get } from "node:https";
+import { get } from "node:https";
 import { URL, URLSearchParams } from "node:url";
-import type { Path, RequestOptions, Response } from "../../types";
-import { Constants, RequestStatus } from "../../types";
-import type Rest from "./Rest";
-
-const agent = new Agent({ keepAlive: true });
+import type { Path, RequestOptions, Rest } from "..";
+import Defaults, { RequestStatus } from "../util";
+import Response from "./Response";
 
 /**
  * A class representing a request to the API
@@ -44,18 +42,18 @@ export class APIRequest {
 	/**
 	 * @param rest - The rest that instantiated this
 	 * @param path - The path to request
-	 * @param method - The method of the request
 	 * @param options - Options for this request
 	 */
-	constructor(rest: Rest, path: Path, options: RequestOptions = {}) {
-		const { url = Constants.APIUrl, query, headers } = options;
-
+	constructor(
+		rest: Rest,
+		path: Path,
+		{ url = Defaults.APIUrl, query, headers }: RequestOptions = {}
+	) {
 		this.path = path;
 		this.rest = rest;
 
 		this.baseUrl = url;
-		this.query =
-			query instanceof URLSearchParams ? query : new URLSearchParams(query);
+		this.query = new URLSearchParams(query);
 
 		this.headers = {
 			Accept: "application/json",
@@ -76,18 +74,7 @@ export class APIRequest {
 	}
 
 	/**
-	 * Send the request to the api.
-	 * @returns A promise with the data received from the API or null if there is no data
-	 */
-	send() {
-		return new Promise<Response>((resolve, reject) => {
-			this.status = RequestStatus.InProgress;
-			this.make(resolve, reject);
-		});
-	}
-
-	/**
-	 * Edit headers for this request
+	 * Edit headers for this request.
 	 * @param headers - Headers to add/remove
 	 * @returns The new request
 	 */
@@ -97,9 +84,21 @@ export class APIRequest {
 	}
 
 	/**
+	 * Send the request to the api.
+	 * @returns A promise that resolves with the response
+	 */
+	send() {
+		this.rest.client.emit("requestStart", this);
+		this.status = RequestStatus.InProgress;
+		return new Promise<Response>((resolve, reject) => {
+			this.make(resolve, reject);
+		});
+	}
+
+	/**
 	 * Make the request to the API.
-	 * @param resolve A function to resolve the promise
-	 * @param reject A function to reject the promise
+	 * @param resolve - A function to resolve the promise
+	 * @param reject - A function to reject the promise
 	 */
 	private make(
 		resolve: (value: PromiseLike<Response> | Response) => void,
@@ -114,11 +113,11 @@ export class APIRequest {
 			req.destroy(
 				new Error(
 					`Request to path ${this.path} took more than ${
-						Constants.AbortTimeout / 1_000
+						Defaults.AbortTimeout / 1_000
 					} seconds and was aborted before ending.`
 				)
 			);
-		}, Constants.AbortTimeout).unref();
+		}, Defaults.AbortTimeout).unref();
 		const callback = (res: IncomingMessage) => {
 			if (
 				[301, 302].includes(res.statusCode!) &&
@@ -132,8 +131,9 @@ export class APIRequest {
 			}
 
 			// Handle the data received
-			res.on("data", (d) => {
+			res.on("data", (d: string) => {
 				data += d;
+				this.rest.client.emit("chunk", d);
 			});
 			res.once("end", () => {
 				if (!res.complete)
@@ -141,20 +141,16 @@ export class APIRequest {
 						`Request to path ${this.path} ended before all data was transferred.`
 					);
 				clearTimeout(timeout);
-				resolve({
-					data: data || null,
-					statusCode: res.statusCode!,
-					headers: res.headers,
-					status: res.statusMessage!,
-					request: this,
-				});
+				const response = new Response(data, res, this);
+
+				resolve(response);
 				this.status = RequestStatus.Finished;
+				this.rest.client.emit("requestEnd", response);
 			});
 		};
 		const req = get(
 			this.url,
 			{
-				agent,
 				headers: this.headers,
 			},
 			callback

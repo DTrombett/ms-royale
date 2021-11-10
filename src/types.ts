@@ -1,20 +1,8 @@
 import type { SlashCommandBuilder } from "@discordjs/builders";
 import type { Awaitable, CommandInteraction } from "discord.js";
-import type { IncomingHttpHeaders, OutgoingHttpHeaders } from "http";
-import type { URLSearchParams } from "url";
-import type { APIRequest } from "./ClientRoyale/rest";
+import type { ClientEvents } from "./ClientRoyale/util";
 import type { Command } from "./util";
-
-/**
- * Options to instantiate a client
- */
-export type ClientOptions = {
-	/**
-	 * The token of this client
-	 * This defaults to `process.env.CLASH_ROYALE_TOKEN` if none is provided
-	 */
-	token?: Token;
-};
+import type { Event } from "./util/Event";
 
 /**
  * Options to create a command
@@ -23,7 +11,9 @@ export type CommandOptions = {
 	/**
 	 * The data for this command
 	 */
-	data: SlashCommandBuilder;
+	data:
+		| Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
+		| SlashCommandBuilder;
 
 	/**
 	 * A function to run when this command is received by Discord.
@@ -33,92 +23,126 @@ export type CommandOptions = {
 	run(this: Command, interaction: CommandInteraction): Awaitable<void>;
 };
 
-export const enum Constants {
-	AbortTimeout = 10_000,
-	APIUrl = "https://api.clashroyale.com/v1",
+/**
+ * Emojis for the bot
+ */
+export const enum Emojis {
+	/**
+	 * The emoji for a check mark
+	 */
+	Check = "✅",
+
+	/**
+	 * The emoji for a cross mark
+	 */
+	Cross = "❌",
+
+	/**
+	 * The emoji for a warning sign
+	 */
+	Warning = "⚠️",
+
+	/**
+	 * The emoji for a question mark
+	 */
+	Question = "❓",
+
+	/**
+	 * The emoji for a exclamation mark
+	 */
+	Exclamation = "❗",
+
+	/**
+	 * The emoji for a double exclamation mark
+	 */
+	DoubleExclamation = "❕",
+
+	/**
+	 * The emoji for a heavy exclamation mark
+	 */
+	HeavyExclamation = "❗",
+
+	/**
+	 * The emoji for a heavy double exclamation mark
+	 */
+	HeavyDoubleExclamation = "❕",
+
+	/**
+	 * The emoji for a heavy check mark
+	 */
+	HeavyCheck = "✔️",
+
+	/**
+	 * The emoji for a heavy cross mark
+	 */
+	HeavyCross = "❌",
+
+	/**
+	 * The emoji for a heavy multiplication sign
+	 */
+	HeavyMultiplication = "✖️",
+
+	/**
+	 * The emoji for a heavy division sign
+	 */
+	HeavyDivision = "➗",
+
+	/**
+	 * The emoji for a heavy minus sign
+	 */
+	HeavyMinus = "➖",
+
+	/**
+	 * The emoji for a heavy plus sign
+	 */
+	HeavyPlus = "➕",
 }
 
 /**
- * Any JSON data
+ * All the face emojis
  */
-export type Json =
-	| Json[]
-	| boolean
-	| number
-	| string
-	| { [property: string]: Json };
-
-/**
- * The path for a request to the API
- */
-export type Path = `/${string}`;
-
-/**
- * The options for a request
- */
-export type RequestOptions = {
-	/**
-	 * Headers to be sent for this request
-	 */
-	headers?: OutgoingHttpHeaders;
-
-	/**
-	 * The query of this request
-	 */
-	query?:
-		| Iterable<[string, string]>
-		| Record<string, string | readonly string[]>
-		| URLSearchParams
-		| string
-		| readonly [string, string][];
-
-	/**
-	 * The base url for this request
-	 */
-	url?: string;
-};
-
-/**
- * The status of a request to the API
- */
-export enum RequestStatus {
-	Pending,
-	InProgress,
-	Finished,
-	Failed,
+export const enum emojis {
+	":)" = "😊",
+	":D" = "😀",
+	":P" = "😛",
+	":O" = "😮",
+	":*" = "😗",
+	";)" = "😉",
+	":|" = "😐",
+	":/" = "😕",
+	":S" = "😖",
+	":$" = "😳",
+	":@" = "😡",
+	":^)" = "😛",
+	":\\" = "😕",
 }
 
 /**
- * A response received from the API
+ * Custom emojis for the bot
  */
-export type Response = {
+export const enum CustomEmojis {
 	/**
-	 * The received data
+	 * The emoji of a war trophy
 	 */
-	data: string | null;
-
-	/**
-	 * The status code received for this request
-	 */
-	statusCode: number;
-
-	/**
-	 * Headers received from the API
-	 */
-	headers: IncomingHttpHeaders;
-
-	/**
-	 * The status message received for this request
-	 */
-	status: string;
-
-	/**
-	 * The APIRequest object that instantiated this
-	 */
-	request: APIRequest;
-};
+	warTrophy = "<:wartrophy:906920944868671498>",
+}
 
 /**
- * A valid token for the API
+ * The data for an event
  */
-export type Token = `${string}.${string}.${string}`;
+export type EventOptions<T extends keyof ClientEvents = keyof ClientEvents> = {
+	/**
+	 * The name of the event
+	 */
+	name: T;
+
+	/**
+	 * The function to execute when the event is received
+	 */
+	on?: (this: Event<T>, ...args: ClientEvents[T]) => Awaitable<void>;
+
+	/**
+	 * The function to execute when the event is received once
+	 */
+	once?: EventOptions<T>["on"];
+};

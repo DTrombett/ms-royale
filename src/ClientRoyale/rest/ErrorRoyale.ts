@@ -1,16 +1,10 @@
-import type { OutgoingHttpHeaders } from "http";
-import type { Path, Response } from "../../types";
-import type APIRequest from "./APIRequest";
+import type { OutgoingHttpHeaders } from "node:http";
+import type { APIRequest, ClashRoyaleError, Path, Response } from "..";
 
 /**
- * A class representing a GitHub error
+ * A class representing an error received from the API
  */
 export class ErrorRoyale extends Error {
-	/**
-	 * Other details about this error provided by the API
-	 */
-	details?: Record<string, unknown>;
-
 	/**
 	 * Headers sent in the request
 	 */
@@ -44,17 +38,8 @@ export class ErrorRoyale extends Error {
 		let error: string | undefined;
 		const query = request.query.toString();
 
-		if (res.data != null) {
-			// Parse any JSON error data
-			const errorData = JSON.parse(res.data) as {
-				reason: string;
-				message?: string;
-				type?: string;
-				detail?: Record<string, unknown>;
-			};
-
-			error = errorData.message;
-		}
+		if (res.data != null)
+			error = (JSON.parse(res.data) as ClashRoyaleError).message;
 		if (error == null) error = res.status;
 		super(error);
 
