@@ -1,11 +1,15 @@
 import { promises } from "node:fs";
 import { join } from "node:path";
 import type { CommandOptions } from "../types";
-import type ClientRoyale from "../ClientRoyale";
 import Constants from "./Constants";
 import Command from "./Command";
+import type CustomClient from "../CustomClient";
 
-export const loadCommands = (client: ClientRoyale) =>
+/**
+ * Loads all commands from the commands directory.
+ * @param client - The client to load commands into
+ */
+export const loadCommands = (client: CustomClient) =>
 	promises
 		.readdir(join(__dirname, "..", Constants.commandsFolderName()))
 		.then((fileNames) =>

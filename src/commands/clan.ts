@@ -1,5 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import type { Clan } from "apiroyale";
+import { ClanType } from "apiroyale";
+import { Constants, MessageEmbed } from "discord.js";
 import type { CommandOptions } from "../types";
+import { CustomEmojis } from "../types";
 import { time, validateTag } from "../util";
 
 export const command: CommandOptions = {
@@ -26,9 +30,36 @@ export const command: CommandOptions = {
 			});
 		this.client.clans
 			.fetch(tag, { maxAge: time.millisecondsPerMinute * 5 })
-			.then((clan) =>
+			.then((clan: Clan) =>
 				interaction.reply({
-					embeds: [clan.embed],
+					embeds: [
+						new MessageEmbed()
+							.setTitle(clan.name)
+							.setDescription(clan.description)
+							.addField(
+								"Trofei guerra tra clan",
+								`${CustomEmojis.warTrophy} ${clan.warTrophies}`
+							)
+							.addField("Posizione", clan.locationName, true)
+							.addField(
+								"Trofei richiesti",
+								clan.requiredTrophies.toString(),
+								true
+							)
+							.addField(
+								"Donazioni a settimana",
+								clan.donationsPerWeek.toString(),
+								true
+							)
+							.addField("Punteggio del clan", clan.score.toString(), true)
+							.addField("Tipo", ClanType[clan.type], true)
+							.addField("Tag del clan", clan.tag, true)
+							.addField("Membri", `${clan.memberCount.toString()}/50`)
+							.setColor(Constants.Colors.BLUE)
+							.setFooter("Ultimo aggiornamento")
+							.setTimestamp(clan.lastUpdate)
+							.setURL(`https://royaleapi.com/clan/${clan.tag.slice(1)}`),
+					],
 				})
 			)
 			.catch((error: Error) => interaction.reply(error.message));

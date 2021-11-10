@@ -15,11 +15,8 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"resolveJsonModule": true,
-		"newLine": "crlf",
-		"importHelpers": true,
 		"outDir": "dist",
 		"pretty": true,
-		"removeComments": true,
 		"sourceMap": true
 	}
 }

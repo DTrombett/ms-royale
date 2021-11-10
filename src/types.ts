@@ -1,6 +1,6 @@
 import type { SlashCommandBuilder } from "@discordjs/builders";
 import type { Awaitable, CommandInteraction } from "discord.js";
-import type { ClientEvents } from "./ClientRoyale/util";
+import type { ClientEvents } from "apiroyale";
 import type { Command } from "./util";
 import type { Event } from "./util/Event";
 

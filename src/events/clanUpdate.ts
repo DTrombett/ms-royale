@@ -6,7 +6,7 @@ import Constants, { cast } from "../util";
 export const event: EventOptions<"clanUpdate"> = {
 	name: "clanUpdate",
 	on(oldClan, newClan) {
-		const channel = this.client.channels.cache.get(
+		const channel = this.client.discord.channels.cache.get(
 			process.env.CLAN_CHANNEL_ID!
 		);
 		if (!channel) return;

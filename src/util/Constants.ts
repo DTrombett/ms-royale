@@ -1,7 +1,7 @@
 import { bold, italic, underscore } from "@discordjs/builders";
 import { Util } from "discord.js";
-import type { APITag, Clan, ClanMember } from "../ClientRoyale";
-import { ClanMemberRole, ClanType } from "../ClientRoyale";
+import type { APITag, Clan, ClanMember } from "apiroyale";
+import { ClanMemberRole, ClanType } from "apiroyale";
 
 /**
  * Constants about time
