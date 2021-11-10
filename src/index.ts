@@ -1,12 +1,26 @@
 import { config } from "dotenv";
-import ClientRoyale from "./ClientRoyale";
-import Constants, { loadEvents, loadCommands } from "./util";
+import CustomClient from "./CustomClient";
+import Constants, { time } from "./util";
 
 config();
-
-const client = new ClientRoyale();
-
 console.time(Constants.clientOnlineLabel());
-void Promise.all([loadEvents(client), loadCommands(client)]).then(() =>
-	client.login()
-);
+
+const client = new CustomClient();
+
+client.discord
+	.on("ready", async (discord) => {
+		setInterval(() => {
+			client.clans
+				.fetch(Constants.mainClanTag(), { maxAge: time.millisecondsPerMinute })
+				.catch(console.error);
+		}, Constants.mainClanFetchInterval());
+		await Promise.all([
+			discord.application.fetch(),
+			client.clans.fetch(Constants.mainClanTag()),
+		]);
+		console.timeEnd(Constants.clientOnlineLabel());
+	})
+	.on("interactionCreate", (interaction) => {
+		if (interaction.isCommand())
+			client.commands.get(interaction.commandName)?.run(interaction);
+	});

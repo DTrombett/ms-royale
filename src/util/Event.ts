@@ -1,4 +1,5 @@
-import type { ClientRoyale, ClientEvents } from "../ClientRoyale";
+import type { ClientEvents } from "apiroyale";
+import type CustomClient from "../CustomClient";
 import type { EventOptions } from "../types";
 
 /**
@@ -8,7 +9,7 @@ export class Event<T extends keyof ClientEvents = keyof ClientEvents> {
 	/**
 	 * The client that instantiated this event
 	 */
-	readonly client: ClientRoyale;
+	readonly client: CustomClient;
 
 	/**
 	 * The name of this event
@@ -29,7 +30,7 @@ export class Event<T extends keyof ClientEvents = keyof ClientEvents> {
 	 * @param client - The client that instantiated this event
 	 * @param data - The data to use to create this event
 	 */
-	constructor(client: ClientRoyale, data: EventOptions<T>) {
+	constructor(client: CustomClient, data: EventOptions<T>) {
 		this.client = client;
 		this.name = data.name;
 		this.on = data.on?.bind<EventOptions<T>["on"]>(this);

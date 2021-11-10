@@ -1,4 +1,4 @@
-import type { APITag } from "../ClientRoyale";
+import type { APITag } from "apiroyale";
 
 /**
  * Asserts that a tag is valid.

@@ -1,6 +1,6 @@
 import type { CommandInteraction } from "discord.js";
-import type ClientRoyale from "../ClientRoyale";
 import type { CommandOptions } from "../types";
+import type CustomClient from "../CustomClient";
 
 /**
  * A class representing a Discord slash command
@@ -9,7 +9,7 @@ export class Command {
 	/**
 	 * The client that instantiated this
 	 */
-	client: ClientRoyale;
+	client: CustomClient;
 
 	/**
 	 * The Discord data for this command
@@ -24,7 +24,7 @@ export class Command {
 	/**
 	 * @param options - Options for this command
 	 */
-	constructor(client: ClientRoyale, options: CommandOptions) {
+	constructor(client: CustomClient, options: CommandOptions) {
 		this._execute = options.run.bind(this);
 		this.client = client;
 		this.data = options.data;

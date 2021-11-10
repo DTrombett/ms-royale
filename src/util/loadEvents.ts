@@ -1,15 +1,15 @@
 import { promises } from "node:fs";
 import { join } from "node:path";
 import Event from "./Event";
-import type ClientRoyale from "../ClientRoyale";
 import type { EventOptions } from "../types";
 import Constants from "./Constants";
+import type CustomClient from "../CustomClient";
 
 /**
  * Load events listeners for the client.
  * @param client - The client to load the events for
  */
-export const loadEvents = (client: ClientRoyale) =>
+export const loadEvents = (client: CustomClient) =>
 	promises
 		.readdir(join(__dirname, "..", Constants.eventsFolderName()))
 		.then((fileNames) =>
