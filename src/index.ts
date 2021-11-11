@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import CustomClient from "./CustomClient";
-import Constants, { time } from "./util";
+import Constants, { SelectMenuActions, time } from "./util";
 
 config();
 console.time(Constants.clientOnlineLabel());
@@ -22,5 +22,14 @@ client.discord
 	})
 	.on("interactionCreate", (interaction) => {
 		if (interaction.isCommand())
-			client.commands.get(interaction.commandName)?.run(interaction);
+			return client.commands.get(interaction.commandName)?.run(interaction);
+		if (interaction.isSelectMenu()) {
+			const [action, ...args] = interaction.customId.split("-");
+
+			if (action === SelectMenuActions.MemberInfo)
+				return interaction.reply(
+					`Tag clan: ${args[0]}\nTag membro: ${interaction.values[0]}`
+				);
+		}
+		return undefined;
 	});

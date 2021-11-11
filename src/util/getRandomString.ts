@@ -12,3 +12,5 @@ export const getRandomString = (length: number): string => {
 		result += chars.charAt(Math.floor(Math.random() * chars.length));
 	return result;
 };
+
+export default getRandomString;

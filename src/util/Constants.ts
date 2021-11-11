@@ -249,4 +249,14 @@ export const Constants = {
 	eventsFolderName: () => "events" as const,
 } as const;
 
+/**
+ * Values used as custom identifiers for select menu actions
+ */
+export const enum SelectMenuActions {
+	/**
+	 * Show info about a clan member
+	 */
+	MemberInfo = "clanmember",
+}
+
 export default Constants;

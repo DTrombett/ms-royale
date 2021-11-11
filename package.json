@@ -8,6 +8,7 @@
     "commands": "node dist/registerCommands.js",
     "lint": "eslint src --fix && prettier --write src/*/**.ts",
     "start": "npm run lint && npm run build && node .",
+    "compileAndRun": "npm run build && node .",
     "test": "tsc --noEmit"
   },
   "author": "DTrombett",

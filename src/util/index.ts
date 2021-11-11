@@ -10,6 +10,7 @@ export * from "./getRandomInt";
 export * from "./getRandomString";
 export * from "./loadCommands";
 export * from "./loadEvents";
+export * from "./roundNumber";
 export * from "./validateTag";
 
 export default Constants;

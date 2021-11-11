@@ -96,12 +96,52 @@ export const enum Emojis {
 	 * The emoji for a heavy plus sign
 	 */
 	HeavyPlus = "➕",
+
+	/**
+	 * The emoji for a trophy
+	 */
+	Trophy = "🏆",
+
+	/**
+	 * The emoji for a crown
+	 */
+	Crown = "👑",
+
+	/**
+	 * The emoji for a star
+	 */
+	Star = "⭐",
+
+	/**
+	 * The emoji for a sparkles
+	 */
+	Sparkles = "✨",
+
+	/**
+	 * The emoji for a snowflake
+	 */
+	Snowflake = "❄",
+
+	/**
+	 * The emoji for a heart
+	 */
+	Heart = "❤",
+
+	/**
+	 * The emoji for a heavy heart
+	 */
+	HeavyHeart = "💖",
+
+	/**
+	 * The emoji for money with wings
+	 */
+	MoneyWithWings = "💸",
 }
 
 /**
  * All the face emojis
  */
-export const enum emojis {
+export const enum FaceEmojis {
 	":)" = "😊",
 	":D" = "😀",
 	":P" = "😛",
@@ -125,6 +165,16 @@ export const enum CustomEmojis {
 	 * The emoji of a war trophy
 	 */
 	warTrophy = "<:wartrophy:906920944868671498>",
+
+	/**
+	 * The profile emoji of a clan member
+	 */
+	clanMember = "<:member:908369034418991134>",
+
+	/**
+	 * The emoji of donations
+	 */
+	donations = "<:donations:908400204418519060>",
 }
 
 /**
