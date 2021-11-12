@@ -20,7 +20,7 @@
     "@discordjs/rest": "^0.1.0-canary.0",
     "@tsconfig/node16": "^1.0.2",
     "@types/node": "^16.11.7",
-    "apiroyale": "github:DTrombett/apiroyale",
+    "apiroyale": "github:DTrombett/apiroyale#feat/clans",
     "bufferutil": "^4.0.5",
     "discord.js": "^13.3.1",
     "dotenv": "^10.0.0",

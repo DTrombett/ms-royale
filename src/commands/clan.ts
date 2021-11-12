@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { Clan, ClanMember } from "apiroyale";
+import type { ClanMember } from "apiroyale";
 import { ClanMemberRole, ClanType } from "apiroyale";
 import {
 	Constants,
@@ -38,7 +38,7 @@ export const command: CommandOptions = {
 			});
 		this.client.clans
 			.fetch(tag, { maxAge: time.millisecondsPerMinute * 5 })
-			.then((clan: Clan) =>
+			.then((clan) =>
 				interaction.reply({
 					embeds: [
 						new MessageEmbed()
@@ -48,7 +48,7 @@ export const command: CommandOptions = {
 								"Trofei guerra tra clan",
 								`${CustomEmojis.warTrophy}${clan.warTrophies}`
 							)
-							.addField("Posizione", clan.locationName, true)
+							.addField("Posizione", clan.location.name, true)
 							.addField(
 								"Trofei richiesti",
 								clan.requiredTrophies.toString(),

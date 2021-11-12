@@ -145,8 +145,8 @@ export const Constants = {
 	 * @param newClanDescription - The new clan description
 	 */
 	clanDescriptionUpdatedFieldValue: (
-		oldClanDescription: Clan["description"],
-		newClanDescription: Clan["description"]
+		oldClanDescription: string,
+		newClanDescription: string
 	) =>
 		`${underscore(Util.escapeMarkdown(oldClanDescription))}\n=> ${underscore(
 			Util.escapeMarkdown(newClanDescription)
@@ -163,8 +163,8 @@ export const Constants = {
 	 * @param newClanLocation - The new clan location
 	 */
 	clanLocationUpdatedFieldValue: (
-		oldClanLocation: Clan["locationName"],
-		newClanLocation: Clan["locationName"]
+		oldClanLocation: string,
+		newClanLocation: string
 	) =>
 		`${italic(Util.escapeMarkdown(oldClanLocation))} => ${italic(
 			Util.escapeMarkdown(newClanLocation)
@@ -181,8 +181,8 @@ export const Constants = {
 	 * @param newClanRequiredTrophies - The new clan required trophies
 	 */
 	clanRequiredTrophiesUpdatedFieldValue: (
-		oldClanRequiredTrophies: Clan["requiredTrophies"],
-		newClanRequiredTrophies: Clan["requiredTrophies"]
+		oldClanRequiredTrophies: number,
+		newClanRequiredTrophies: number
 	) =>
 		`🏆 ${oldClanRequiredTrophies} => 🏆 ${newClanRequiredTrophies}` as const,
 
@@ -196,10 +196,8 @@ export const Constants = {
 	 * @param oldClanType - The old clan type
 	 * @param newClanType - The new clan type
 	 */
-	clanTypeUpdatedFieldValue: (
-		oldClanType: Clan["type"],
-		newClanType: Clan["type"]
-	) => `${ClanType[oldClanType]} => ${ClanType[newClanType]}` as const,
+	clanTypeUpdatedFieldValue: (oldClanType: ClanType, newClanType: ClanType) =>
+		`${ClanType[oldClanType]} => ${ClanType[newClanType]}` as const,
 
 	/**
 	 * The embed field name shown when a clan member left.
