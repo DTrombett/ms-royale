@@ -245,6 +245,11 @@ export const Constants = {
 	 * The name of the folder with events.
 	 */
 	eventsFolderName: () => "events" as const,
+
+	/**
+	 * A zero-width space.
+	 */
+	zeroWidthSpace: () => "\u200b" as const,
 } as const;
 
 /**

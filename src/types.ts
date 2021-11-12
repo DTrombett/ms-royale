@@ -1,4 +1,7 @@
-import type { SlashCommandBuilder } from "@discordjs/builders";
+import type {
+	SlashCommandBuilder,
+	SlashCommandSubcommandsOnlyBuilder,
+} from "@discordjs/builders";
 import type { Awaitable, CommandInteraction } from "discord.js";
 import type { ClientEvents } from "apiroyale";
 import type { Command } from "./util";
@@ -13,7 +16,8 @@ export type CommandOptions = {
 	 */
 	data:
 		| Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
-		| SlashCommandBuilder;
+		| SlashCommandBuilder
+		| SlashCommandSubcommandsOnlyBuilder;
 
 	/**
 	 * A function to run when this command is received by Discord.
@@ -136,6 +140,31 @@ export const enum Emojis {
 	 * The emoji for money with wings
 	 */
 	MoneyWithWings = "💸",
+
+	/**
+	 * The emoji for people
+	 */
+	People = "👥",
+
+	/**
+	 * The emoji for a score
+	 */
+	Score = "💯",
+
+	/**
+	 * The emoji for a location
+	 */
+	Location = "📍",
+
+	/**
+	 * The emoji for a back arrow
+	 */
+	BackArrow = "⬅",
+
+	/**
+	 * The emoji for a forward arrow
+	 */
+	ForwardArrow = "➡",
 }
 
 /**
