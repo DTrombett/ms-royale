@@ -107,6 +107,7 @@ export const command: CommandOptions = {
 						return interaction.reply({
 							...handleSearchResults(results),
 							content: Constants.clanSearchResultsContent(
+								interaction.user.id,
 								name,
 								locationId,
 								minMembers,

@@ -1,4 +1,5 @@
 import { bold, italic, underscore } from "@discordjs/builders";
+import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
 import type { APITag, Clan, ClanMember, ClanResultPreview } from "apiroyale";
 import { ClanMemberRole, ClanType } from "apiroyale";
@@ -284,19 +285,22 @@ export const Constants = {
 	 * The content of the message with the clan search results.
 	 */
 	clanSearchResultsContent: (
+		user: Snowflake,
 		name?: string,
 		locationId?: number | `${number}`,
 		minMembers?: number,
 		maxMembers?: number,
 		minScore?: number
 	) =>
-		`Risultati per la seguente ricerca:\n\n${bold("Nome")}: ${
-			name != null ? Util.escapeMarkdown(name) : "-"
-		}\n${bold("Id posizione")}: ${locationId ?? "-"}\n${bold(
-			"Minimo membri"
-		)}: ${minMembers ?? "-"}\n${bold("Massimo membri")}: ${
-			maxMembers ?? "-"
-		}\n${bold("Punteggio minimo")}: ${minScore ?? "-"}` as const,
+		`Risultati per la seguente ricerca richiesta da <@${user}>:\n\n${bold(
+			"Nome"
+		)}: ${name != null ? Util.escapeMarkdown(name) : "-"}\n${bold(
+			"Id posizione"
+		)}: ${locationId ?? "-"}\n${bold("Minimo membri")}: ${
+			minMembers ?? "-"
+		}\n${bold("Massimo membri")}: ${maxMembers ?? "-"}\n${bold(
+			"Punteggio minimo"
+		)}: ${minScore ?? "-"}` as const,
 
 	/**
 	 * Invalid tag provided.

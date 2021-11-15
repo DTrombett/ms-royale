@@ -61,14 +61,28 @@ client.discord
 					void client.clans
 						.search(getSearchOptions(interaction, { after: args[0] }))
 						.then((results) =>
-							interaction.update(handleSearchResults(results))
+							interaction.user.id ===
+							interaction.message.content.split("<@")[1].split(">")[0]
+								? interaction.update(handleSearchResults(results))
+								: interaction.reply({
+										...handleSearchResults(results),
+										content: interaction.message.content,
+										ephemeral: true,
+								  })
 						);
 					break;
 				case ButtonActions.PreviousPage:
 					void client.clans
 						.search(getSearchOptions(interaction, { before: args[0] }))
 						.then((results) =>
-							interaction.update(handleSearchResults(results))
+							interaction.user.id ===
+							interaction.message.content.split("<@")[1].split(">")[0]
+								? interaction.update(handleSearchResults(results))
+								: interaction.reply({
+										...handleSearchResults(results),
+										content: interaction.message.content,
+										ephemeral: true,
+								  })
 						);
 					break;
 				default:

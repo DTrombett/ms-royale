@@ -9,7 +9,7 @@ export const handleSearchResults = (results: ClanSearchResults) => ({
 	components: [
 		new MessageActionRow().addComponents(
 			new MessageSelectMenu()
-				.setCustomId(MenuActions.ClanInfo.toString())
+				.setCustomId(MenuActions.ClanInfo)
 				.addOptions(
 					results.map((clan) => ({
 						label: clan.name,
@@ -21,13 +21,17 @@ export const handleSearchResults = (results: ClanSearchResults) => ({
 		),
 		new MessageActionRow().addComponents(
 			new MessageButton()
-				.setCustomId(`${ButtonActions.PreviousPage}-${results.paging.cursors.before ?? ""}`)
+				.setCustomId(
+					`${ButtonActions.PreviousPage}-${results.paging.cursors.before ?? ""}`
+				)
 				.setEmoji(Emojis.BackArrow)
 				.setLabel(Constants.backButtonLabel())
 				.setDisabled(results.paging.cursors.before == null)
 				.setStyle(MessageButtonStyles.PRIMARY),
 			new MessageButton()
-				.setCustomId(`${ButtonActions.NextPage}-${results.paging.cursors.after ?? ""}`)
+				.setCustomId(
+					`${ButtonActions.NextPage}-${results.paging.cursors.after ?? ""}`
+				)
 				.setEmoji(Emojis.ForwardArrow)
 				.setLabel(Constants.afterButtonLabel())
 				.setDisabled(results.paging.cursors.after == null)
