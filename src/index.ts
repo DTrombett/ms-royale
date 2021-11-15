@@ -1,6 +1,13 @@
 import { config } from "dotenv";
 import CustomClient from "./CustomClient";
-import Constants, { SelectMenuActions, time } from "./util";
+import Constants, {
+	MenuActions,
+	clanInfo,
+	time,
+	ButtonActions,
+	getSearchOptions,
+	handleSearchResults,
+} from "./util";
 
 config();
 console.time(Constants.clientOnlineLabel());
@@ -22,14 +29,51 @@ client.discord
 	})
 	.on("interactionCreate", (interaction) => {
 		if (interaction.isCommand())
-			return client.commands.get(interaction.commandName)?.run(interaction);
+			client.commands.get(interaction.commandName)?.run(interaction);
 		if (interaction.isSelectMenu()) {
-			const [action, ...args] = interaction.customId.split("-");
+			const [action, ...args] = interaction.customId.split("-") as [
+				MenuActions,
+				...(string | undefined)[]
+			];
 
-			if (action === SelectMenuActions.MemberInfo)
-				return interaction.reply(
-					`Tag clan: ${args[0]}\nTag membro: ${interaction.values[0]}`
-				);
+			switch (action) {
+				case MenuActions.ClanInfo:
+					void clanInfo(client, interaction, interaction.values[0], true);
+					break;
+				case MenuActions.MemberInfo:
+					void interaction.reply(
+						`Tag clan: ${args[0]!}\nTag membro: ${interaction.values[0]}`
+					);
+					break;
+				default:
+					console.error(`Received unknown action: ${action as string}`);
+					break;
+			}
 		}
-		return undefined;
+		if (interaction.isButton()) {
+			const [action, ...args] = interaction.customId.split("-") as [
+				ButtonActions,
+				...(string | undefined)[]
+			];
+
+			switch (action) {
+				case ButtonActions.NextPage:
+					void client.clans
+						.search(getSearchOptions(interaction, { after: args[0] }))
+						.then((results) =>
+							interaction.update(handleSearchResults(results))
+						);
+					break;
+				case ButtonActions.PreviousPage:
+					void client.clans
+						.search(getSearchOptions(interaction, { before: args[0] }))
+						.then((results) =>
+							interaction.update(handleSearchResults(results))
+						);
+					break;
+				default:
+					console.error(`Received unknown action: ${action as string}`);
+					break;
+			}
+		}
 	});

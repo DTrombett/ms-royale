@@ -1,7 +1,8 @@
 import { bold, italic, underscore } from "@discordjs/builders";
 import { Util } from "discord.js";
-import type { APITag, Clan, ClanMember } from "apiroyale";
+import type { APITag, Clan, ClanMember, ClanResultPreview } from "apiroyale";
 import { ClanMemberRole, ClanType } from "apiroyale";
+import { Emojis } from "../types";
 
 /**
  * Constants about time
@@ -250,16 +251,88 @@ export const Constants = {
 	 * A zero-width space.
 	 */
 	zeroWidthSpace: () => "\u200b" as const,
+
+	/**
+	 * No clan was found.
+	 */
+	noClanFound: () =>
+		"Non ho trovato nessun clan con queste caratteristiche!" as const,
+
+	/**
+	 * Description with information about a clan.
+	 * @param clan - The clan
+	 */
+	clanInfo: (clan: ClanResultPreview) =>
+		`${Emojis.People}${clan.memberCount}/50 - ${Emojis.Score}${clan.score} - ${Emojis.MoneyWithWings}${clan.donationsPerWeek} - ${Emojis.Trophy}${clan.requiredTrophies} - ${Emojis.Location}${clan.location.name}` as const,
+
+	/**
+	 * The placeholder for the clan info menu.
+	 */
+	clanInfoPlaceholder: () => "Scegli un clan..." as const,
+
+	/**
+	 * The label for the back button.
+	 */
+	backButtonLabel: () => "Precedente" as const,
+
+	/**
+	 * The label for the after button.
+	 */
+	afterButtonLabel: () => "Successivo" as const,
+
+	/**
+	 * The content of the message with the clan search results.
+	 */
+	clanSearchResultsContent: (
+		name?: string,
+		locationId?: number | `${number}`,
+		minMembers?: number,
+		maxMembers?: number,
+		minScore?: number
+	) =>
+		`Risultati per la seguente ricerca:\n\n${bold("Nome")}: ${
+			name != null ? Util.escapeMarkdown(name) : "-"
+		}\n${bold("Id posizione")}: ${locationId ?? "-"}\n${bold(
+			"Minimo membri"
+		)}: ${minMembers ?? "-"}\n${bold("Massimo membri")}: ${
+			maxMembers ?? "-"
+		}\n${bold("Punteggio minimo")}: ${minScore ?? "-"}` as const,
+
+	/**
+	 * Invalid tag provided.
+	 */
+	invalidTag: () =>
+		"Hai inserito un tag non valido!\nI caratteri validi nei tag sono: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V" as const,
 } as const;
 
 /**
- * Values used as custom identifiers for select menu actions
+ * Values used as custom identifiers for select menus
  */
-export const enum SelectMenuActions {
+export const enum MenuActions {
 	/**
 	 * Show info about a clan member
 	 */
-	MemberInfo = "clanmember",
+	MemberInfo = "mi",
+
+	/**
+	 * Show info about a clan
+	 */
+	ClanInfo = "ci",
+}
+
+/**
+ * Values used as custom identifiers for buttons
+ */
+export const enum ButtonActions {
+	/**
+	 * Show the next page
+	 */
+	NextPage = "np",
+
+	/**
+	 * Show the previous page
+	 */
+	PreviousPage = "pp",
 }
 
 export default Constants;
