@@ -96,7 +96,7 @@ export const clanInfo = (
 								})
 							)
 							.setPlaceholder("Membri del clan")
-							.setCustomId(`${MenuActions.MemberInfo}-${clan.tag}`)
+							.setCustomId(`${MenuActions.PlayerInfo}-${clan.tag}`)
 					),
 				],
 				ephemeral,

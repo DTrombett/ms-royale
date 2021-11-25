@@ -314,14 +314,14 @@ export const Constants = {
  */
 export const enum MenuActions {
 	/**
-	 * Show info about a clan member
+	 * Show info about a player
 	 */
-	MemberInfo = "mi",
+	PlayerInfo = "player",
 
 	/**
 	 * Show info about a clan
 	 */
-	ClanInfo = "ci",
+	ClanInfo = "clan",
 }
 
 /**
@@ -331,12 +331,12 @@ export const enum ButtonActions {
 	/**
 	 * Show the next page
 	 */
-	NextPage = "np",
+	NextPage = "after",
 
 	/**
 	 * Show the previous page
 	 */
-	PreviousPage = "pp",
+	PreviousPage = "before",
 }
 
 export default Constants;

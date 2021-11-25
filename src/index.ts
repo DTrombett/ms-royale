@@ -40,7 +40,7 @@ client.discord
 				case MenuActions.ClanInfo:
 					void clanInfo(client, interaction, interaction.values[0], true);
 					break;
-				case MenuActions.MemberInfo:
+				case MenuActions.PlayerInfo:
 					void interaction.reply(
 						`Tag clan: ${args[0]!}\nTag membro: ${interaction.values[0]}`
 					);
