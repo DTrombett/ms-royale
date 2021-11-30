@@ -18,7 +18,7 @@
     "@discordjs/collection": "^0.3.2",
     "@discordjs/rest": "^0.1.0-canary.0",
     "@tsconfig/node16": "^1.0.2",
-    "@types/node": "^16.11.10",
+    "@types/node": "^16.11.11",
     "apiroyale": "github:DTrombett/apiroyale",
     "bufferutil": "^4.0.5",
     "discord.js": "^13.3.1",
