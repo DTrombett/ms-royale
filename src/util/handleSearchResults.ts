@@ -1,4 +1,4 @@
-import type ClanSearchResults from "apiroyale/types/searchResults/ClanSearchResults";
+import type { ClanSearchResults } from "apiroyale";
 import { MessageActionRow, MessageButton, MessageSelectMenu } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import { ButtonActions } from ".";

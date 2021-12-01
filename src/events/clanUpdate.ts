@@ -9,7 +9,7 @@ export const event: EventOptions<"clanUpdate"> = {
 		const channel = this.client.discord.channels.cache.get(
 			process.env.CLAN_CHANNEL_ID!
 		);
-		if (!channel || !oldClan.isNotPartial() || !newClan.isNotPartial()) return;
+		if (!channel) return;
 		const embed = new MessageEmbed()
 			.setTitle(Constants.clanUpdatedEmbedTitle())
 			.setURL(Constants.clanLink(newClan.tag))
