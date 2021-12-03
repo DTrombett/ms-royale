@@ -1,9 +1,9 @@
 import { promises } from "node:fs";
 import { join } from "node:path";
-import Event from "./Event";
-import type { EventOptions } from "../types";
-import Constants from "./Constants";
+import type { EventOptions } from ".";
 import type CustomClient from "../CustomClient";
+import Constants from "./Constants";
+import Event from "./Event";
 
 /**
  * Load events listeners for the client.

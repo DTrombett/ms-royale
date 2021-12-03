@@ -1,9 +1,9 @@
 import { bold, italic, underscore } from "@discordjs/builders";
-import type { Snowflake } from "discord.js";
-import { Util } from "discord.js";
 import type { APITag, Clan, ClanMember, ClanResultPreview } from "apiroyale";
 import { ClanMemberRole, ClanType } from "apiroyale";
-import { Emojis } from "../types";
+import type { Snowflake } from "discord.js";
+import { Util } from "discord.js";
+import { Emojis } from "./types";
 
 /**
  * Constants about time
@@ -307,6 +307,11 @@ export const Constants = {
 	 */
 	invalidTag: () =>
 		"Hai inserito un tag non valido!\nI caratteri validi nei tag sono: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V" as const,
+
+	/**
+	 * Bot owners.
+	 */
+	owners: (): Snowflake[] => ["597505862449496065", "584465680506814465"],
 } as const;
 
 /**

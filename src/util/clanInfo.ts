@@ -1,7 +1,6 @@
 import type ClientRoyale from "apiroyale";
 import type { ClanMember } from "apiroyale";
-import { ClanType, ClanMemberRole } from "apiroyale";
-import Constants, { MenuActions, time } from "./Constants";
+import { ClanMemberRole, ClanType } from "apiroyale";
 import type {
 	ButtonInteraction,
 	CommandInteraction,
@@ -9,19 +8,28 @@ import type {
 	SelectMenuInteraction,
 } from "discord.js";
 import {
-	MessageEmbed,
-	MessageActionRow,
-	MessageSelectMenu,
 	Constants as DiscordCostants,
+	MessageActionRow,
+	MessageEmbed,
+	MessageSelectMenu,
 } from "discord.js";
-import { CustomEmojis, Emojis } from "../types";
-import { validateTag } from "./validateTag";
 import capitalize from "./capitalize";
+import Constants, { MenuActions, time } from "./Constants";
+import normalizeTag from "./normalizeTag";
+import { CustomEmojis, Emojis } from "./types";
+import validateTag from "./validateTag";
 
 const getMaxNameLength = (member: ClanMember) =>
 	100 - `#${member.rank}  (${member.tag})`.length;
 
-export const clanInfo = (
+/**
+ * Displays information about a clan.
+ * @param client - The client
+ * @param interaction - The interaction
+ * @param tag - The tag of the clan
+ * @param ephemeral - Whether the message should be ephemeral
+ */
+export const clanInfo = async (
 	client: ClientRoyale,
 	interaction:
 		| ButtonInteraction
@@ -31,8 +39,7 @@ export const clanInfo = (
 	tag: string,
 	ephemeral?: boolean
 ) => {
-	tag = tag.toUpperCase();
-	if (!tag.startsWith("#")) tag = `#${tag}`;
+	tag = normalizeTag(tag);
 	if (!validateTag(tag))
 		return interaction
 			.reply({
@@ -40,68 +47,71 @@ export const clanInfo = (
 				ephemeral: true,
 			})
 			.catch(console.error);
-	return client.clans
-		.fetch(tag, { maxAge: time.millisecondsPerMinute * 5 })
-		.then((clan) =>
-			interaction.reply({
-				embeds: [
-					new MessageEmbed()
-						.setTitle(clan.name)
-						.setDescription(clan.description)
-						.addField(
-							"Trofei guerra tra clan",
-							`${CustomEmojis.warTrophy}${clan.warTrophies}`
-						)
-						.addField("Posizione", clan.location.name, true)
-						.addField(
-							"Trofei richiesti",
-							clan.requiredTrophies.toString(),
-							true
-						)
-						.addField(
-							"Donazioni a settimana",
-							clan.donationsPerWeek.toString(),
-							true
-						)
-						.addField("Punteggio del clan", clan.score.toString(), true)
-						.addField("Tipo", capitalize(ClanType[clan.type]), true)
-						.addField("Tag del clan", clan.tag, true)
-						.addField("Membri", `${clan.memberCount.toString()}/50`)
-						.setColor(DiscordCostants.Colors.BLUE)
-						.setFooter("Ultimo aggiornamento")
-						.setTimestamp(clan.lastUpdate)
-						.setURL(`https://royaleapi.com/clan/${clan.tag.slice(1)}`),
-				],
-				components: [
-					new MessageActionRow().addComponents(
-						new MessageSelectMenu()
-							.addOptions(
-								clan.members.first(25).map((member) => {
-									const maxLength = getMaxNameLength(member);
 
-									return {
-										description: `${capitalize(
-											ClanMemberRole[member.role]
-										)} - ${Emojis.MoneyWithWings}${member.donationsPerWeek} - ${
-											Emojis.Trophy
-										}${member.trophies}`,
-										emoji: CustomEmojis.clanMember,
-										label: `#${member.rank} ${
-											member.name.length <= maxLength
-												? member.name
-												: `${member.name.slice(0, maxLength - 3)}...`
-										} (${member.tag})`,
-										value: member.tag,
-									};
-								})
-							)
-							.setPlaceholder("Membri del clan")
-							.setCustomId(`${MenuActions.PlayerInfo}-${clan.tag}`)
-					),
-				],
-				ephemeral,
-			})
-		)
+	const clan = await client.clans
+		.fetch(tag, {
+			maxAge: time.millisecondsPerMinute * 5,
+		})
 		.catch((error: Error) => interaction.reply(error.message))
+		.catch(console.error);
+
+	if (!clan) return undefined;
+	const embed = new MessageEmbed()
+		.setTitle(clan.name)
+		.setDescription(clan.description)
+		.setColor(DiscordCostants.Colors.BLUE)
+		.setFooter("Ultimo aggiornamento")
+		.setTimestamp(clan.lastUpdate)
+		.setThumbnail(clan.badgeUrl)
+		.setURL(`https://royaleapi.com/clan/${clan.tag.slice(1)}`)
+		.addField(
+			"Trofei guerra tra clan",
+			`${CustomEmojis.warTrophy} ${clan.warTrophies}`
+		)
+		.addField("Posizione", `${Emojis.Location} ${clan.locationName}`, true)
+		.addField(
+			"Trofei richiesti",
+			`${Emojis.Trophy} ${clan.requiredTrophies}`,
+			true
+		)
+		.addField(
+			"Donazioni a settimana",
+			`${CustomEmojis.donations} ${clan.donationsPerWeek}`,
+			true
+		)
+		.addField("Punteggio del clan", `${Emojis.Score} ${clan.score}`, true)
+		.addField("Tipo", capitalize(ClanType[clan.type]), true)
+		.addField("Tag del clan", clan.tag, true)
+		.addField("Membri", `${CustomEmojis.clanMembers} ${clan.memberCount}/50`);
+	const menu = new MessageSelectMenu().addOptions(
+		clan.members.first(25).map((member) => {
+			const maxLength = getMaxNameLength(member);
+
+			return {
+				description: `${capitalize(ClanMemberRole[member.role])} - ${
+					Emojis.MoneyWithWings
+				}${member.donationsPerWeek} - ${Emojis.Trophy}${member.trophies}`,
+				emoji: CustomEmojis.user,
+				label: `#${member.rank} ${
+					member.name.length <= maxLength
+						? member.name
+						: `${member.name.slice(0, maxLength - 3)}...`
+				} (${member.tag})`,
+				value: member.tag,
+			};
+		})
+	);
+	const row = new MessageActionRow().addComponents(
+		menu
+			.setPlaceholder("Membri del clan")
+			.setCustomId(`${MenuActions.PlayerInfo}-${clan.tag}`)
+	);
+
+	return interaction
+		.reply({
+			embeds: [embed],
+			components: [row],
+			ephemeral,
+		})
 		.catch(console.error);
 };

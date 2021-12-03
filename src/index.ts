@@ -1,12 +1,13 @@
 import { config } from "dotenv";
 import CustomClient from "./CustomClient";
 import Constants, {
-	MenuActions,
-	clanInfo,
-	time,
 	ButtonActions,
+	clanInfo,
 	getSearchOptions,
 	handleSearchResults,
+	MenuActions,
+	playerInfo,
+	time,
 } from "./util";
 
 config();
@@ -29,9 +30,9 @@ client.discord
 	})
 	.on("interactionCreate", (interaction) => {
 		if (interaction.isCommand())
-			client.commands.get(interaction.commandName)?.run(interaction);
+			void client.commands.get(interaction.commandName)?.run(interaction);
 		if (interaction.isSelectMenu()) {
-			const [action, ...args] = interaction.customId.split("-") as [
+			const [action] = interaction.customId.split("-") as [
 				MenuActions,
 				...(string | undefined)[]
 			];
@@ -41,14 +42,13 @@ client.discord
 					void clanInfo(client, interaction, interaction.values[0], true);
 					break;
 				case MenuActions.PlayerInfo:
-					void interaction.reply(
-						`Tag clan: ${args[0]!}\nTag membro: ${interaction.values[0]}`
-					);
+					void playerInfo(client, interaction, interaction.values[0], true);
 					break;
 				default:
 					console.error(`Received unknown action: ${action as string}`);
 					break;
 			}
+			return;
 		}
 		if (interaction.isButton()) {
 			const [action, ...args] = interaction.customId.split("-") as [

@@ -1,9 +1,8 @@
 import type { ClanSearchResults } from "apiroyale";
 import { MessageActionRow, MessageButton, MessageSelectMenu } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
-import { ButtonActions } from ".";
-import { Emojis } from "../types";
-import Constants, { MenuActions } from "./Constants";
+import Constants, { ButtonActions, MenuActions } from "./Constants";
+import { Emojis } from "./types";
 
 export const handleSearchResults = (results: ClanSearchResults) => ({
 	components: [

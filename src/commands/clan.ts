@@ -1,18 +1,18 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import type { SearchClanOptions } from "apiroyale";
-import type { CommandOptions } from "../types";
+import type { CommandOptions } from "../util";
 import Constants, { clanInfo, handleSearchResults } from "../util";
 
 const enum SubCommands {
-	Search = "search",
+	Search = "cerca",
 	Info = "info",
 }
 const enum SearchOptions {
-	Name = "name",
-	Location = "location",
-	MinMembers = "min-members",
-	MaxMembers = "max-members",
-	MinScore = "min-score",
+	Name = "nome",
+	Location = "posizione",
+	MinMembers = "min-membri",
+	MaxMembers = "max-membri",
+	MinScore = "min-punteggio",
 }
 const enum InfoOptions {
 	Tag = "tag",
@@ -30,7 +30,7 @@ export const command: CommandOptions = {
 					tag
 						.setName(InfoOptions.Tag)
 						.setDescription(
-							"Il tag del clan. Non fa differenza tra maiuscole e minuscole ed è possibile omettere il simbolo #"
+							"Il tag del clan. Non fa differenza tra maiuscole e minuscole ed è possibile omettere l'hashtag"
 						)
 						.setRequired(true)
 				)
@@ -67,7 +67,7 @@ export const command: CommandOptions = {
 						.setDescription("Punti clan minimi")
 				)
 		),
-	run(interaction) {
+	async run(interaction) {
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Search:
 				const location = interaction.options
@@ -120,7 +120,7 @@ export const command: CommandOptions = {
 					.catch(console.error);
 				break;
 			case SubCommands.Info:
-				void clanInfo(
+				await clanInfo(
 					this.client,
 					interaction,
 					interaction.options.getString(InfoOptions.Tag, true)

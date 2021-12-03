@@ -1,6 +1,6 @@
 import type { TextChannel } from "discord.js";
 import { MessageEmbed } from "discord.js";
-import type { EventOptions } from "../types";
+import type { EventOptions } from "../util";
 import Constants, { cast } from "../util";
 
 export const event: EventOptions<"clanUpdate"> = {

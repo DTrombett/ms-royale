@@ -2,10 +2,9 @@ import type {
 	SlashCommandBuilder,
 	SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
-import type { Awaitable, CommandInteraction } from "discord.js";
 import type { ClientEvents } from "apiroyale";
-import type { Command } from "./util";
-import type { Event } from "./util/Event";
+import type { Awaitable, CommandInteraction } from "discord.js";
+import type { Command, Event } from ".";
 
 /**
  * Options to create a command
@@ -18,6 +17,11 @@ export type CommandOptions = {
 		| Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
 		| SlashCommandBuilder
 		| SlashCommandSubcommandsOnlyBuilder;
+
+	/**
+	 * If this event can only be executed from owners
+	 */
+	reserved?: boolean;
 
 	/**
 	 * A function to run when this command is received by Discord.
@@ -62,24 +66,9 @@ export const enum Emojis {
 	DoubleExclamation = "❕",
 
 	/**
-	 * The emoji for a heavy exclamation mark
-	 */
-	HeavyExclamation = "❗",
-
-	/**
-	 * The emoji for a heavy double exclamation mark
-	 */
-	HeavyDoubleExclamation = "❕",
-
-	/**
 	 * The emoji for a heavy check mark
 	 */
 	HeavyCheck = "✔️",
-
-	/**
-	 * The emoji for a heavy cross mark
-	 */
-	HeavyCross = "❌",
 
 	/**
 	 * The emoji for a heavy multiplication sign
@@ -189,6 +178,7 @@ export const enum FaceEmojis {
 /**
  * Custom emojis for the bot
  */
+
 export const enum CustomEmojis {
 	/**
 	 * The emoji of a war trophy
@@ -196,14 +186,49 @@ export const enum CustomEmojis {
 	warTrophy = "<:wartrophy:906920944868671498>",
 
 	/**
-	 * The profile emoji of a clan member
+	 * The profile emoji of a user
 	 */
-	clanMember = "<:member:908369034418991134>",
+	user = "<:user:915686990723285022>",
 
 	/**
 	 * The emoji of donations
 	 */
-	donations = "<:donations:908400204418519060>",
+	donations = "<:donations:915687097984241685>",
+
+	/**
+	 * The emoji for clan members
+	 */
+	clanMembers = "<:members:915688913413210123>",
+
+	/**
+	 * The emoji of the king level
+	 */
+	kingLevel = "<:kinglevel:916016946774958101>",
+
+	/**
+	 * The emoji for copying a deck
+	 */
+	copyDeck = "<:copydeck:916029046700261417>",
+
+	/**
+	 * The emoji of a clan invite
+	 */
+	clanInvite = "<:claninvite:916032272631750698>",
+
+	/**
+	 * The emoji for a win
+	 */
+	win = "<:win:916339474403848223>",
+
+	/**
+	 * The emoji for a loss
+	 */
+	lose = "<:lose:916339513591222322>",
+
+	/**
+	 * The emoji for cards
+	 */
+	cards = "<:cards:916340767021203478>",
 }
 
 /**

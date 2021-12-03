@@ -1,9 +1,11 @@
 import type { ClientEvents } from "apiroyale";
+import { join } from "node:path";
+import type { EventOptions } from ".";
 import type CustomClient from "../CustomClient";
-import type { EventOptions } from "../types";
+import Constants from "./Constants";
 
 /**
- * A class representing a ClientRoyale event
+ * A class representing a client event
  */
 export class Event<T extends keyof ClientEvents = keyof ClientEvents> {
 	/**
@@ -33,10 +35,24 @@ export class Event<T extends keyof ClientEvents = keyof ClientEvents> {
 	constructor(client: CustomClient, data: EventOptions<T>) {
 		this.client = client;
 		this.name = data.name;
-		this.on = data.on?.bind<EventOptions<T>["on"]>(this);
-		this.once = data.once?.bind<EventOptions<T>["once"]>(this);
+		this.patch(data);
+	}
+
+	/**
+	 * Patches this event with the given data.
+	 * @param data - The data to use to create this event
+	 */
+	patch(data: Partial<EventOptions<T>>) {
+		this.removeListeners();
+
+		if (data.on !== undefined)
+			this.on = data.on.bind<EventOptions<T>["on"]>(this);
+		if (data.once !== undefined)
+			this.once = data.once.bind<EventOptions<T>["once"]>(this);
 
 		this.addListeners();
+
+		return this;
 	}
 
 	/**
@@ -56,9 +72,27 @@ export class Event<T extends keyof ClientEvents = keyof ClientEvents> {
 	}
 
 	/**
+	 * Reloads this event.
+	 * @returns The new event
+	 */
+	async reload(): Promise<this> {
+		const path = join(
+			__dirname,
+			"..",
+			Constants.eventsFolderName(),
+			`${this.name}.js`
+		);
+		delete require.cache[require.resolve(path)];
+
+		return this.patch(
+			((await import(path)) as { event: EventOptions<T> }).event
+		);
+	}
+
+	/**
 	 * Removes this event.
 	 */
-	remove(): void {
+	removeListeners(): void {
 		if (this.on) this.client.off(this.name, this.on);
 		if (this.once) this.client.off(this.name, this.once);
 	}

@@ -1,9 +1,9 @@
 import { promises } from "node:fs";
 import { join } from "node:path";
-import type { CommandOptions } from "../types";
-import Constants from "./Constants";
-import Command from "./Command";
+import type { CommandOptions } from ".";
 import type CustomClient from "../CustomClient";
+import Command from "./Command";
+import Constants from "./Constants";
 
 /**
  * Loads all commands from the commands directory.
