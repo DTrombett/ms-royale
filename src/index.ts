@@ -7,6 +7,7 @@ import Constants, {
 	handleSearchResults,
 	MenuActions,
 	playerInfo,
+	riverRaceLog,
 	time,
 } from "./util";
 
@@ -84,6 +85,15 @@ client.discord
 										ephemeral: true,
 								  })
 						);
+					break;
+				case ButtonActions.RiverRaceLog:
+					void riverRaceLog(
+						client,
+						interaction,
+						args[0]!,
+						Number(args[1]),
+						true
+					);
 					break;
 				default:
 					console.error(`Received unknown action: ${action as string}`);

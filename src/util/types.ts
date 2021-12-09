@@ -229,6 +229,16 @@ export const enum CustomEmojis {
 	 * The emoji for cards
 	 */
 	cards = "<:cards:916340767021203478>",
+
+	/**
+	 * The emoji for a medal
+	 */
+	medal = "<:medal:918514839670886400>",
+
+	/**
+	 * The emoji for a war point
+	 */
+	warPoint = "<:warpoint:918522796747915304>",
 }
 
 /**

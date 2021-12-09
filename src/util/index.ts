@@ -20,5 +20,6 @@ export * from "./restart";
 export * from "./roundNumber";
 export * from "./types";
 export * from "./validateTag";
+export * from "./riverRaceLog";
 
 export default Constants;

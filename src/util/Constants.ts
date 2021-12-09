@@ -342,6 +342,11 @@ export const enum ButtonActions {
 	 * Show the previous page
 	 */
 	PreviousPage = "before",
+
+	/**
+	 * Show the river race log of a clan
+	 */
+	RiverRaceLog = "rrlog",
 }
 
 export default Constants;

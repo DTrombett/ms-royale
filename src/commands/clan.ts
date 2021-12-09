@@ -1,11 +1,16 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import type { SearchClanOptions } from "apiroyale";
 import type { CommandOptions } from "../util";
-import Constants, { clanInfo, handleSearchResults } from "../util";
+import Constants, {
+	clanInfo,
+	handleSearchResults,
+	riverRaceLog,
+} from "../util";
 
 const enum SubCommands {
 	Search = "cerca",
 	Info = "info",
+	RiverRaceLog = "guerre-passate",
 }
 const enum SearchOptions {
 	Name = "nome",
@@ -15,6 +20,9 @@ const enum SearchOptions {
 	MinScore = "min-punteggio",
 }
 const enum InfoOptions {
+	Tag = "tag",
+}
+const enum RiverRaceLogOptions {
 	Tag = "tag",
 }
 
@@ -65,6 +73,19 @@ export const command: CommandOptions = {
 					minScore
 						.setName(SearchOptions.MinScore)
 						.setDescription("Punti clan minimi")
+				)
+		)
+		.addSubcommand((riverRaceLogCmd) =>
+			riverRaceLogCmd
+				.setName(SubCommands.RiverRaceLog)
+				.setDescription("Mostra le guerre passate")
+				.addStringOption((tag) =>
+					tag
+						.setName(RiverRaceLogOptions.Tag)
+						.setDescription(
+							"Il tag del clan. Non fa differenza tra maiuscole e minuscole ed è possibile omettere l'hashtag"
+						)
+						.setRequired(true)
 				)
 		),
 	async run(interaction) {
@@ -124,6 +145,13 @@ export const command: CommandOptions = {
 					this.client,
 					interaction,
 					interaction.options.getString(InfoOptions.Tag, true)
+				);
+				break;
+			case SubCommands.RiverRaceLog:
+				await riverRaceLog(
+					this.client,
+					interaction,
+					interaction.options.getString(RiverRaceLogOptions.Tag, true)
 				);
 				break;
 			default:
