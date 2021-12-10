@@ -137,7 +137,9 @@ export const command: CommandOptions = {
 							),
 						});
 					})
-					.catch((error: Error) => interaction.reply(error.message))
+					.catch((error: Error) =>
+						interaction.reply({ content: error.message, ephemeral: true })
+					)
 					.catch(console.error);
 				break;
 			case SubCommands.Info:
@@ -148,11 +150,12 @@ export const command: CommandOptions = {
 				);
 				break;
 			case SubCommands.RiverRaceLog:
-				await riverRaceLog(
+				const result = await riverRaceLog(
 					this.client,
 					interaction,
 					interaction.options.getString(RiverRaceLogOptions.Tag, true)
 				);
+				if (result) await interaction.reply(result);
 				break;
 			default:
 				break;

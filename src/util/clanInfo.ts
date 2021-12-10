@@ -10,11 +10,13 @@ import type {
 import {
 	Constants as DiscordCostants,
 	MessageActionRow,
+	MessageButton,
 	MessageEmbed,
 	MessageSelectMenu,
 } from "discord.js";
+import { MessageButtonStyles } from "discord.js/typings/enums";
 import capitalize from "./capitalize";
-import Constants, { MenuActions, time } from "./Constants";
+import Constants, { ButtonActions, MenuActions, time } from "./Constants";
 import normalizeTag from "./normalizeTag";
 import { CustomEmojis, Emojis } from "./types";
 import validateTag from "./validateTag";
@@ -52,7 +54,9 @@ export const clanInfo = async (
 		.fetch(tag, {
 			maxAge: time.millisecondsPerMinute * 5,
 		})
-		.catch((error: Error) => interaction.reply(error.message))
+		.catch((error: Error) =>
+			interaction.reply({ content: error.message, ephemeral: true })
+		)
 		.catch(console.error);
 
 	if (!clan) return undefined;
@@ -101,16 +105,23 @@ export const clanInfo = async (
 			};
 		})
 	);
-	const row = new MessageActionRow().addComponents(
+	const row1 = new MessageActionRow().addComponents(
 		menu
 			.setPlaceholder("Membri del clan")
 			.setCustomId(`${MenuActions.PlayerInfo}-${clan.tag}`)
+	);
+	const row2 = new MessageActionRow().addComponents(
+		new MessageButton()
+			.setCustomId(`${ButtonActions.RiverRaceLog}-${clan.tag}`)
+			.setEmoji(Emojis.Log)
+			.setLabel("Guerre passate")
+			.setStyle(MessageButtonStyles.PRIMARY)
 	);
 
 	return interaction
 		.reply({
 			embeds: [embed],
-			components: [row],
+			components: [row1, row2],
 			ephemeral,
 		})
 		.catch(console.error);

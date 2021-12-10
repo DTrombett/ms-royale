@@ -34,6 +34,7 @@ export type CommandOptions = {
 /**
  * Emojis for the bot
  */
+
 export const enum Emojis {
 	/**
 	 * The emoji for a check mark
@@ -154,6 +155,41 @@ export const enum Emojis {
 	 * The emoji for a forward arrow
 	 */
 	ForwardArrow = "➡",
+
+	/**
+	 * The emoji for a medal
+	 */
+	medal = "🏅",
+
+	/**
+	 * The emoji for a boat
+	 */
+	Boat = "⛵",
+
+	/**
+	 * The emoji for a dagger
+	 */
+	Dagger = "🗡",
+
+	/**
+	 * The emoji for a deck
+	 */
+	Deck = "🎴",
+
+	/**
+	 * The emoji for an information symbol
+	 */
+	Info = "ℹ",
+
+	/**
+	 * The emoji for a log
+	 */
+	Log = "🗒",
+
+	/**
+	 * The emoji for crossed swords
+	 */
+	CrossedSwords = "⚔",
 }
 
 /**
@@ -239,6 +275,16 @@ export const enum CustomEmojis {
 	 * The emoji for a war point
 	 */
 	warPoint = "<:warpoint:918522796747915304>",
+
+	/**
+	 * The emoji for a bot attack
+	 */
+	boatAttack = "<:boatattack:918909257745825793>",
+
+	/**
+	 * The emoji for a war deck
+	 */
+	warDeck = "<:wardeck:918908890761035817>",
 }
 
 /**

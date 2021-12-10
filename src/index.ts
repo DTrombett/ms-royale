@@ -91,9 +91,18 @@ client.discord
 						client,
 						interaction,
 						args[0]!,
-						Number(args[1]),
+						args[1] !== undefined ? Number(args[1]) : undefined,
 						true
+					).then(
+						(result) =>
+							result &&
+							(interaction.user.id === args[2]
+								? interaction.update(result)
+								: interaction.reply(result))
 					);
+					break;
+				case ButtonActions.ClanInfo:
+					void clanInfo(client, interaction, args[0]!, true);
 					break;
 				default:
 					console.error(`Received unknown action: ${action as string}`);

@@ -332,6 +332,7 @@ export const enum MenuActions {
 /**
  * Values used as custom identifiers for buttons
  */
+
 export const enum ButtonActions {
 	/**
 	 * Show the next page
@@ -347,6 +348,11 @@ export const enum ButtonActions {
 	 * Show the river race log of a clan
 	 */
 	RiverRaceLog = "rrlog",
+
+	/**
+	 * Show clan's info
+	 */
+	ClanInfo = "clan",
 }
 
 export default Constants;

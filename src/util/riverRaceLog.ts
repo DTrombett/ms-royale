@@ -7,15 +7,16 @@ import type {
 	ButtonInteraction,
 	CommandInteraction,
 	ContextMenuInteraction,
-	SelectMenuInteraction
+	SelectMenuInteraction,
 } from "discord.js";
 import {
-	Constants as DiscordCostants, MessageActionRow,
-	MessageButton
+	Constants as DiscordCostants,
+	MessageActionRow,
+	MessageButton,
+	MessageSelectMenu,
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
-import { ButtonActions } from ".";
-import Constants from "./Constants";
+import Constants, { ButtonActions, MenuActions } from "./Constants";
 import normalizeTag from "./normalizeTag";
 import { CustomEmojis, Emojis } from "./types";
 import validateTag from "./validateTag";
@@ -45,22 +46,26 @@ export const riverRaceLog = async (
 			})
 			.catch(console.error);
 
-	let race;
+	let last: boolean, race;
 	if (index !== undefined) race = cache.get(tag)?.at(index);
 	if (!race) {
 		const log = await client
 			.fetchRiverRaceLog({ tag })
-			.catch((error: Error) => interaction.reply(error.message))
+			.catch((error: Error) =>
+				interaction.reply({ content: error.message, ephemeral: true })
+			)
 			.catch(console.error);
 
 		if (!log) return undefined;
 		race = index !== undefined ? log.at(index) : log.first();
+		last = index === log.size - 1;
 		for (const [key, value] of log)
 			(cache.get(tag) ?? cache.set(tag, new Collection()).get(tag))!.set(
 				key,
 				value
 			);
 	}
+	last ??= index === (cache.get(tag)?.size ?? 0) - 1;
 
 	if (race === undefined)
 		return interaction
@@ -70,10 +75,10 @@ export const riverRaceLog = async (
 			})
 			.catch(console.error);
 	const embed = new Embed()
-		.setTitle(`Sett. ${race.weekNumber}`)
+		.setTitle(`Stagione ${race.seasonId} - Settimana ${race.weekNumber}`)
 		.setColor(DiscordCostants.Colors.BLURPLE)
 		.setFooter({
-			text: "Terminata",
+			text: "Guerra terminata il",
 		})
 		.setTimestamp(race.finishTime)
 		.addFields(
@@ -105,42 +110,70 @@ export const riverRaceLog = async (
 					"Punteggio del clan",
 					`${Emojis.Score} ${standing.clan.score}`
 				);
+				values.set(
+					"Partecipanti",
+					`${CustomEmojis.clanMembers} ${
+						standing.clan.participants.filter((p) => Boolean(p.medals)).size
+					}`
+				);
+
 				return {
 					name: `${standing.rank}. ${standing.clan.name} (${standing.clan.tag})`,
 					value: values.map((v, k) => `${bold(k)}: ${v}`).join("\n"),
 				};
 			})
 		);
+	const row1 = new MessageActionRow().addComponents(
+		new MessageSelectMenu()
+			.setCustomId(MenuActions.PlayerInfo)
+			.setPlaceholder("Lista partecipanti")
+			.addOptions(
+				[...race.leaderboard.get(tag)!.clan.participants.values()]
+					.filter((p) => p.medals)
+					.sort((a, b) => b.medals - a.medals)
+					.slice(0, 25)
+					.map((p, i) => ({
+						description: `${Emojis.medal} ${p.medals} - ${Emojis.Boat}${Emojis.Dagger} ${p.boatAttacks} - ${Emojis.Deck} ${p.decksUsed}`,
+						label: `#${i + 1} ${p.name} (${p.tag})`,
+						value: p.tag,
+					}))
+			)
+	);
+	const row2 = new MessageActionRow().addComponents(
+		new MessageButton()
+			.setCustomId(`${ButtonActions.ClanInfo}-${tag}`)
+			.setEmoji(Emojis.Info)
+			.setLabel("Info clan")
+			.setStyle(MessageButtonStyles.PRIMARY)
+	);
+	const row3 = new MessageActionRow().addComponents(
+		new MessageButton()
+			.setCustomId(
+				`${ButtonActions.RiverRaceLog}-${tag}-${
+					index !== undefined ? index + 1 : 1
+				}-${interaction.user.id}`
+			)
+			.setEmoji(Emojis.BackArrow)
+			.setLabel(Constants.backButtonLabel())
+			.setStyle(MessageButtonStyles.PRIMARY)
+			.setDisabled(last),
+		new MessageButton()
+			.setCustomId(
+				`${ButtonActions.RiverRaceLog}-${tag}-${
+					index !== undefined ? index - 1 : 0
+				}-${interaction.user.id}`
+			)
+			.setEmoji(Emojis.ForwardArrow)
+			.setLabel(Constants.afterButtonLabel())
+			.setStyle(MessageButtonStyles.PRIMARY)
+			.setDisabled(index === undefined || index === 0)
+	);
 
-	return interaction
-		.reply({
-			embeds: [embed.toJSON()],
-			components: [
-				new MessageActionRow().addComponents(
-					new MessageButton()
-						.setCustomId(
-							`${ButtonActions.RiverRaceLog}-${tag}-${
-								index !== undefined ? index - 1 : 0
-							}`
-						)
-						.setEmoji(Emojis.BackArrow)
-						.setLabel(Constants.backButtonLabel())
-						.setStyle(MessageButtonStyles.PRIMARY)
-						.setDisabled(index === undefined || index === 0),
-					new MessageButton()
-						.setCustomId(
-							`${ButtonActions.RiverRaceLog}-${tag}-${
-								index !== undefined ? index + 1 : 1
-							}`
-						)
-						.setEmoji(Emojis.ForwardArrow)
-						.setLabel(Constants.afterButtonLabel())
-						.setStyle(MessageButtonStyles.PRIMARY)
-				),
-			],
-			ephemeral,
-		})
-		.catch(console.error);
+	return {
+		embeds: [embed.toJSON()],
+		components: [row1, row2, row3],
+		ephemeral,
+	};
 };
 
 export default riverRaceLog;
