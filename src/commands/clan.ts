@@ -1,9 +1,16 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import type { SearchClanOptions } from "apiroyale";
+import type {
+	ApplicationCommandOptionChoice,
+	AutocompleteInteraction,
+} from "discord.js";
+import type CustomClient from "../CustomClient";
 import type { CommandOptions } from "../util";
 import Constants, {
 	clanInfo,
 	handleSearchResults,
+	matchStrings,
+	normalizeTag,
 	riverRaceLog,
 } from "../util";
 
@@ -25,6 +32,41 @@ const enum InfoOptions {
 const enum RiverRaceLogOptions {
 	Tag = "tag",
 }
+const enum AutoCompletableInfoOptions {
+	Tag = "tag",
+}
+const enum AutoCompletableRiverRaceLogOptions {
+	Tag = "tag",
+}
+
+const autocompleteClanTag = (
+	client: CustomClient,
+	option: ApplicationCommandOptionChoice,
+	interaction: AutocompleteInteraction
+) => {
+	const value = option.value as string;
+	const clans = client.clanPreviews.concat(
+		client.clanResultPreviews,
+		client.clans
+	);
+
+	if (value.length)
+		clans.sweep(
+			(c) =>
+				!c.tag.startsWith(normalizeTag(value)) && !matchStrings(c.name, value)
+		);
+	interaction
+		.respond(
+			clans
+				.last(25)
+				.reverse()
+				.map((c) => ({
+					name: `${c.name} (${c.tag})`,
+					value: c.tag,
+				}))
+		)
+		.catch(console.error);
+};
 
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder()
@@ -41,6 +83,7 @@ export const command: CommandOptions = {
 							"Il tag del clan. Non fa differenza tra maiuscole e minuscole ed è possibile omettere l'hashtag"
 						)
 						.setRequired(true)
+						.setAutocomplete(true)
 				)
 		)
 		.addSubcommand((search) =>
@@ -86,10 +129,18 @@ export const command: CommandOptions = {
 							"Il tag del clan. Non fa differenza tra maiuscole e minuscole ed è possibile omettere l'hashtag"
 						)
 						.setRequired(true)
+						.setAutocomplete(true)
 				)
 		),
 	async run(interaction) {
 		switch (interaction.options.getSubcommand() as SubCommands) {
+			case SubCommands.Info:
+				await clanInfo(
+					this.client,
+					interaction,
+					interaction.options.getString(InfoOptions.Tag, true)
+				);
+				break;
 			case SubCommands.Search:
 				const location = interaction.options
 					.getString(SearchOptions.Location)
@@ -142,13 +193,6 @@ export const command: CommandOptions = {
 					)
 					.catch(console.error);
 				break;
-			case SubCommands.Info:
-				await clanInfo(
-					this.client,
-					interaction,
-					interaction.options.getString(InfoOptions.Tag, true)
-				);
-				break;
 			case SubCommands.RiverRaceLog:
 				const result = await riverRaceLog(
 					this.client,
@@ -156,6 +200,35 @@ export const command: CommandOptions = {
 					interaction.options.getString(RiverRaceLogOptions.Tag, true)
 				);
 				if (result) await interaction.reply(result);
+				break;
+			default:
+				break;
+		}
+	},
+	autocomplete(interaction) {
+		let option;
+		switch (interaction.options.getSubcommand() as SubCommands) {
+			case SubCommands.Info:
+				option = interaction.options.getFocused(true);
+
+				switch (option.name as AutoCompletableInfoOptions) {
+					case AutoCompletableInfoOptions.Tag:
+						autocompleteClanTag(this.client, option, interaction);
+						break;
+					default:
+						break;
+				}
+				break;
+			case SubCommands.RiverRaceLog:
+				option = interaction.options.getFocused(true);
+
+				switch (option.name as AutoCompletableRiverRaceLogOptions) {
+					case AutoCompletableRiverRaceLogOptions.Tag:
+						autocompleteClanTag(this.client, option, interaction);
+						break;
+					default:
+						break;
+				}
 				break;
 			default:
 				break;

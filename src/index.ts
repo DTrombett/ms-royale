@@ -30,8 +30,16 @@ client.discord
 		console.timeEnd(Constants.clientOnlineLabel());
 	})
 	.on("interactionCreate", (interaction) => {
-		if (interaction.isCommand())
+		if (interaction.isCommand()) {
 			void client.commands.get(interaction.commandName)?.run(interaction);
+			return;
+		}
+		if (interaction.isAutocomplete()) {
+			void client.commands
+				.get(interaction.commandName)
+				?.autocomplete(interaction);
+			return;
+		}
 		if (interaction.isSelectMenu()) {
 			const [action] = interaction.customId.split("-") as [
 				MenuActions,

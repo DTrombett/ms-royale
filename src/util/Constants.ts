@@ -1,6 +1,6 @@
-import { bold, italic, underscore } from "@discordjs/builders";
+import { bold } from "@discordjs/builders";
 import type { APITag, Clan, ClanMember, ClanResultPreview } from "apiroyale";
-import { ClanMemberRole, ClanType } from "apiroyale";
+import { ClanType } from "apiroyale";
 import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
 import { Emojis } from "./types";
@@ -150,8 +150,26 @@ export const Constants = {
 		oldClanDescription: string,
 		newClanDescription: string
 	) =>
-		`${underscore(Util.escapeMarkdown(oldClanDescription))}\n=> ${underscore(
-			Util.escapeMarkdown(newClanDescription)
+		`${bold("Prima")}: ${Util.escapeMarkdown(oldClanDescription)}\n${bold(
+			"Dopo"
+		)}: ${Util.escapeMarkdown(newClanDescription)}` as const,
+
+	/**
+	 * The embed field name shown when the clan badge id is updated.
+	 */
+	clanBadgeIdUpdatedFieldName: () => "Badge" as const,
+
+	/**
+	 * The embed field value shown when the clan badge id is updated.
+	 * @param oldClanBadgeId - The old clan badge id
+	 * @param newClanBadgeId - The new clan badge id
+	 */
+	clanBadgeIdUpdatedFieldValue: (
+		oldClanBadgeId: number,
+		newClanBadgeId: number
+	) =>
+		`${bold(Util.escapeMarkdown(oldClanBadgeId.toString()))} => ${bold(
+			Util.escapeMarkdown(newClanBadgeId.toString())
 		)}` as const,
 
 	/**
@@ -168,7 +186,7 @@ export const Constants = {
 		oldClanLocation: string,
 		newClanLocation: string
 	) =>
-		`${italic(Util.escapeMarkdown(oldClanLocation))} => ${italic(
+		`${bold(Util.escapeMarkdown(oldClanLocation))} => ${bold(
 			Util.escapeMarkdown(newClanLocation)
 		)}` as const,
 
@@ -203,35 +221,31 @@ export const Constants = {
 
 	/**
 	 * The embed field name shown when a clan member left.
-	 * @param member - The member that left
 	 */
-	clanMemberLeftFieldName: (member: ClanMember) =>
-		`A ${ClanMemberRole[member.role]} left` as const,
+	clanMemberLeftFieldName: () => `Un membro è uscito` as const,
 
 	/**
 	 * The embed field value shown when a clan member left.
 	 * @param member - The member that left
 	 */
 	clanMemberLeftFieldValue: (member: ClanMember) =>
-		`${Util.escapeMarkdown(member.name)} (${member.tag}) - 🏆 ${
-			member.trophies
-		} (#${member.rank})` as const,
+		`#${member.rank} ${bold(Util.escapeMarkdown(member.name))} (${
+			member.tag
+		}) - 🏆 ${member.trophies}` as const,
 
 	/**
 	 * The embed field name shown when a clan member joined.
-	 * @param member - The member that joined
 	 */
-	clanMemberJoinedFieldName: (member: ClanMember) =>
-		`A ${ClanMemberRole[member.role]} joined` as const,
+	clanMemberJoinedFieldName: () => `Un membro è entrato` as const,
 
 	/**
 	 * The embed field value shown when a clan member joined.
 	 * @param member - The member that joined
 	 */
 	clanMemberJoinedFieldValue: (member: ClanMember) =>
-		`${Util.escapeMarkdown(member.name)} (${member.tag}) - 🏆 ${
-			member.trophies
-		} (#${member.rank})` as const,
+		`#${member.rank} ${bold(Util.escapeMarkdown(member.name))} (${
+			member.tag
+		}) - 🏆 ${member.trophies}` as const,
 
 	/**
 	 * Number of milliseconds before fetching the main clan again.

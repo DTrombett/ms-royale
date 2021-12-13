@@ -3,7 +3,11 @@ import type {
 	SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
 import type { ClientEvents } from "apiroyale";
-import type { Awaitable, CommandInteraction } from "discord.js";
+import type {
+	AutocompleteInteraction,
+	Awaitable,
+	CommandInteraction,
+} from "discord.js";
 import type { Command, Event } from ".";
 
 /**
@@ -22,6 +26,16 @@ export type CommandOptions = {
 	 * If this event can only be executed from owners
 	 */
 	reserved?: boolean;
+
+	/**
+	 * A functions to run when an autocomplete request is received by Discord.
+	 * @param this - The command object that called this
+	 * @param interaction - The interaction received
+	 */
+	autocomplete?(
+		this: Command,
+		interaction: AutocompleteInteraction
+	): Awaitable<void>;
 
 	/**
 	 * A function to run when this command is received by Discord.

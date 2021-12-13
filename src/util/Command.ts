@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import type { CommandInteraction } from "discord.js";
+import type { AutocompleteInteraction, CommandInteraction } from "discord.js";
 import { join } from "node:path";
 import type { CommandOptions } from ".";
 import type CustomClient from "../CustomClient";
@@ -23,6 +23,11 @@ export class Command {
 	 * If this command is private and can only be executed by the owners of the bot
 	 */
 	reserved = false;
+
+	/**
+	 * The function to handle the autocomplete of this command
+	 */
+	private _autocomplete: OmitThisParameter<CommandOptions["autocomplete"]>;
 
 	/**
 	 * The function provided to handle the command received
@@ -59,13 +64,29 @@ export class Command {
 	}
 
 	/**
+	 * Autocomplete this command.
+	 * @param interaction - The interaction received
+	 */
+	async autocomplete(interaction: AutocompleteInteraction) {
+		try {
+			if (this.reserved && !Constants.owners().includes(interaction.user.id))
+				return;
+			await this._autocomplete?.(interaction);
+		} catch (message) {
+			console.error(message);
+		}
+	}
+
+	/**
 	 * Patch this command
 	 * @param options - Options for this command
 	 */
 	patch(options: Partial<CommandOptions>) {
-		if (options.run !== undefined) this._execute = options.run.bind(this);
 		if (options.data !== undefined) this.data = options.data;
 		if (options.reserved !== undefined) this.reserved = options.reserved;
+		if (options.autocomplete !== undefined)
+			this._autocomplete = options.autocomplete.bind(this);
+		if (options.run !== undefined) this._execute = options.run.bind(this);
 
 		return this;
 	}

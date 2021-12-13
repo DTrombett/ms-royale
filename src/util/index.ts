@@ -14,12 +14,13 @@ export * from "./getSearchOptions";
 export * from "./handleSearchResults";
 export * from "./loadCommands";
 export * from "./loadEvents";
+export * from "./matchStrings";
 export * from "./normalizeTag";
 export * from "./playerInfo";
 export * from "./restart";
+export * from "./riverRaceLog";
 export * from "./roundNumber";
 export * from "./types";
 export * from "./validateTag";
-export * from "./riverRaceLog";
 
 export default Constants;
