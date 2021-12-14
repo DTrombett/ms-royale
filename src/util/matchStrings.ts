@@ -1,3 +1,5 @@
+import { MatchLevel } from "./Constants";
+
 /**
  * Search for a string in a string.
  * @param haystack - The string to search in
@@ -9,12 +11,18 @@ export const matchStrings = (
 	haystack: string,
 	needle: string,
 	caseSensitive = false
-): boolean => {
+): MatchLevel => {
+	haystack = haystack.trim().normalize();
+	needle = needle.trim().normalize();
 	if (!caseSensitive) {
 		haystack = haystack.toLowerCase();
 		needle = needle.toLowerCase();
 	}
-	return haystack.includes(needle);
+	if (haystack === needle) return MatchLevel.Full;
+	if (haystack.startsWith(needle)) return MatchLevel.Start;
+	if (haystack.endsWith(needle)) return MatchLevel.End;
+	if (haystack.includes(needle)) return MatchLevel.Partial;
+	return MatchLevel.None;
 };
 
 export default matchStrings;

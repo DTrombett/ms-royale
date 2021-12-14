@@ -10,7 +10,7 @@
     "lint": "eslint src --fix",
     "prettier": "prettier --write src/**/*.ts",
     "commands": "npm run build && node dist/registerCommands.js",
-    "start": "npm run build && node ."
+    "start": "npm run build && node . --enable-source-maps"
   },
   "author": "DTrombett",
   "license": "ISC",

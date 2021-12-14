@@ -369,4 +369,34 @@ export const enum ButtonActions {
 	ClanInfo = "clan",
 }
 
+/**
+ * The match level from comparing 2 strings
+ */
+export const enum MatchLevel {
+	/**
+	 * The strings don't match at all
+	 */
+	None,
+
+	/**
+	 * The second string is a substring of the first one
+	 */
+	Partial,
+
+	/**
+	 * The second string is at the end of the first one
+	 */
+	End,
+
+	/**
+	 * The second string is at the beginning of the first one
+	 */
+	Start,
+
+	/**
+	 * The second string is the same as the first one
+	 */
+	Full,
+}
+
 export default Constants;

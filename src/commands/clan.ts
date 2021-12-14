@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { SearchClanOptions } from "apiroyale";
+import type { Clan, SearchClanOptions } from "apiroyale";
 import type {
 	ApplicationCommandOptionChoice,
 	AutocompleteInteraction,
@@ -9,6 +9,7 @@ import type { CommandOptions } from "../util";
 import Constants, {
 	clanInfo,
 	handleSearchResults,
+	MatchLevel,
 	matchStrings,
 	normalizeTag,
 	riverRaceLog,
@@ -45,25 +46,27 @@ const autocompleteClanTag = (
 	interaction: AutocompleteInteraction
 ) => {
 	const value = option.value as string;
+	const matches: Record<Clan["tag"], MatchLevel> = {};
 	const clans = client.clanPreviews.concat(
 		client.clanResultPreviews,
 		client.clans
 	);
 
-	if (value.length)
+	if (value.length) {
 		clans.sweep(
 			(c) =>
-				!c.tag.startsWith(normalizeTag(value)) && !matchStrings(c.name, value)
+				(matches[c.tag] =
+					matchStrings(normalizeTag(c.tag), value, true) ||
+					matchStrings(c.name, value)) === MatchLevel.None
 		);
+		clans.sort((a, b) => matches[b.tag] - matches[a.tag] || 0);
+	}
 	interaction
 		.respond(
-			clans
-				.last(25)
-				.reverse()
-				.map((c) => ({
-					name: `${c.name} (${c.tag})`,
-					value: c.tag,
-				}))
+			clans.first(25).map((c) => ({
+				name: `${c.name} (${c.tag})`,
+				value: c.tag,
+			}))
 		)
 		.catch(console.error);
 };
@@ -206,29 +209,15 @@ export const command: CommandOptions = {
 		}
 	},
 	autocomplete(interaction) {
-		let option;
-		switch (interaction.options.getSubcommand() as SubCommands) {
-			case SubCommands.Info:
-				option = interaction.options.getFocused(true);
+		const option = interaction.options.getFocused(true);
 
-				switch (option.name as AutoCompletableInfoOptions) {
-					case AutoCompletableInfoOptions.Tag:
-						autocompleteClanTag(this.client, option, interaction);
-						break;
-					default:
-						break;
-				}
-				break;
-			case SubCommands.RiverRaceLog:
-				option = interaction.options.getFocused(true);
-
-				switch (option.name as AutoCompletableRiverRaceLogOptions) {
-					case AutoCompletableRiverRaceLogOptions.Tag:
-						autocompleteClanTag(this.client, option, interaction);
-						break;
-					default:
-						break;
-				}
+		switch (
+			option.name as
+				| AutoCompletableInfoOptions
+				| AutoCompletableRiverRaceLogOptions
+		) {
+			case AutoCompletableInfoOptions.Tag:
+				autocompleteClanTag(this.client, option, interaction);
 				break;
 			default:
 				break;

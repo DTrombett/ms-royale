@@ -1,11 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import type { Player } from "apiroyale";
 import type {
 	ApplicationCommandOptionChoice,
 	AutocompleteInteraction,
 } from "discord.js";
 import type CustomClient from "../CustomClient";
 import type { CommandOptions } from "../util";
-import { matchStrings, normalizeTag, playerInfo } from "../util";
+import { MatchLevel, matchStrings, normalizeTag, playerInfo } from "../util";
 
 const enum SubCommands {
 	Info = "info",
@@ -23,22 +24,24 @@ const autocompletePlayerTag = (
 	interaction: AutocompleteInteraction
 ) => {
 	const value = option.value as string;
+	const matches: Record<Player["tag"], MatchLevel> = {};
 	const { players } = client;
 
-	if (value.length)
+	if (value.length) {
 		players.sweep(
 			(c) =>
-				!c.tag.startsWith(normalizeTag(value)) && !matchStrings(c.name, value)
+				(matches[c.tag] =
+					matchStrings(normalizeTag(c.tag), value, true) ||
+					matchStrings(c.name, value)) === MatchLevel.None
 		);
+		players.sort((a, b) => matches[b.tag] - matches[a.tag] || 0);
+	}
 	interaction
 		.respond(
-			players
-				.last(25)
-				.reverse()
-				.map((c) => ({
-					name: `${c.name} (${c.tag})`,
-					value: c.tag,
-				}))
+			players.first(25).map((c) => ({
+				name: `${c.name} (${c.tag})`,
+				value: c.tag,
+			}))
 		)
 		.catch(console.error);
 };
@@ -78,18 +81,11 @@ export const command: CommandOptions = {
 		}
 	},
 	autocomplete(interaction) {
-		let option;
-		switch (interaction.options.getSubcommand() as SubCommands) {
-			case SubCommands.Info:
-				option = interaction.options.getFocused(true);
+		const option = interaction.options.getFocused(true);
 
-				switch (option.name as AutoCompletableInfoOptions) {
-					case AutoCompletableInfoOptions.Tag:
-						autocompletePlayerTag(this.client, option, interaction);
-						break;
-					default:
-						break;
-				}
+		switch (option.name as AutoCompletableInfoOptions) {
+			case AutoCompletableInfoOptions.Tag:
+				autocompletePlayerTag(this.client, option, interaction);
 				break;
 			default:
 				break;
