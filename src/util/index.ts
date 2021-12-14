@@ -5,6 +5,7 @@ export * from "./cast";
 export * from "./clanInfo";
 export * from "./Command";
 export * from "./Constants";
+export * from "./customId";
 export * from "./eval";
 export * from "./Event";
 export * from "./getRandomColor";

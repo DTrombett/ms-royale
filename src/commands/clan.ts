@@ -46,25 +46,35 @@ const autocompleteClanTag = (
 	interaction: AutocompleteInteraction
 ) => {
 	const value = option.value as string;
+	/**
+	 * A record of clan tags with their respective match level with the value provided
+	 */
 	const matches: Record<Clan["tag"], MatchLevel> = {};
+	/**
+	 * A collection of all cached clans
+	 */
 	const clans = client.clanPreviews.concat(
 		client.clanResultPreviews,
 		client.clans
 	);
 
+	// If a value was provided, search for clans with a tag or a name that contains the value
 	if (value.length) {
+		// Remove any clan that doesn't match the value
 		clans.sweep(
 			(c) =>
 				(matches[c.tag] =
 					matchStrings(normalizeTag(c.tag), value, true) ||
 					matchStrings(c.name, value)) === MatchLevel.None
 		);
+		// Sort the clans by their match level
 		clans.sort((a, b) => matches[b.tag] - matches[a.tag] || 0);
 	}
 	interaction
 		.respond(
+			// Take the first 25 clans as only 25 options are allowed
 			clans.first(25).map((c) => ({
-				name: `${c.name} (${c.tag})`,
+				name: Constants.autocompleteClanOptionName(c),
 				value: c.tag,
 			}))
 		)
@@ -138,6 +148,7 @@ export const command: CommandOptions = {
 	async run(interaction) {
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Info:
+				// Display the clan info
 				await clanInfo(
 					this.client,
 					interaction,
@@ -145,66 +156,112 @@ export const command: CommandOptions = {
 				);
 				break;
 			case SubCommands.Search:
-				const location = interaction.options
+				/**
+				 * The location option provided
+				 */
+				const locationProvided = interaction.options
 					.getString(SearchOptions.Location)
 					?.toLowerCase();
-				const locationId =
-					location != null
+				/**
+				 * The resolved location id
+				 */
+				const location =
+					locationProvided != null
 						? this.client.locations.find(
-								(l) => l.id === location || l.name.toLowerCase() === location
+								(l) =>
+									l.id === locationProvided ||
+									l.name.toLowerCase() === locationProvided
 						  )?.id ??
-						  (!Number.isNaN(Number(location))
-								? (location as `${number}`)
+						  (!Number.isNaN(Number(locationProvided))
+								? (locationProvided as `${number}`)
 								: undefined)
 						: undefined;
+				/**
+				 * The max members option provided
+				 */
 				const maxMembers =
 					interaction.options.getInteger(SearchOptions.MaxMembers) ?? undefined;
+				/**
+				 * The min members option provided
+				 */
 				const minMembers =
 					interaction.options.getInteger(SearchOptions.MinMembers) ?? undefined;
+				/**
+				 * The min score option provided
+				 */
 				const minScore =
 					interaction.options.getInteger(SearchOptions.MinScore) ?? undefined;
+				/**
+				 * The clan name option provided
+				 */
 				const name =
 					interaction.options.getString(SearchOptions.Name) ?? undefined;
+				/**
+				 * The resolved search options
+				 */
 				const options: SearchClanOptions = {
+					// This is 25 because the max number of options in a menu is 25
 					limit: 25,
-					location: locationId,
+					location,
 					maxMembers,
 					minMembers,
 					minScore,
 					name,
 				};
 
+				// Search the clans with the provided options
 				this.client.clans
 					.search(options)
 					.then((results) => {
+						// Display a message if no results were found
 						if (!results.size)
 							return interaction.reply(Constants.noClanFound());
+						// Display the results
 						return interaction.reply({
 							...handleSearchResults(results),
 							content: Constants.clanSearchResultsContent(
 								interaction.user.id,
 								name,
-								locationId,
+								location,
 								minMembers,
 								maxMembers,
 								minScore
 							),
 						});
 					})
-					.catch((error: Error) =>
-						interaction.reply({ content: error.message, ephemeral: true })
-					)
+					.catch((error: Error) => {
+						// Catch any errors
+						console.error(error);
+						// Display the error message
+						return interaction.reply({
+							content: error.message,
+							ephemeral: true,
+						});
+					})
 					.catch(console.error);
 				break;
 			case SubCommands.RiverRaceLog:
+				/**
+				 * The options for replying to the interaction
+				 */
 				const result = await riverRaceLog(
 					this.client,
 					interaction,
 					interaction.options.getString(RiverRaceLogOptions.Tag, true)
 				);
+
+				// If there weren't any errors then display the results
 				if (result) await interaction.reply(result);
 				break;
 			default:
+				console.error(
+					new Error(
+						Constants.optionNotRecognizedLog(
+							interaction.options.getSubcommand()
+						)
+					)
+				);
+				await interaction.reply(Constants.subCommandNotRecognized());
 				break;
 		}
 	},
@@ -217,9 +274,11 @@ export const command: CommandOptions = {
 				| AutoCompletableRiverRaceLogOptions
 		) {
 			case AutoCompletableInfoOptions.Tag:
+				// Autocomplete the clan tag
 				autocompleteClanTag(this.client, option, interaction);
 				break;
 			default:
+				console.error(new Error(Constants.optionNotRecognizedLog(option.name)));
 				break;
 		}
 	},

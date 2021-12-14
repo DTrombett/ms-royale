@@ -17,6 +17,7 @@ import {
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import Constants, { ButtonActions, MenuActions } from "./Constants";
+import { buildCustomButtonId } from "./customId";
 import normalizeTag from "./normalizeTag";
 import { CustomEmojis, Emojis } from "./types";
 import validateTag from "./validateTag";
@@ -51,9 +52,10 @@ export const riverRaceLog = async (
 	if (!race) {
 		const log = await client
 			.fetchRiverRaceLog({ tag })
-			.catch((error: Error) =>
-				interaction.reply({ content: error.message, ephemeral: true })
-			)
+			.catch((error: Error) => {
+				console.error(error);
+				return interaction.reply({ content: error.message, ephemeral: true });
+			})
 			.catch(console.error);
 
 		if (!log) return undefined;
@@ -141,7 +143,7 @@ export const riverRaceLog = async (
 	);
 	const row2 = new MessageActionRow().addComponents(
 		new MessageButton()
-			.setCustomId(`${ButtonActions.ClanInfo}-${tag}`)
+			.setCustomId(buildCustomButtonId(ButtonActions.ClanInfo, tag))
 			.setEmoji(Emojis.Info)
 			.setLabel("Info clan")
 			.setStyle(MessageButtonStyles.PRIMARY)
@@ -149,9 +151,12 @@ export const riverRaceLog = async (
 	const row3 = new MessageActionRow().addComponents(
 		new MessageButton()
 			.setCustomId(
-				`${ButtonActions.RiverRaceLog}-${tag}-${
-					index !== undefined ? index + 1 : 1
-				}-${interaction.user.id}`
+				buildCustomButtonId(
+					ButtonActions.RiverRaceLog,
+					tag,
+					index !== undefined ? index + 1 : 1,
+					interaction.user.id
+				)
 			)
 			.setEmoji(Emojis.BackArrow)
 			.setLabel(Constants.backButtonLabel())

@@ -1,6 +1,4 @@
 import type ClientRoyale from "apiroyale";
-import type { ClanMember } from "apiroyale";
-import { ClanMemberRole, ClanType } from "apiroyale";
 import type {
 	ButtonInteraction,
 	CommandInteraction,
@@ -15,14 +13,11 @@ import {
 	MessageSelectMenu,
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
-import capitalize from "./capitalize";
 import Constants, { ButtonActions, MenuActions, time } from "./Constants";
+import { buildCustomButtonId, buildCustomMenuId } from "./customId";
 import normalizeTag from "./normalizeTag";
 import { CustomEmojis, Emojis } from "./types";
 import validateTag from "./validateTag";
-
-const getMaxNameLength = (member: ClanMember) =>
-	100 - `#${member.rank}  (${member.tag})`.length;
 
 /**
  * Displays information about a clan.
@@ -54,67 +49,74 @@ export const clanInfo = async (
 		.fetch(tag, {
 			maxAge: time.millisecondsPerMinute * 5,
 		})
-		.catch((error: Error) =>
-			interaction.reply({ content: error.message, ephemeral: true })
-		)
+		.catch((error: Error) => {
+			console.error(error);
+			return interaction.reply({ content: error.message, ephemeral: true });
+		})
 		.catch(console.error);
 
 	if (!clan) return undefined;
 	const embed = new MessageEmbed()
-		.setTitle(clan.name)
+		.setTitle(Constants.clanInfoEmbedTitle(clan))
 		.setDescription(clan.description)
 		.setColor(DiscordCostants.Colors.BLUE)
-		.setFooter("Ultimo aggiornamento")
+		.setFooter(Constants.clanInfoFooter())
 		.setTimestamp(clan.lastUpdate)
 		.setThumbnail(clan.badgeUrl)
-		.setURL(`https://royaleapi.com/clan/${clan.tag.slice(1)}`)
-		.addField(
-			"Trofei guerra tra clan",
-			`${CustomEmojis.warTrophy} ${clan.warTrophies}`
-		)
-		.addField("Posizione", `${Emojis.Location} ${clan.locationName}`, true)
-		.addField(
-			"Trofei richiesti",
-			`${Emojis.Trophy} ${clan.requiredTrophies}`,
-			true
-		)
-		.addField(
-			"Donazioni a settimana",
-			`${CustomEmojis.donations} ${clan.donationsPerWeek}`,
-			true
-		)
-		.addField("Punteggio del clan", `${Emojis.Score} ${clan.score}`, true)
-		.addField("Tipo", capitalize(ClanType[clan.type]), true)
-		.addField("Tag del clan", clan.tag, true)
-		.addField("Membri", `${CustomEmojis.clanMembers} ${clan.memberCount}/50`);
-	const menu = new MessageSelectMenu().addOptions(
-		clan.members.first(25).map((member) => {
-			const maxLength = getMaxNameLength(member);
+		.setURL(Constants.clanInfoUrl(clan));
 
-			return {
-				description: `${capitalize(ClanMemberRole[member.role])} - ${
-					Emojis.MoneyWithWings
-				}${member.donationsPerWeek} - ${Emojis.Trophy}${member.trophies}`,
-				emoji: CustomEmojis.user,
-				label: `#${member.rank} ${
-					member.name.length <= maxLength
-						? member.name
-						: `${member.name.slice(0, maxLength - 3)}...`
-				} (${member.tag})`,
-				value: member.tag,
-			};
-		})
+	embed
+		.addField(
+			Constants.clanInfoWarTrophiesFieldName(),
+			Constants.clanInfoWarTrophiesFieldValue(clan.warTrophies)
+		)
+		.addField(
+			Constants.clanInfoLocationFieldName(),
+			Constants.clanInfoLocationFieldValue(clan.location),
+			true
+		)
+		.addField(
+			Constants.clanInfoRequiredTrophiesFieldName(),
+			Constants.clanInfoRequiredTrophiesFieldValue(clan.requiredTrophies),
+			true
+		)
+		.addField(
+			Constants.clanInfoDonationsPerWeekFieldName(),
+			Constants.clanInfoDonationsPerWeekFieldValue(clan.donationsPerWeek),
+			true
+		)
+		.addField(
+			Constants.clanInfoScoreFieldName(),
+			Constants.clanInfoScoreFieldValue(clan.score),
+			true
+		)
+		.addField(
+			Constants.clanInfoTypeFieldName(),
+			Constants.clanInfoTypeFieldValue(clan.type),
+			true
+		)
+		.addField(
+			Constants.clanInfoMemberCountFieldName(),
+			Constants.clanInfoMemberCountFieldValue(clan.memberCount)
+		);
+	const menu = new MessageSelectMenu().addOptions(
+		clan.members.first(25).map((member) => ({
+			description: Constants.clanMemberDescription(member),
+			emoji: CustomEmojis.user,
+			label: Constants.clanMemberLabel(member),
+			value: member.tag,
+		}))
 	);
 	const row1 = new MessageActionRow().addComponents(
 		menu
-			.setPlaceholder("Membri del clan")
-			.setCustomId(`${MenuActions.PlayerInfo}-${clan.tag}`)
+			.setPlaceholder(Constants.clanMembersPlaceholder())
+			.setCustomId(buildCustomMenuId(MenuActions.PlayerInfo))
 	);
 	const row2 = new MessageActionRow().addComponents(
 		new MessageButton()
-			.setCustomId(`${ButtonActions.RiverRaceLog}-${clan.tag}`)
+			.setCustomId(buildCustomButtonId(ButtonActions.RiverRaceLog, tag))
 			.setEmoji(Emojis.Log)
-			.setLabel("Guerre passate")
+			.setLabel(Constants.riverRaceLogLabel())
 			.setStyle(MessageButtonStyles.PRIMARY)
 	);
 

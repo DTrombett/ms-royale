@@ -13,8 +13,8 @@ import {
 	MessageButton,
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
-import { ButtonActions } from ".";
-import Constants, { time } from "./Constants";
+import Constants, { ButtonActions, time } from "./Constants";
+import { buildCustomButtonId } from "./customId";
 import normalizeTag from "./normalizeTag";
 import { CustomEmojis, Emojis } from "./types";
 import validateTag from "./validateTag";
@@ -42,9 +42,10 @@ export const playerInfo = async (
 		.fetch(tag, {
 			maxAge: time.millisecondsPerMinute * 5,
 		})
-		.catch((error: Error) =>
-			interaction.reply({ content: error.message, ephemeral: true })
-		)
+		.catch((error: Error) => {
+			console.error(error);
+			return interaction.reply({ content: error.message, ephemeral: true });
+		})
 		.catch(console.error);
 
 	if (!player) return undefined;
@@ -223,7 +224,11 @@ export const playerInfo = async (
 
 	const row1 = new MessageActionRow().addComponents(
 		new MessageButton()
-			.setCustomId(`${ButtonActions.ClanInfo}-${player.clan?.tag ?? ""}`)
+			.setCustomId(
+				player.clan
+					? buildCustomButtonId(ButtonActions.ClanInfo, player.clan.tag)
+					: ""
+			)
 			.setDisabled(player.clan === undefined)
 			.setEmoji(Emojis.CrossedSwords)
 			.setLabel("Info clan")

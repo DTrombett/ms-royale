@@ -3,6 +3,8 @@ import CustomClient from "./CustomClient";
 import Constants, {
 	ButtonActions,
 	clanInfo,
+	destructureCustomButtonId,
+	destructureCustomMenuId,
 	getSearchOptions,
 	handleSearchResults,
 	MenuActions,
@@ -41,10 +43,7 @@ client.discord
 			return;
 		}
 		if (interaction.isSelectMenu()) {
-			const [action] = interaction.customId.split("-") as [
-				MenuActions,
-				...(string | undefined)[]
-			];
+			const { action } = destructureCustomMenuId(interaction.customId);
 
 			switch (action) {
 				case MenuActions.ClanInfo:
@@ -60,10 +59,7 @@ client.discord
 			return;
 		}
 		if (interaction.isButton()) {
-			const [action, ...args] = interaction.customId.split("-") as [
-				ButtonActions,
-				...(string | undefined)[]
-			];
+			const { action, args } = destructureCustomButtonId(interaction.customId);
 
 			switch (action) {
 				case ButtonActions.NextPage:

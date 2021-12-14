@@ -2,11 +2,16 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import type { Player } from "apiroyale";
 import type {
 	ApplicationCommandOptionChoice,
-	AutocompleteInteraction,
+	AutocompleteInteraction
 } from "discord.js";
 import type CustomClient from "../CustomClient";
 import type { CommandOptions } from "../util";
-import { MatchLevel, matchStrings, normalizeTag, playerInfo } from "../util";
+import Constants, {
+	MatchLevel,
+	matchStrings,
+	normalizeTag,
+	playerInfo
+} from "../util";
 
 const enum SubCommands {
 	Info = "info",
@@ -24,22 +29,32 @@ const autocompletePlayerTag = (
 	interaction: AutocompleteInteraction
 ) => {
 	const value = option.value as string;
+	/**
+	 * A record of player tags with their respective match level with the value provided
+	 */
 	const matches: Record<Player["tag"], MatchLevel> = {};
+	/**
+	 * A collection of all cached players
+	 */
 	const { players } = client;
 
+	// If a value was provided, search for players with a tag or a name that contains the value
 	if (value.length) {
+		// Remove any clan that doesn't match the value
 		players.sweep(
 			(c) =>
 				(matches[c.tag] =
 					matchStrings(normalizeTag(c.tag), value, true) ||
 					matchStrings(c.name, value)) === MatchLevel.None
 		);
+		// Sort the players by their match level
 		players.sort((a, b) => matches[b.tag] - matches[a.tag] || 0);
 	}
 	interaction
 		.respond(
+			// Take the first 25 clans as only 25 options are allowed
 			players.first(25).map((c) => ({
-				name: `${c.name} (${c.tag})`,
+				name: Constants.autocompletePlayerOptionName(c),
 				value: c.tag,
 			}))
 		)
@@ -69,6 +84,7 @@ export const command: CommandOptions = {
 	async run(interaction) {
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Info:
+				// Display the player info
 				await playerInfo(
 					this.client,
 					interaction,
@@ -76,7 +92,14 @@ export const command: CommandOptions = {
 				);
 				break;
 			default:
-				await interaction.reply("Comando non riconosciuto!");
+				console.error(
+					new Error(
+						Constants.optionNotRecognizedLog(
+							interaction.options.getSubcommand()
+						)
+					)
+				);
+				await interaction.reply(Constants.subCommandNotRecognized());
 				break;
 		}
 	},
@@ -85,9 +108,11 @@ export const command: CommandOptions = {
 
 		switch (option.name as AutoCompletableInfoOptions) {
 			case AutoCompletableInfoOptions.Tag:
+				// Autocomplete the player tag
 				autocompletePlayerTag(this.client, option, interaction);
 				break;
 			default:
+				console.error(new Error(Constants.optionNotRecognizedLog(option.name)));
 				break;
 		}
 	},

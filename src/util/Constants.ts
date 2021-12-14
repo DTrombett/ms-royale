@@ -1,9 +1,18 @@
 import { bold } from "@discordjs/builders";
-import type { APITag, Clan, ClanMember, ClanResultPreview } from "apiroyale";
-import { ClanType } from "apiroyale";
+import type {
+	APITag,
+	Clan,
+	ClanMember,
+	ClanPreview,
+	ClanResultPreview,
+	Location,
+	Player,
+} from "apiroyale";
+import { ClanMemberRole, ClanType } from "apiroyale";
 import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
-import { Emojis } from "./types";
+import capitalize from "./capitalize";
+import { CustomEmojis, Emojis } from "./types";
 
 /**
  * Constants about time
@@ -325,7 +334,162 @@ export const Constants = {
 	/**
 	 * Bot owners.
 	 */
-	owners: (): Snowflake[] => ["597505862449496065", "584465680506814465"],
+	owners: () => ["597505862449496065", "584465680506814465"],
+
+	/**
+	 * The displayed name of an autocomplete clan option.
+	 * @param clan - The clan
+	 */
+	autocompleteClanOptionName: (clan: ClanPreview) =>
+		`${clan.name} (${clan.tag})` as const,
+
+	/**
+	 * The displayed name of an autocomplete player option.
+	 * @param player - The player
+	 */
+	autocompletePlayerOptionName: (player: Player) =>
+		`${player.name} (${player.tag})` as const,
+
+	/**
+	 * The message to display when a subcommand is not recognized.
+	 */
+	subCommandNotRecognized: () => "Comando non riconosciuto!" as const,
+
+	/**
+	 * The message to log when a command is not recognized.
+	 * @param command - The command
+	 */
+	optionNotRecognizedLog: (command: string) =>
+		`Option not recognized: ${command}` as const,
+
+	/**
+	 * The title of the clan info embed.
+	 * @param clan - The clan
+	 */
+	clanInfoEmbedTitle: (clan: ClanPreview) =>
+		`${clan.name} (${clan.tag})` as const,
+
+	/**
+	 * The footer of the clan info embed.
+	 */
+	clanInfoFooter: () => "Ultimo aggiornamento" as const,
+
+	/**
+	 * The url of the clan info embed.
+	 * @param clan - The clan
+	 */
+	clanInfoUrl: (clan: ClanPreview) =>
+		`https://royaleapi.com/clan/${clan.tag.slice(1)}` as const,
+
+	/**
+	 * The clan info embed field name for war trophies.
+	 */
+	clanInfoWarTrophiesFieldName: () => "Trofei guerra tra clan" as const,
+
+	/**
+	 * The clan info embed field value for war trophies.
+	 * @param warTrophies - The war trophies
+	 */
+	clanInfoWarTrophiesFieldValue: (warTrophies: number) =>
+		`${CustomEmojis.warTrophy} ${warTrophies}` as const,
+
+	/**
+	 * The clan info embed field name for the location.
+	 */
+	clanInfoLocationFieldName: () => "Posizione" as const,
+
+	/**
+	 * The clan info embed field value for the location.
+	 * @param location - The location
+	 */
+	clanInfoLocationFieldValue: (location: Location) =>
+		`${Emojis.Location} ${location.name}` as const,
+
+	/**
+	 * The clan info embed field name for the clan's required trophies.
+	 */
+	clanInfoRequiredTrophiesFieldName: () => "Trofei richiesti" as const,
+
+	/**
+	 * The clan info embed field value for the clan's required trophies.
+	 * @param requiredTrophies - The clan's required trophies
+	 */
+	clanInfoRequiredTrophiesFieldValue: (requiredTrophies: number) =>
+		`${Emojis.Trophy} ${requiredTrophies}` as const,
+
+	/**
+	 * The clan info embed field name for the clan's donations per week.
+	 */
+	clanInfoDonationsPerWeekFieldName: () => "Donazioni settimanali" as const,
+
+	/**
+	 * The clan info embed field value for the clan's donations per week.
+	 * @param donationsPerWeek - The clan's donations per week
+	 */
+	clanInfoDonationsPerWeekFieldValue: (donationsPerWeek: number) =>
+		`${CustomEmojis.donations} ${donationsPerWeek}` as const,
+
+	/**
+	 * The clan info embed field name for the clan's score.
+	 */
+	clanInfoScoreFieldName: () => "Punteggio" as const,
+
+	/**
+	 * The clan info embed field value for the clan's score.
+	 * @param score - The clan's score
+	 */
+	clanInfoScoreFieldValue: (score: number) =>
+		`${Emojis.Score} ${score}` as const,
+
+	/**
+	 * The clan info embed field name for the clan's type.
+	 */
+	clanInfoTypeFieldName: () => "Tipo" as const,
+
+	/**
+	 * The clan info embed field value for the clan's type.
+	 * @param type - The clan's type
+	 */
+	clanInfoTypeFieldValue: (type: ClanType) =>
+		`${capitalize(ClanType[type])}` as const,
+
+	/**
+	 * The clan info embed field name for the clan's member count.
+	 */
+	clanInfoMemberCountFieldName: () => "Membri" as const,
+
+	/**
+	 * The clan info embed field value for the clan's member count.
+	 * @param memberCount - The clan's member count
+	 */
+	clanInfoMemberCountFieldValue: (memberCount: number) =>
+		`${CustomEmojis.clanMembers} ${memberCount}/50` as const,
+
+	/**
+	 * Description with information about a clan member.
+	 * @param member - The clan member
+	 */
+	clanMemberDescription: (member: ClanMember) =>
+		`${capitalize(ClanMemberRole[member.role])} - ${Emojis.MoneyWithWings}${
+			member.donationsPerWeek
+		} - ${Emojis.Trophy}${member.trophies}` as const,
+
+	/**
+	 * Label with information about a clan member.
+	 * @param member - The clan member
+	 */
+	clanMemberLabel: (member: ClanMember) =>
+		`#${member.rank} ${member.name} (${member.tag})` as const,
+
+	/**
+	 * Placeholder for the clan members list.
+	 */
+	clanMembersPlaceholder: () => "Membri del clan" as const,
+
+	/**
+	 * Label for the clan river race log button.
+	 */
+	riverRaceLogLabel: () => "Guerre passate" as const,
 } as const;
 
 /**
@@ -342,6 +506,15 @@ export const enum MenuActions {
 	 */
 	ClanInfo = "clan",
 }
+
+/**
+ * Types of other arguments for button actions
+ */
+
+export type MenuActionsTypes = {
+	[MenuActions.PlayerInfo]: [];
+	[MenuActions.ClanInfo]: [];
+};
 
 /**
  * Values used as custom identifiers for buttons
@@ -368,6 +541,21 @@ export const enum ButtonActions {
 	 */
 	ClanInfo = "clan",
 }
+
+/**
+ * Types of other arguments for button actions
+ */
+
+export type ButtonActionsTypes = {
+	[ButtonActions.NextPage]: [cursor: string];
+	[ButtonActions.PreviousPage]: [cursor: string];
+	[ButtonActions.RiverRaceLog]: [
+		clan: APITag,
+		index?: number,
+		userId?: Snowflake
+	];
+	[ButtonActions.ClanInfo]: [clan: APITag];
+};
 
 /**
  * The match level from comparing 2 strings
