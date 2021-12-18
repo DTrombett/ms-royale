@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import type { Player } from "apiroyale";
 import type {
 	ApplicationCommandOptionChoice,
-	AutocompleteInteraction
+	AutocompleteInteraction,
 } from "discord.js";
 import type CustomClient from "../CustomClient";
 import type { CommandOptions } from "../util";
@@ -10,7 +10,7 @@ import Constants, {
 	MatchLevel,
 	matchStrings,
 	normalizeTag,
-	playerInfo
+	playerInfo,
 } from "../util";
 
 const enum SubCommands {

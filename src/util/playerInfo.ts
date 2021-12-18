@@ -1,6 +1,5 @@
-import { bold, Embed, hyperlink } from "@discordjs/builders";
+import { Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
-import { ClanMemberRole } from "apiroyale";
 import type {
 	ButtonInteraction,
 	CommandInteraction,
@@ -13,10 +12,10 @@ import {
 	MessageButton,
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
-import Constants, { ButtonActions, time } from "./Constants";
+import Constants, { ButtonActions, TIME } from "./Constants";
 import { buildCustomButtonId } from "./customId";
 import normalizeTag from "./normalizeTag";
-import { CustomEmojis, Emojis } from "./types";
+import { Emojis } from "./types";
 import validateTag from "./validateTag";
 
 export const playerInfo = async (
@@ -40,7 +39,7 @@ export const playerInfo = async (
 
 	const player = await client.players
 		.fetch(tag, {
-			maxAge: time.millisecondsPerMinute * 5,
+			maxAge: TIME.millisecondsPerMinute * 5,
 		})
 		.catch((error: Error) => {
 			console.error(error);
@@ -49,177 +48,130 @@ export const playerInfo = async (
 		.catch(console.error);
 
 	if (!player) return undefined;
-	const deck = player.deck.map(
-		(card) => `${bold(card.name)} (Liv. ${bold(card.displayLevel.toString())})`
-	);
 	const embed = new Embed()
-		.setTitle(`${player.name} (${player.tag})`)
+		.setTitle(Constants.playerInfoTitle(player))
 		.setColor(DiscordCostants.Colors.BLUE)
-		.setFooter({ text: "Ultimo aggiornamento" })
+		.setFooter({ text: Constants.playerInfoFooter() })
 		.setTimestamp(player.lastUpdate)
-		.setURL(`https://royaleapi.com/player/${player.tag.slice(1)}`)
+		.setURL(Constants.playerInfoUrl(player))
 		.addField({
-			name: "Livello",
-			value: `${CustomEmojis.kingLevel} ${bold(
-				player.kingLevel.toString()
-			)} (${bold(player.expPoints.toString())} exp)`,
+			name: Constants.playerInfoLevelFieldName(),
+			value: Constants.playerInfoLevelFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Trofei",
-			value: `${Emojis.Trophy} ${player.trophies}`,
+			name: Constants.playerInfoTrophiesFieldName(),
+			value: Constants.playerInfoTrophiesFieldValue(player.trophies),
 			inline: true,
 		})
 		.addField({
-			name: "Punti stella",
-			value: `${Emojis.Star} ${player.starPoints}`,
+			name: Constants.playerInfoStarPointsFieldName(),
+			value: Constants.playerInfoStarPointsFieldValue(player.starPoints),
 			inline: true,
 		})
 		.addField({
-			name: "Clan",
-			value: `${CustomEmojis.clanInvite} ${
-				player.clan
-					? `${hyperlink(
-							player.clan.name,
-							`https://royaleapi.com/clan/${player.clan.tag.slice(1)}`
-					  )} (${player.clan.tag}) - ${ClanMemberRole[player.role]}`
-					: "Nessuno"
-			}`,
+			name: Constants.playerInfoClanFieldName(),
+			value: Constants.playerInfoClanFieldValue(player),
 		})
 		.addField({
-			name: "Mazzo battaglia",
-			value: `${deck.slice(0, 4).join(", ")}\n${deck
-				.slice(4)
-				.join(", ")} - ${hyperlink(
-				"Copia",
-				`https://link.clashroyale.com/deck/it?deck=${player.deck
-					.map((card) => card.id)
-					.join(";")}&id=${player.id.slice(1)}`
-			)} ${CustomEmojis.copyDeck}`,
+			name: Constants.playerInfoCurrentDeckFieldName(),
+			value: Constants.playerInfoCurrentDeckFieldValue(player),
 		});
 	if (player.leagueStatistics)
 		embed
 			.addField({
-				name: "Trofei massimi in questa stagione",
-				value: `${Emojis.Trophy} ${player.leagueStatistics.currentSeason.bestTrophies}`,
+				name: Constants.playerInfoCurrentBestTrophiesFieldName(),
+				value: Constants.playerInfoCurrentBestTrophiesFieldValue(
+					player.leagueStatistics
+				),
 				inline: true,
 			})
 			.addField({
-				name: "Stagione precedente",
-				value: `${Emojis.Trophy} ${player.leagueStatistics.previousSeason.bestTrophies}`,
+				name: Constants.playerInfoPreviousBestTrophiesFieldName(),
+				value: Constants.playerInfoPreviousBestTrophiesFieldValue(
+					player.leagueStatistics
+				),
 				inline: true,
 			})
 			.addField({
-				name: "Stagione migliore",
-				value: `${Emojis.Trophy} ${player.leagueStatistics.bestSeason.trophies}`,
+				name: Constants.playerInfoBestSeasonFieldName(),
+				value: Constants.playerInfoBestSeasonFieldValue(
+					player.leagueStatistics
+				),
 				inline: true,
 			});
 	embed
 		.addField({
-			name: "Emblemi",
-			value: `${player.badges
-				.map(
-					(badge) =>
-						`${bold(badge.name)}${
-							badge.isMultipleLevels()
-								? ` (Liv. ${badge.level}/${badge.levels})`
-								: ""
-						}`
-				)
-				.join(", ")}`,
+			name: Constants.playerInfoBadgesFieldName(),
+			value: Constants.playerInfoBadgesFieldValue(player.badges),
 		})
 		.addField({
-			name: "Vittorie",
-			value: `${CustomEmojis.win} ${
-				player.wins
-			} (${player.winPercentage.toFixed(1)}%)`,
+			name: Constants.playerInfoWinsFieldName(),
+			value: Constants.playerInfoWinsFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Vittorie con tre corone",
-			value: `${CustomEmojis.win}${CustomEmojis.win}${CustomEmojis.win} ${
-				player.threeCrownWins
-			} (${player.threeCrownWinPercentage.toFixed(1)}%)`,
+			name: Constants.playerInfoThreeCrownWinsFieldName(),
+			value: Constants.playerInfoThreeCrownWinsFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Sconfitte",
-			value: `${CustomEmojis.lose} ${
-				player.losses
-			} (${player.lossPercentage.toFixed(1)}%)`,
+			name: Constants.playerInfoLossesFieldName(),
+			value: Constants.playerInfoLossesFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Totale partite",
-			value: `${player.battleCount}`,
+			name: Constants.playerInfoTotalMatchesFieldName(),
+			value: Constants.playerInfoTotalMatchesFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Record di trofei",
-			value: `${Emojis.Trophy} ${player.bestTrophies}`,
+			name: Constants.playerInfoTrophiesRecordFieldName(),
+			value: Constants.playerInfoTrophiesRecordFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Carte trovate",
-			value: `${CustomEmojis.cards} ${player.cards.size}`,
+			name: Constants.playerInfoCardCountFieldName(),
+			value: Constants.playerInfoCardCountFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Donazioni in questa settimana",
-			value: `${CustomEmojis.donations} ${player.donationsPerWeek}`,
+			name: Constants.playerInfoWeekDonationsFieldName(),
+			value: Constants.playerInfoWeekDonationsFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Donazioni ricevute questa settimana",
-			value: `${CustomEmojis.donations} ${player.donationsReceivedPerWeek}`,
+			name: Constants.playerInfoWeekReceivedDonationsFieldName(),
+			value: Constants.playerInfoWeekReceivedDonationsFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Totale donazioni",
-			value: `${CustomEmojis.donations} ${player.totalDonations}`,
+			name: Constants.playerInfoTotalDonationsFieldName(),
+			value: Constants.playerInfoTotalDonationsFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Carta preferita attuale",
-			value: `${player.favouriteCard.name} (Liv. ${player.favouriteCard.displayLevel})`,
+			name: Constants.playerInfoFavoriteCardFieldName(),
+			value: Constants.playerInfoFavoriteCardFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Veterano delle guerre tra clan",
-			value: `${bold("Vittorie giorno della guerra")}: ${
-				player.oldWarDayWins
-			} - ${bold("Carte del clan ottenute")}: ${player.oldClanCardsCollected}`,
+			name: Constants.playerInfoOldWarStatsFieldName(),
+			value: Constants.playerInfoOldWarStatsFieldValue(player),
 		})
 		.addField({
-			name: "Statistiche sfida",
-			value: `${bold("Record vittorie")}: ${player.maxWinsInChallenge}\n${bold(
-				"Carte vinte"
-			)}: ${player.cardsWonInChallenges}`,
+			name: Constants.playerInfoChallengeStatsFieldName(),
+			value: Constants.playerInfoChallengeStatsFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Statistiche del torneo",
-			value: `${bold("Tornei giocati")}: ${
-				player.tournamentBattleCount
-			}\n${bold("Vittorie nel torneo")}: ${player.tournamentCardsWon}`,
+			name: Constants.playerInfoTournamentStatsFieldName(),
+			value: Constants.playerInfoTournamentStatsFieldValue(player),
 			inline: true,
 		})
 		.addField({
-			name: "Obiettivi",
-			value: `${player.achievements
-				.map(
-					(achievement) =>
-						`• ${bold(achievement.name)}: ${achievement.info}${
-							achievement.level
-								? ` ${Emojis.Star.repeat(achievement.level)}`
-								: ""
-						} - ${achievement.progress}/${achievement.target}${
-							achievement.completed
-								? ""
-								: ` (${achievement.percentage.toFixed(1)}%)`
-						}`
-				)
-				.join("\n")}`,
+			name: Constants.playerInfoAchievementsFieldName(),
+			value: Constants.playerInfoAchievementsFieldValue(player),
 		});
 
 	const row1 = new MessageActionRow().addComponents(
@@ -227,11 +179,11 @@ export const playerInfo = async (
 			.setCustomId(
 				player.clan
 					? buildCustomButtonId(ButtonActions.ClanInfo, player.clan.tag)
-					: ""
+					: "-"
 			)
 			.setDisabled(player.clan === undefined)
 			.setEmoji(Emojis.CrossedSwords)
-			.setLabel("Info clan")
+			.setLabel(Constants.clanInfoLabel())
 			.setStyle(MessageButtonStyles.PRIMARY)
 	);
 

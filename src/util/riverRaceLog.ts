@@ -1,4 +1,4 @@
-import { bold, Embed, time, TimestampStyles } from "@discordjs/builders";
+import { Embed } from "@discordjs/builders";
 import Collection from "@discordjs/collection";
 import type ClientRoyale from "apiroyale";
 import type { APITag, FinishedRiverRace } from "apiroyale";
@@ -19,7 +19,7 @@ import { MessageButtonStyles } from "discord.js/typings/enums";
 import Constants, { ButtonActions, MenuActions } from "./Constants";
 import { buildCustomButtonId } from "./customId";
 import normalizeTag from "./normalizeTag";
-import { CustomEmojis, Emojis } from "./types";
+import { Emojis } from "./types";
 import validateTag from "./validateTag";
 
 const cache = new Collection<
@@ -72,58 +72,21 @@ export const riverRaceLog = async (
 	if (race === undefined)
 		return interaction
 			.reply({
-				content: "Nessuna guerra trovata.",
+				content: Constants.noWarFoundMessage(),
 				ephemeral: true,
 			})
 			.catch(console.error);
 	const embed = new Embed()
-		.setTitle(`Stagione ${race.seasonId} - Settimana ${race.weekNumber}`)
+		.setTitle(Constants.riverRaceInfoTitle(race))
 		.setColor(DiscordCostants.Colors.BLURPLE)
 		.setFooter({
-			text: "Guerra terminata il",
+			text: Constants.riverRaceInfoFooter(),
 		})
 		.setTimestamp(race.finishTime)
 		.addFields(
-			...race.leaderboard.map<APIEmbedField>((standing) => {
-				const values = new Collection<string, string>()
-					.set("Punti", `${CustomEmojis.warPoint} ${standing.clan.points}`)
-					.set(
-						"Trofei guadagnati/persi",
-						`${CustomEmojis.warTrophy} ${standing.trophyChange}`
-					);
-
-				if (standing.pointsToOvertake != null)
-					values.set(
-						"Punti necessari per superare il clan in classifica",
-						`${CustomEmojis.warPoint} ${standing.pointsToOvertake}`
-					);
-				if (standing.clan.finishedAt != null)
-					values.set(
-						"Corsa terminata",
-						`${time(
-							standing.clan.finishedAt,
-							TimestampStyles.LongDateTime
-						)} (${time(
-							standing.clan.finishedAt,
-							TimestampStyles.RelativeTime
-						)})`
-					);
-				values.set(
-					"Punteggio del clan",
-					`${Emojis.Score} ${standing.clan.score}`
-				);
-				values.set(
-					"Partecipanti",
-					`${CustomEmojis.clanMembers} ${
-						standing.clan.participants.filter((p) => Boolean(p.medals)).size
-					}`
-				);
-
-				return {
-					name: `${standing.rank}. ${standing.clan.name} (${standing.clan.tag})`,
-					value: values.map((v, k) => `${bold(k)}: ${v}`).join("\n"),
-				};
-			})
+			...race.leaderboard.map<APIEmbedField>(
+				Constants.riverRaceInfoStandingField
+			)
 		);
 	const row1 = new MessageActionRow().addComponents(
 		new MessageSelectMenu()
@@ -135,8 +98,8 @@ export const riverRaceLog = async (
 					.sort((a, b) => b.medals - a.medals)
 					.slice(0, 25)
 					.map((p, i) => ({
-						description: `${Emojis.medal} ${p.medals} - ${Emojis.Boat}${Emojis.Dagger} ${p.boatAttacks} - ${Emojis.Deck} ${p.decksUsed}`,
-						label: `#${i + 1} ${p.name} (${p.tag})`,
+						description: Constants.riverRaceParticipantDescription(p),
+						label: Constants.riverRaceParticipantLabel(p, i + 1),
 						value: p.tag,
 					}))
 			)
@@ -145,7 +108,7 @@ export const riverRaceLog = async (
 		new MessageButton()
 			.setCustomId(buildCustomButtonId(ButtonActions.ClanInfo, tag))
 			.setEmoji(Emojis.Info)
-			.setLabel("Info clan")
+			.setLabel(Constants.clanInfoLabel())
 			.setStyle(MessageButtonStyles.PRIMARY)
 	);
 	const row3 = new MessageActionRow().addComponents(
@@ -164,9 +127,12 @@ export const riverRaceLog = async (
 			.setDisabled(last),
 		new MessageButton()
 			.setCustomId(
-				`${ButtonActions.RiverRaceLog}-${tag}-${
-					index !== undefined ? index - 1 : 0
-				}-${interaction.user.id}`
+				buildCustomButtonId(
+					ButtonActions.RiverRaceLog,
+					tag,
+					index !== undefined ? index - 1 : 0,
+					interaction.user.id
+				)
 			)
 			.setEmoji(Emojis.ForwardArrow)
 			.setLabel(Constants.afterButtonLabel())

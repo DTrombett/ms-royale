@@ -1,12 +1,20 @@
-import { bold } from "@discordjs/builders";
+import { bold, hyperlink, time, TimestampStyles } from "@discordjs/builders";
+import Collection from "@discordjs/collection";
 import type {
+	APILeagueStatistics,
 	APITag,
 	Clan,
 	ClanMember,
 	ClanPreview,
 	ClanResultPreview,
+	FinishedRiverRace,
 	Location,
 	Player,
+	PlayerBadge,
+	PlayerBadgeManager,
+	PlayerCard,
+	RiverRaceParticipant,
+	RiverRaceWeekStanding,
 } from "apiroyale";
 import { ClanMemberRole, ClanType } from "apiroyale";
 import type { Snowflake } from "discord.js";
@@ -17,7 +25,7 @@ import { CustomEmojis, Emojis } from "./types";
 /**
  * Constants about time
  */
-export const time = {
+export const TIME = {
 	/**
 	 * The number of milliseconds in a day
 	 */
@@ -259,7 +267,7 @@ export const Constants = {
 	/**
 	 * Number of milliseconds before fetching the main clan again.
 	 */
-	mainClanFetchInterval: () => time.millisecondsPerMinute * 2,
+	mainClanFetchInterval: () => TIME.millisecondsPerMinute * 2,
 
 	/**
 	 * The name of the folder with commands.
@@ -490,6 +498,444 @@ export const Constants = {
 	 * Label for the clan river race log button.
 	 */
 	riverRaceLogLabel: () => "Guerre passate" as const,
+
+	/**
+	 * The embed title of a player info embed.
+	 * @param player - The player
+	 */
+	playerInfoTitle: (player: Player) =>
+		`${player.name} (${player.tag})` as const,
+
+	/**
+	 * The embed footer of a player info embed.
+	 */
+	playerInfoFooter: () => "Ultimo aggiornamento" as const,
+
+	/**
+	 * The url for player info.
+	 */
+	playerInfoUrl: (player: Player) =>
+		`https://royaleapi.com/player/${player.tag.slice(1)}` as const,
+
+	/**
+	 * The embed field name for the player's level.
+	 */
+	playerInfoLevelFieldName: () => "Livello" as const,
+
+	/**
+	 * The embed field value for the player's level.
+	 * @param player - The player
+	 */
+	playerInfoLevelFieldValue: (player: Player) =>
+		`${CustomEmojis.kingLevel} ${bold(player.kingLevel.toString())} (${bold(
+			player.expPoints.toString()
+		)} exp)` as const,
+
+	/**
+	 * The embed field name for the player's trophies.
+	 */
+	playerInfoTrophiesFieldName: () => "Trofei" as const,
+
+	/**
+	 * The embed field value for the player's trophies.
+	 * @param trophies - The player's trophies
+	 */
+	playerInfoTrophiesFieldValue: (trophies: number) =>
+		`${Emojis.Trophy} ${trophies}` as const,
+
+	/**
+	 * The embed field name for the player's star points.
+	 */
+	playerInfoStarPointsFieldName: () => "Punti stella" as const,
+
+	/**
+	 * The embed field value for the player's star points.
+	 * @param starPoints - The player's star points
+	 */
+	playerInfoStarPointsFieldValue: (starPoints: number) =>
+		`${Emojis.Star} ${starPoints}` as const,
+
+	/**
+	 * The embed field name for the player's clan.
+	 */
+	playerInfoClanFieldName: () => "Clan" as const,
+
+	/**
+	 * The embed field value for the player's clan.
+	 * @param player - The player
+	 */
+	playerInfoClanFieldValue: (player: Player) =>
+		`${CustomEmojis.clanInvite} ${
+			player.clan
+				? `${hyperlink(
+						player.clan.name,
+						`https://royaleapi.com/clan/${player.clan.tag.slice(1)}`
+				  )} (${player.clan.tag}) - ${ClanMemberRole[player.role]}`
+				: "Nessuno"
+		}` as const,
+
+	/**
+	 * The description of a player card.
+	 * @param card - The card
+	 */
+	playerCardDescription: (card: PlayerCard) =>
+		`${bold(card.name)} (Liv. ${bold(card.displayLevel.toString())})` as const,
+
+	/**
+	 * The embed field name for the player's current deck.
+	 */
+	playerInfoCurrentDeckFieldName: () => "Mazzo battaglia" as const,
+
+	/**
+	 * The embed field value for the player's current deck.
+	 * @param player - The player
+	 */
+	playerInfoCurrentDeckFieldValue: (player: Player) => {
+		const deck = player.deck.map(Constants.playerCardDescription);
+
+		return `${deck.slice(0, 4).join(", ")}\n${deck
+			.slice(4)
+			.join(", ")} - ${hyperlink(
+			"Copia",
+			`https://link.clashroyale.com/deck/it?deck=${player.deck
+				.map((card) => card.id)
+				.join(";")}&id=${player.id.slice(1)}`
+		)} ${CustomEmojis.copyDeck}` as const;
+	},
+
+	/**
+	 * The embed field name for the player's best trophies in the current season.
+	 */
+	playerInfoCurrentBestTrophiesFieldName: () =>
+		"Trofei massimi in questa stagione" as const,
+
+	/**
+	 * The embed field value for the player's best trophies in the current season.
+	 * @param leagueStatistics - The player's league statistics
+	 */
+	playerInfoCurrentBestTrophiesFieldValue: (
+		leagueStatistics: APILeagueStatistics
+	) =>
+		`${Emojis.Trophy} ${leagueStatistics.currentSeason.bestTrophies}` as const,
+
+	/**
+	 * The embed field name for the player's best trophies in the previous season.
+	 */
+	playerInfoPreviousBestTrophiesFieldName: () => "Stagione precedente" as const,
+
+	/**
+	 * The embed field value for the player's best trophies in the previous season.
+	 * @param leagueStatistics - The player's league statistics
+	 */
+	playerInfoPreviousBestTrophiesFieldValue: (
+		leagueStatistics: APILeagueStatistics
+	) =>
+		`${Emojis.Trophy} ${leagueStatistics.previousSeason.bestTrophies}` as const,
+
+	/**
+	 * The embed field name for the player's best season.
+	 */
+	playerInfoBestSeasonFieldName: () => "Stagione migliore" as const,
+
+	/**
+	 * The embed field value for the player's best season.
+	 * @param leagueStatistics - The player's league statistics
+	 */
+	playerInfoBestSeasonFieldValue: (leagueStatistics: APILeagueStatistics) =>
+		`${Emojis.Trophy} ${leagueStatistics.bestSeason.trophies}` as const,
+
+	/**
+	 * The description of a player badge.
+	 * @param badge - The badge
+	 */
+	playerBadgeDescription: (badge: PlayerBadge) =>
+		`${bold(badge.name)}${
+			badge.isMultipleLevels() ? ` (Liv. ${badge.level}/${badge.levels})` : ""
+		}` as const,
+
+	/**
+	 * The embed field name for the player's badges.
+	 */
+	playerInfoBadgesFieldName: () => "Emblemi" as const,
+
+	/**
+	 * The embed field value for the player's badges.
+	 * @param badges - The player's badges
+	 */
+	playerInfoBadgesFieldValue: (badges: PlayerBadgeManager) =>
+		badges.map(Constants.playerBadgeDescription).join(", "),
+
+	/**
+	 * The embed field name for the player's wins.
+	 */
+	playerInfoWinsFieldName: () => "Vittorie" as const,
+
+	/**
+	 * The embed field value for the player's wins.
+	 * @param player - The player
+	 */
+	playerInfoWinsFieldValue: (player: Player) =>
+		`${CustomEmojis.win} ${player.wins} (${player.winPercentage.toFixed(
+			1
+		)}%)` as const,
+
+	/**
+	 * The embed field name for the player's three crown wins.
+	 */
+	playerInfoThreeCrownWinsFieldName: () => "Vittorie con tre corone" as const,
+
+	/**
+	 * The embed field value for the player's three crown wins.
+	 * @param player - The player
+	 */
+	playerInfoThreeCrownWinsFieldValue: (player: Player) =>
+		`${CustomEmojis.win}${CustomEmojis.win}${CustomEmojis.win} ${
+			player.threeCrownWins
+		} (${player.threeCrownWinPercentage.toFixed(1)}%)` as const,
+
+	/**
+	 * The embed field name for the player's losses.
+	 */
+	playerInfoLossesFieldName: () => "Sconfitte" as const,
+
+	/**
+	 * The embed field value for the player's losses.
+	 * @param player - The player
+	 */
+	playerInfoLossesFieldValue: (player: Player) =>
+		`${CustomEmojis.lose} ${player.losses} (${player.lossPercentage.toFixed(
+			1
+		)}%)` as const,
+
+	/**
+	 * The embed field name for the player's total matches.
+	 */
+	playerInfoTotalMatchesFieldName: () => "Totale partite" as const,
+
+	/**
+	 * The embed field value for the player's total matches.
+	 * @param player - The player
+	 */
+	playerInfoTotalMatchesFieldValue: (player: Player) =>
+		`${player.battleCount}` as const,
+
+	/**
+	 * The embed field name for the player's trophies record.
+	 */
+	playerInfoTrophiesRecordFieldName: () => "Record di trofei" as const,
+
+	/**
+	 * The embed field value for the player's trophies record.
+	 * @param player - The player
+	 */
+	playerInfoTrophiesRecordFieldValue: (player: Player) =>
+		`${Emojis.Trophy} ${player.bestTrophies}` as const,
+
+	/**
+	 * The embed field name for the player's card count.
+	 */
+	playerInfoCardCountFieldName: () => "Carte trovate" as const,
+
+	/**
+	 * The embed field value for the player's card count.
+	 * @param player - The player
+	 */
+	playerInfoCardCountFieldValue: (player: Player) =>
+		`${CustomEmojis.cards} ${player.cards.size}` as const,
+
+	/**
+	 * The embed field name for the player's week donations.
+	 */
+	playerInfoWeekDonationsFieldName: () =>
+		"Donazioni in questa settimana" as const,
+
+	/**
+	 * The embed field value for the player's week donations.
+	 * @param player - The player
+	 */
+	playerInfoWeekDonationsFieldValue: (player: Player) =>
+		`${CustomEmojis.donations} ${player.donationsPerWeek}` as const,
+
+	/**
+	 * The embed field name for the player's week received donations.
+	 */
+	playerInfoWeekReceivedDonationsFieldName: () =>
+		"Donazioni ricevute in questa settimana" as const,
+
+	/**
+	 * The embed field value for the player's week received donations.
+	 * @param player - The player
+	 */
+	playerInfoWeekReceivedDonationsFieldValue: (player: Player) =>
+		`${CustomEmojis.donations} ${player.donationsReceivedPerWeek}` as const,
+
+	/**
+	 * The embed field name for the player's total donations.
+	 */
+	playerInfoTotalDonationsFieldName: () => "Totale donazioni" as const,
+
+	/**
+	 * The embed field value for the player's total donations.
+	 * @param player - The player
+	 */
+	playerInfoTotalDonationsFieldValue: (player: Player) =>
+		`${CustomEmojis.donations} ${player.totalDonations}` as const,
+
+	/**
+	 * The embed field name for the player's favorite card.
+	 */
+	playerInfoFavoriteCardFieldName: () => "Carta preferita attuale" as const,
+
+	/**
+	 * The embed field value for the player's favorite card.
+	 * @param player - The player
+	 */
+	playerInfoFavoriteCardFieldValue: (player: Player) =>
+		`${player.favouriteCard.name} (Liv. ${player.favouriteCard.displayLevel})` as const,
+
+	/**
+	 * The embed field name for the player's old war stats.
+	 */
+	playerInfoOldWarStatsFieldName: () =>
+		"Veterano delle guerre tra clan" as const,
+
+	/**
+	 * The embed field value for the player's old war stats.
+	 * @param player - The player
+	 */
+	playerInfoOldWarStatsFieldValue: (player: Player) =>
+		`${bold("Vittorie giorno della guerra")}: ${player.oldWarDayWins} - ${bold(
+			"Carte del clan ottenute"
+		)}: ${player.oldClanCardsCollected}` as const,
+
+	/**
+	 * The embed field name for the player's challenge stats.
+	 */
+	playerInfoChallengeStatsFieldName: () => "Statistiche sfida" as const,
+
+	/**
+	 * The embed field value for the player's challenge stats.
+	 * @param player - The player
+	 */
+	playerInfoChallengeStatsFieldValue: (player: Player) =>
+		`${bold("Record vittorie")}: ${player.maxWinsInChallenge}\n${bold(
+			"Carte vinte"
+		)}: ${player.cardsWonInChallenges}` as const,
+
+	/**
+	 * The embed field name for the player's tournament stats.
+	 */
+	playerInfoTournamentStatsFieldName: () => "Statistiche del torneo" as const,
+
+	/**
+	 * The embed field value for the player's tournament stats.
+	 * @param player - The player
+	 */
+	playerInfoTournamentStatsFieldValue: (player: Player) =>
+		`${bold("Tornei giocati")}: ${player.tournamentBattleCount}\n${bold(
+			"Vittorie nel torneo"
+		)}: ${player.tournamentCardsWon}` as const,
+
+	/**
+	 * The embed field name for the player's achievements.
+	 */
+	playerInfoAchievementsFieldName: () => "Obiettivi" as const,
+
+	/**
+	 * The embed field value for the player's achievements.
+	 * @param player - The player
+	 */
+	playerInfoAchievementsFieldValue: (player: Player) =>
+		`${player.achievements
+			.map(
+				(achievement) =>
+					`• ${bold(achievement.name)}: ${achievement.info}${
+						achievement.level ? ` ${Emojis.Star.repeat(achievement.level)}` : ""
+					} - ${achievement.progress}/${achievement.target}${
+						achievement.completed
+							? ""
+							: ` (${achievement.percentage.toFixed(1)}%)`
+					}`
+			)
+			.join("\n")}` as const,
+
+	/**
+	 * The label for clan info.
+	 */
+	clanInfoLabel: () => "Info clan" as const,
+
+	/**
+	 * The message to display when no war is found.
+	 */
+	noWarFoundMessage: () => "Nessuna guerra trovata." as const,
+
+	/**
+	 * The embed title for a clan river race.
+	 * @param race - The race
+	 */
+	riverRaceInfoTitle: (race: FinishedRiverRace) =>
+		`Stagione ${race.seasonId} - Settimana ${race.weekNumber}` as const,
+
+	/**
+	 * The embed footer for a clan river race.
+	 */
+	riverRaceInfoFooter: () => "Guerra terminata il" as const,
+
+	/**
+	 * The embed field for a river race standing.
+	 * @param standing - The standing
+	 */
+	riverRaceInfoStandingField: (standing: RiverRaceWeekStanding) => {
+		const values = new Collection<string, string>()
+			.set("Punti", `${CustomEmojis.warPoint} ${standing.clan.points}`)
+			.set(
+				"Trofei guadagnati/persi",
+				`${CustomEmojis.warTrophy} ${standing.trophyChange}`
+			);
+
+		if (standing.pointsToOvertake != null)
+			values.set(
+				"Punti necessari per superare il clan in classifica",
+				`${CustomEmojis.warPoint} ${standing.pointsToOvertake}`
+			);
+		if (standing.clan.finishedAt != null)
+			values.set(
+				"Corsa terminata",
+				`${time(
+					standing.clan.finishedAt,
+					TimestampStyles.LongDateTime
+				)} (${time(standing.clan.finishedAt, TimestampStyles.RelativeTime)})`
+			);
+		values.set("Punteggio del clan", `${Emojis.Score} ${standing.clan.score}`);
+		values.set(
+			"Partecipanti",
+			`${CustomEmojis.clanMembers} ${
+				standing.clan.participants.filter((p) => Boolean(p.medals)).size
+			}`
+		);
+
+		return {
+			name: `${standing.rank}. ${standing.clan.name} (${standing.clan.tag})`,
+			value: values.map((v, k) => `${bold(k)}: ${v}`).join("\n"),
+		} as const;
+	},
+
+	/**
+	 * Description with information about a river race participant.
+	 * @param participant - The participant
+	 */
+	riverRaceParticipantDescription: (participant: RiverRaceParticipant) =>
+		`${Emojis.medal} ${participant.medals} - ${Emojis.Boat}${Emojis.Dagger} ${participant.boatAttacks} - ${Emojis.Deck} ${participant.decksUsed}` as const,
+
+	/**
+	 * Label with information about a river race participant.
+	 * @param participant - The participant
+	 * @param rank - The participant rank
+	 */
+	riverRaceParticipantLabel: (
+		participant: RiverRaceParticipant,
+		rank: number
+	) => `#${rank} ${participant.name} (${participant.tag})`,
 } as const;
 
 /**

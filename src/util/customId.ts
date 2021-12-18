@@ -41,7 +41,7 @@ export const destructureCustomButtonId = <T extends ButtonActions>(
 	const args = id.split("-") as ButtonActionsTypes[T];
 
 	return {
-		action: args.splice(0)[0] as T,
+		action: args.splice(0, 1)[0] as T,
 		args,
 	};
 };
@@ -60,7 +60,7 @@ export const destructureCustomMenuId = <T extends MenuActions>(
 	const args = id.split("-") as MenuActionsTypes[T];
 
 	return {
-		action: args.splice(0)[0] as T,
+		action: args.splice(0, 1)[0] as T,
 		args,
 	};
 };
