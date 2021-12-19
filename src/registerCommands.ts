@@ -3,12 +3,13 @@ import { APIVersion, Routes } from "discord-api-types/v9";
 import { config } from "dotenv";
 import { promises } from "node:fs";
 import { join } from "node:path";
+import { URL } from "node:url";
 import type { CommandOptions } from "./util";
 import Constants from "./util";
 
 console.time("Register slash commands");
 
-config({ path: join(__dirname, "../.env") });
+config({ path: join(process.cwd(), ".env") });
 
 const {
 	DISCORD_CLIENT_ID: applicationId,
@@ -19,14 +20,14 @@ const {
 const registerGlobal = GLOBAL_COMMANDS === "true";
 
 void promises
-	.readdir(join(__dirname, Constants.commandsFolderName()))
+	.readdir(new URL(Constants.commandsFolderName(), import.meta.url))
 	.then((files) =>
 		Promise.all(
 			files
 				.filter((file): file is `${string}.js` => file.endsWith(".js"))
 				.map(async (file) => {
 					const fileData = (await import(
-						join(__dirname, Constants.commandsFolderName(), file)
+						`./${Constants.commandsFolderName()}/${file}`
 					)) as { command: CommandOptions };
 					return fileData;
 				})

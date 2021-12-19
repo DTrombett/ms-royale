@@ -12,14 +12,13 @@ import { Constants, Util } from "discord.js";
 import { exec as nativeExec } from "node:child_process";
 import { promisify } from "node:util";
 import type { CommandOptions } from "../util";
-import { loadCommands, loadEvents, parseEval, restart } from "../util";
+import { parseEval, restart } from "../util";
 
 const enum SubCommands {
 	shell = "shell",
 	evalCmd = "eval",
 	test = "test",
 	ram = "ram",
-	reload = "reload",
 	restartCmd = "restart",
 	shutdown = "shutdown",
 	uptime = "uptime",
@@ -28,8 +27,6 @@ const enum SubCommands {
 const enum SubCommandOptions {
 	cmd = "cmd",
 	ephemeral = "ephemeral",
-	reloadCommands = "commands",
-	reloadEvents = "events",
 	process = "process",
 	rebuild = "rebuild",
 	registerCommands = "synccommands",
@@ -99,28 +96,6 @@ export const command: CommandOptions = {
 						)
 				)
 		)
-		.addSubcommand((reload) =>
-			reload
-				.setName(SubCommands.reload)
-				.setDescription("Ricarica i comandi e/o gli eventi del bot")
-				.addBooleanOption((reloadCommands) =>
-					reloadCommands
-						.setName(SubCommandOptions.reloadCommands)
-						.setDescription("Se ricaricare i comandi (default: true)")
-				)
-				.addBooleanOption((reloadEvents) =>
-					reloadEvents
-						.setName(SubCommandOptions.reloadEvents)
-						.setDescription("Se ricaricare gli eventi (default: true)")
-				)
-				.addBooleanOption((ephemeral) =>
-					ephemeral
-						.setName(SubCommandOptions.ephemeral)
-						.setDescription(
-							"Scegli se mostrare il risultato privatamente (default: true)"
-						)
-				)
-		)
 		.addSubcommand((restartCmd) =>
 			restartCmd
 				.setName(SubCommands.restartCmd)
@@ -170,16 +145,6 @@ export const command: CommandOptions = {
 					rebuild
 						.setName(SubCommandOptions.rebuild)
 						.setDescription("Ricompila il progetto con i nuovi cambiamenti")
-				)
-				.addBooleanOption((reloadCommands) =>
-					reloadCommands
-						.setName(SubCommandOptions.reloadCommands)
-						.setDescription("Ricarica i comandi")
-				)
-				.addBooleanOption((reloadEvents) =>
-					reloadEvents
-						.setName(SubCommandOptions.reloadEvents)
-						.setDescription("Ricarica gli eventi")
 				)
 				.addBooleanOption((registerCommands) =>
 					registerCommands
@@ -323,30 +288,6 @@ export const command: CommandOptions = {
 					embeds: [ramEmbed.toJSON()],
 				});
 				break;
-			case SubCommands.reload:
-				await exec("npm run build");
-
-				if (
-					interaction.options.getBoolean(SubCommandOptions.reloadCommands) ??
-					true
-				)
-					await Promise.all([
-						...this.client.commands.map((c) => c.reload()),
-						loadCommands(this.client),
-					]);
-				if (
-					interaction.options.getBoolean(SubCommandOptions.reloadEvents) ??
-					true
-				)
-					await Promise.all([
-						...this.client.events.map((e) => e.reload()),
-						loadEvents(this.client),
-					]);
-
-				await interaction.editReply({
-					content: `Ricaricato in ${bold(`${Date.now() - now}ms`)}`,
-				});
-				break;
 			case SubCommands.restartCmd:
 				if (interaction.options.getBoolean(SubCommandOptions.process) ?? true) {
 					const argvs = process.argv
@@ -371,6 +312,7 @@ export const command: CommandOptions = {
 					content: `Sto spegnendo il bot...`,
 				});
 				this.client.discord.destroy();
+				// eslint-disable-next-line no-process-exit
 				return process.exit(0);
 			case SubCommands.uptime:
 				const processUptime = new Date(Date.now() - process.uptime() * 1000);
@@ -402,12 +344,6 @@ export const command: CommandOptions = {
 				break;
 			case SubCommands.pull:
 				const cmds = ["git pull"];
-				const reloadCommands =
-					interaction.options.getBoolean(SubCommandOptions.reloadCommands) ??
-					false;
-				const reloadEvents =
-					interaction.options.getBoolean(SubCommandOptions.reloadEvents) ??
-					false;
 				const restartProcess =
 					interaction.options.getBoolean(SubCommandOptions.restartProcess) ??
 					false;
@@ -432,22 +368,10 @@ export const command: CommandOptions = {
 					)}\n${
 						restartProcess
 							? "Sto riavviando il processo per rendere effettivi i cambiamenti..."
-							: reloadCommands || reloadEvents
-							? "Sto ricaricando i comandi e/o gli eventi come richiesto"
 							: "Il bot è nuovamente pronto all'uso!"
 					}`,
 				});
 
-				if (reloadCommands)
-					await Promise.all([
-						...this.client.commands.map((c) => c.reload()),
-						loadCommands(this.client),
-					]);
-				if (reloadEvents)
-					await Promise.all([
-						...this.client.events.map((e) => e.reload()),
-						loadEvents(this.client),
-					]);
 				if (restartProcess) restart(this.client);
 
 				await interaction.editReply({

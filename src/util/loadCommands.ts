@@ -1,5 +1,6 @@
 import { promises } from "node:fs";
 import { join } from "node:path";
+import { URL } from "node:url";
 import type { CommandOptions } from ".";
 import type CustomClient from "../CustomClient";
 import Command from "./Command";
@@ -11,7 +12,9 @@ import Constants from "./Constants";
  */
 export const loadCommands = (client: CustomClient) =>
 	promises
-		.readdir(join(__dirname, "..", Constants.commandsFolderName()))
+		.readdir(
+			new URL(join("..", Constants.commandsFolderName()), import.meta.url)
+		)
 		.then((fileNames) =>
 			Promise.all(
 				fileNames
@@ -19,7 +22,7 @@ export const loadCommands = (client: CustomClient) =>
 					.map(
 						(fileName) =>
 							import(
-								join(__dirname, "..", Constants.commandsFolderName(), fileName)
+								`../${Constants.commandsFolderName()}/${fileName}`
 							) as Promise<{
 								command: CommandOptions;
 							}>

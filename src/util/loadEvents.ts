@@ -1,5 +1,6 @@
 import { promises } from "node:fs";
 import { join } from "node:path";
+import { URL } from "node:url";
 import type { EventOptions } from ".";
 import type CustomClient from "../CustomClient";
 import Constants from "./Constants";
@@ -11,7 +12,7 @@ import Event from "./Event";
  */
 export const loadEvents = (client: CustomClient) =>
 	promises
-		.readdir(join(__dirname, "..", Constants.eventsFolderName()))
+		.readdir(new URL(join("..", Constants.eventsFolderName()), import.meta.url))
 		.then((fileNames) =>
 			Promise.all(
 				fileNames
@@ -19,7 +20,7 @@ export const loadEvents = (client: CustomClient) =>
 					.map(
 						(fileName) =>
 							import(
-								join(__dirname, "..", Constants.eventsFolderName(), fileName)
+								`../${Constants.eventsFolderName()}/${fileName}`
 							) as Promise<{
 								event: EventOptions;
 							}>

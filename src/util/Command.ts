@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import type { AutocompleteInteraction, CommandInteraction } from "discord.js";
-import { join } from "node:path";
 import type { CommandOptions } from ".";
 import type CustomClient from "../CustomClient";
 import Constants from "./Constants";
@@ -89,24 +88,6 @@ export class Command {
 		if (options.run !== undefined) this._execute = options.run.bind(this);
 
 		return this;
-	}
-
-	/**
-	 * Reload this command
-	 * @returns The new command
-	 */
-	async reload() {
-		const path = join(
-			__dirname,
-			"..",
-			Constants.commandsFolderName(),
-			`${this.name}.js`
-		);
-		delete require.cache[require.resolve(path)];
-
-		return this.patch(
-			((await import(path)) as { command: CommandOptions }).command
-		);
 	}
 
 	/**

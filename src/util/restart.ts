@@ -14,6 +14,7 @@ export const restart = (client: CustomClient) => {
 		}).unref();
 	});
 	client.discord.destroy();
+	// eslint-disable-next-line no-process-exit
 	process.exit(0);
 };
 

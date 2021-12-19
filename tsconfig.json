@@ -17,6 +17,7 @@
 		"resolveJsonModule": true,
 		"outDir": "dist",
 		"pretty": true,
-		"sourceMap": true
+		"sourceMap": true,
+		"module": "ESNext",
 	}
 }

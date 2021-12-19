@@ -8,7 +8,8 @@
 	"extends": [
 		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended",
-		"plugin:@typescript-eslint/recommended-requiring-type-checking"
+		"plugin:@typescript-eslint/recommended-requiring-type-checking",
+		"plugin:node/recommended"
 	],
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
@@ -18,7 +19,8 @@
 		"tsconfigRootDir": "."
 	},
 	"plugins": [
-		"@typescript-eslint"
+		"@typescript-eslint",
+		"node"
 	],
 	"rules": {
 		"no-extend-native": "warn",
@@ -118,6 +120,25 @@
 		"no-useless-rename": "warn",
 		"no-var": "warn",
 		"no-warning-comments": "warn",
+		"node/no-missing-import": "off",
+		"node/no-unsupported-features/es-syntax": [
+			"error",
+			{
+				"ignores": [
+					"dynamicImport",
+					"modules"
+				]
+			}
+		],
+		"node/prefer-global/buffer": "warn",
+		"node/prefer-global/console": "warn",
+		"node/prefer-global/process": "warn",
+		"node/prefer-global/text-decoder": "warn",
+		"node/prefer-global/text-encoder": "warn",
+		"node/prefer-global/url-search-params": "warn",
+		"node/prefer-global/url": "warn",
+		"node/prefer-promises/dns": "warn",
+		"node/prefer-promises/fs": "warn",
 		"object-shorthand": "warn",
 		"prefer-arrow-callback": "warn",
 		"prefer-const": "warn",

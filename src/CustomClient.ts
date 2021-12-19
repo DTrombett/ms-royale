@@ -1,5 +1,5 @@
 import Collection from "@discordjs/collection";
-import ClientRoyale from "apiroyale";
+import { ClientRoyale } from "apiroyale";
 import { Client, Constants, Options } from "discord.js";
 import type { Command, Event } from "./util";
 import { loadCommands, loadEvents } from "./util";
