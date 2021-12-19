@@ -48,6 +48,7 @@ export const command: CommandOptions = {
 	data: new SlashCommandBuilder()
 		.setName("dev")
 		.setDescription("Comandi privati disponibili solo ai sviluppatori")
+		.setDefaultPermission(false)
 		.addSubcommand((shell) =>
 			shell
 				.setName(SubCommands.shell)
