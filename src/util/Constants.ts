@@ -17,6 +17,7 @@ import type {
 	RiverRaceWeekStanding,
 } from "apiroyale";
 import { ClanMemberRole, ClanType } from "apiroyale";
+import { OAuth2Scopes } from "discord-api-types/v9";
 import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
 import capitalize from "./capitalize";
@@ -936,6 +937,17 @@ export const Constants = {
 		participant: RiverRaceParticipant,
 		rank: number
 	) => `#${rank} ${participant.name} (${participant.tag})`,
+
+	/**
+	 * The invite URL for the bot.
+	 */
+	inviteUrl: () =>
+		`https://discord.com/api/oauth2/authorize?client_id=${process.env
+			.DISCORD_CLIENT_ID!}&scope=${
+			// TODO: This should be replaced with the discord application scopes provided by the API when they are ready.
+			// See https://github.com/discord/discord-api-docs/pull/4112
+			[OAuth2Scopes.ApplicationsCommands].join("%20")
+		}` as const,
 } as const;
 
 /**

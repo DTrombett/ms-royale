@@ -204,6 +204,11 @@ export const enum Emojis {
 	 * The emoji for crossed swords
 	 */
 	CrossedSwords = "⚔",
+
+	/**
+	 * The emoji for a robot
+	 */
+	Robot = "🤖",
 }
 
 /**
@@ -291,7 +296,7 @@ export const enum CustomEmojis {
 	warPoint = "<:warpoint:918522796747915304>",
 
 	/**
-	 * The emoji for a bot attack
+	 * The emoji for a boat attack
 	 */
 	boatAttack = "<:boatattack:918909257745825793>",
 
