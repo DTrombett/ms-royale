@@ -144,6 +144,7 @@
 		"prefer-const": "warn",
 		"prefer-destructuring": "warn",
 		"prefer-numeric-literals": "warn",
+		"prefer-object-has-own": "warn",
 		"prefer-promise-reject-errors": "warn",
 		"prefer-regex-literals": "warn",
 		"prefer-rest-params": "warn",
