@@ -27,7 +27,7 @@
     "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.7.0",
     "eslint": "^8.5.0",
     "prettier": "^2.5.1",
