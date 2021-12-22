@@ -18,7 +18,6 @@
 	"CLAN_INFO_SCORE": "Punteggio",
 	"CLAN_INFO_TYPE": "Tipo",
 	"CLAN_INFO_MEMBER_COUNT": "Membri",
-	"RIVER_RACE_LOG": "Guerre passate",
 	"PLAYER_INFO_LEVEL": "Livello",
 	"PLAYER_INFO_TROPHIES": "Trofei",
 	"PLAYER_INFO_STAR_POINTS": "Punti stella",
@@ -41,6 +40,7 @@
 	"PLAYER_INFO_CHALLENGE_STATISTICS": "Statistiche sfida",
 	"PLAYER_INFO_TOURNAMENT_STATISTICS": "Statistiche del torneo",
 	"PLAYER_INFO_ACHIEVEMENTS": "Obiettivi",
+	"RIVER_RACE_LOG": "Guerre passate",
 	"RIVER_RACE_NOT_FOUND": "Nessuna guerra trovata!",
 	"RIVER_RACE_FINISHED_AT": "Guerra terminata il"
 }
