@@ -9,8 +9,8 @@
     "build": "tsc",
     "lint": "eslint src --fix",
     "prettier": "prettier --write src/**/*.ts",
-    "commands": "node --experimental-specifier-resolution=node --enable-source-maps dist/registerCommands.js",
-    "start": "npm run build && node --experimental-specifier-resolution=node --enable-source-maps ./dist/index.js"
+    "commands": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings dist/registerCommands.js",
+    "start": "npm run build && node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings ./dist/index.js"
   },
   "author": "DTrombett",
   "engines": {

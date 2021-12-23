@@ -5,8 +5,9 @@ import type {
 	AutocompleteInteraction,
 } from "discord.js";
 import type CustomClient from "../CustomClient";
-import type { CommandOptions } from "../util";
 import Constants, {
+	CommandOptions,
+	getLocaleConstants,
 	MatchLevel,
 	matchStrings,
 	normalizeTag,
@@ -82,6 +83,8 @@ export const command: CommandOptions = {
 				)
 		),
 	async run(interaction) {
+		const constants = getLocaleConstants(interaction);
+
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Info:
 				// Display the player info
@@ -99,7 +102,7 @@ export const command: CommandOptions = {
 						)
 					)
 				);
-				await interaction.reply(Constants.subCommandNotRecognized());
+				await interaction.reply(constants.INVALID_COMMAND);
 				break;
 		}
 	},

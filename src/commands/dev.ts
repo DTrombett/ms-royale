@@ -232,7 +232,7 @@ export const command: CommandOptions = {
 							cmd.slice(0, 2000 - 100)
 						)}`
 					)}`,
-					embeds: embeds.map((e) => e.toJSON()),
+					embeds: embeds.map((e) => e),
 				});
 				break;
 			case SubCommands.evalCmd:
@@ -259,7 +259,7 @@ export const command: CommandOptions = {
 
 				await interaction.editReply({
 					content: `Eval elaborato in ${bold(`${Date.now() - now}ms`)}`,
-					embeds: [evalEmbed.toJSON()],
+					embeds: [evalEmbed],
 				});
 				break;
 			case SubCommands.ram:
@@ -286,7 +286,7 @@ export const command: CommandOptions = {
 
 				await interaction.editReply({
 					content: `Memoria calcolata in ${Date.now() - now}`,
-					embeds: [ramEmbed.toJSON()],
+					embeds: [ramEmbed],
 				});
 				break;
 			case SubCommands.restartCmd:
@@ -340,7 +340,7 @@ export const command: CommandOptions = {
 					content: `Process uptime calcolato in ${bold(
 						`${Date.now() - now}ms`
 					)}`,
-					embeds: [uptimeEmbed.toJSON()],
+					embeds: [uptimeEmbed],
 				});
 				break;
 			case SubCommands.pull:

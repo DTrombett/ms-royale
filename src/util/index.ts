@@ -15,6 +15,7 @@ export * from "./getSearchOptions";
 export * from "./handleSearchResults";
 export * from "./loadCommands";
 export * from "./loadEvents";
+export * from "./locales";
 export * from "./matchStrings";
 export * from "./normalizeTag";
 export * from "./playerInfo";

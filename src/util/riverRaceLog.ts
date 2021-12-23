@@ -16,10 +16,11 @@ import {
 	MessageSelectMenu,
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
-import Constants, { ButtonActions, MenuActions } from "./Constants";
+import Constants from "./Constants";
 import { buildCustomButtonId } from "./customId";
+import { getLocaleConstants } from "./locales";
 import normalizeTag from "./normalizeTag";
-import { Emojis } from "./types";
+import { ButtonActions, Emojis, MenuActions } from "./types";
 import validateTag from "./validateTag";
 
 const cache = new Collection<
@@ -38,11 +39,13 @@ export const riverRaceLog = async (
 	index?: number,
 	ephemeral?: boolean
 ) => {
+	const constants = getLocaleConstants(interaction);
+
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
 		return interaction
 			.reply({
-				content: Constants.invalidTag(),
+				content: constants.INVALID_TAG,
 				ephemeral: true,
 			})
 			.catch(console.error);
@@ -72,7 +75,7 @@ export const riverRaceLog = async (
 	if (race === undefined)
 		return interaction
 			.reply({
-				content: Constants.noWarFoundMessage(),
+				content: constants.RIVER_RACE_NOT_FOUND,
 				ephemeral: true,
 			})
 			.catch(console.error);
@@ -80,7 +83,7 @@ export const riverRaceLog = async (
 		.setTitle(Constants.riverRaceInfoTitle(race))
 		.setColor(DiscordCostants.Colors.BLURPLE)
 		.setFooter({
-			text: Constants.riverRaceInfoFooter(),
+			text: constants.RIVER_RACE_FINISHED_AT,
 		})
 		.setTimestamp(race.finishTime)
 		.addFields(
@@ -107,8 +110,8 @@ export const riverRaceLog = async (
 	const row2 = new MessageActionRow().addComponents(
 		new MessageButton()
 			.setCustomId(buildCustomButtonId(ButtonActions.ClanInfo, tag))
-			.setEmoji(Emojis.Info)
-			.setLabel(Constants.clanInfoLabel())
+			.setEmoji(Emojis.CrossedSwords)
+			.setLabel(constants.CLAN)
 			.setStyle(MessageButtonStyles.PRIMARY)
 	);
 	const row3 = new MessageActionRow().addComponents(
@@ -122,7 +125,7 @@ export const riverRaceLog = async (
 				)
 			)
 			.setEmoji(Emojis.BackArrow)
-			.setLabel(Constants.backButtonLabel())
+			.setLabel(constants.BACK)
 			.setStyle(MessageButtonStyles.PRIMARY)
 			.setDisabled(last),
 		new MessageButton()
@@ -135,13 +138,13 @@ export const riverRaceLog = async (
 				)
 			)
 			.setEmoji(Emojis.ForwardArrow)
-			.setLabel(Constants.afterButtonLabel())
+			.setLabel(constants.AFTER)
 			.setStyle(MessageButtonStyles.PRIMARY)
 			.setDisabled(index === undefined || index === 0)
 	);
 
 	return {
-		embeds: [embed.toJSON()],
+		embeds: [embed],
 		components: [row1, row2, row3],
 		ephemeral,
 	};

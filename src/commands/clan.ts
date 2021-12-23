@@ -5,9 +5,11 @@ import type {
 	AutocompleteInteraction,
 } from "discord.js";
 import type CustomClient from "../CustomClient";
-import type { CommandOptions } from "../util";
 import Constants, {
 	clanInfo,
+	CommandOptions,
+	getInteractionLocale,
+	getLocaleConstants,
 	handleSearchResults,
 	MatchLevel,
 	matchStrings,
@@ -146,6 +148,8 @@ export const command: CommandOptions = {
 				)
 		),
 	async run(interaction) {
+		const constants = getLocaleConstants(interaction);
+
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Info:
 				// Display the clan info
@@ -215,10 +219,13 @@ export const command: CommandOptions = {
 					.then((results) => {
 						// Display a message if no results were found
 						if (!results.size)
-							return interaction.reply(Constants.noClanFound());
+							return interaction.reply(constants.CLAN_NOT_FOUND);
 						// Display the results
 						return interaction.reply({
-							...handleSearchResults(results),
+							...handleSearchResults(
+								results,
+								getInteractionLocale(interaction)
+							),
 							content: Constants.clanSearchResultsContent(
 								interaction.user.id,
 								name,
@@ -261,7 +268,7 @@ export const command: CommandOptions = {
 						)
 					)
 				);
-				await interaction.reply(Constants.subCommandNotRecognized());
+				await interaction.reply(constants.INVALID_COMMAND);
 				break;
 		}
 	},

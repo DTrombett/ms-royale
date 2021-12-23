@@ -5,6 +5,7 @@ import Constants, {
 	clanInfo,
 	destructureCustomButtonId,
 	destructureCustomMenuId,
+	getInteractionLocale,
 	getSearchOptions,
 	handleSearchResults,
 	MenuActions,
@@ -60,6 +61,7 @@ client.discord
 		}
 		if (interaction.isButton()) {
 			const { action, args } = destructureCustomButtonId(interaction.customId);
+			const locale = getInteractionLocale(interaction);
 
 			switch (action) {
 				case ButtonActions.NextPage:
@@ -68,9 +70,9 @@ client.discord
 						.then((results) =>
 							interaction.user.id ===
 							interaction.message.content.split("<@")[1].split(">")[0]
-								? interaction.update(handleSearchResults(results))
+								? interaction.update(handleSearchResults(results, locale))
 								: interaction.reply({
-										...handleSearchResults(results),
+										...handleSearchResults(results, locale),
 										content: interaction.message.content,
 										ephemeral: true,
 								  })
@@ -82,9 +84,9 @@ client.discord
 						.then((results) =>
 							interaction.user.id ===
 							interaction.message.content.split("<@")[1].split(">")[0]
-								? interaction.update(handleSearchResults(results))
+								? interaction.update(handleSearchResults(results, locale))
 								: interaction.reply({
-										...handleSearchResults(results),
+										...handleSearchResults(results, locale),
 										content: interaction.message.content,
 										ephemeral: true,
 								  })

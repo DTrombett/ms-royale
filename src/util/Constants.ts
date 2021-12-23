@@ -20,8 +20,9 @@ import { ClanMemberRole, ClanType } from "apiroyale";
 import { OAuth2Scopes } from "discord-api-types/v9";
 import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
+import it from "../locales/it.json";
 import capitalize from "./capitalize";
-import { CustomEmojis, Emojis } from "./types";
+import { CustomEmojis, Emojis, SupportedLocales } from "./types";
 
 /**
  * Constants about time
@@ -125,21 +126,11 @@ export const Constants = {
 	mainClanTag: () => "#L2Y2L2PC" as const,
 
 	/**
-	 * The embed title shown when the clan is updated.
-	 */
-	clanUpdatedEmbedTitle: () => "Clan aggiornato!" as const,
-
-	/**
 	 * The link of RoyaleAPI for a clan.
 	 * @param clanTag - The tag of the clan
 	 */
 	clanLink: (clanTag: APITag) =>
 		`https://royaleapi.com/clan/${clanTag.slice(1)}` as const,
-
-	/**
-	 * The embed field name shown when the clan name is updated.
-	 */
-	clanNameUpdatedFieldName: () => "Nome" as const,
 
 	/**
 	 * The embed field value shown when the clan name is updated.
@@ -155,11 +146,6 @@ export const Constants = {
 		)}` as const,
 
 	/**
-	 * The embed field name shown when the clan description is updated.
-	 */
-	clanDescriptionUpdatedFieldName: () => "Descrizione" as const,
-
-	/**
 	 * The embed field value shown when the clan description is updated.
 	 * @param oldClanDescription - The old clan description
 	 * @param newClanDescription - The new clan description
@@ -168,14 +154,10 @@ export const Constants = {
 		oldClanDescription: string,
 		newClanDescription: string
 	) =>
+		// TODO: Translate
 		`${bold("Prima")}: ${Util.escapeMarkdown(oldClanDescription)}\n${bold(
 			"Dopo"
 		)}: ${Util.escapeMarkdown(newClanDescription)}` as const,
-
-	/**
-	 * The embed field name shown when the clan badge id is updated.
-	 */
-	clanBadgeIdUpdatedFieldName: () => "Badge" as const,
 
 	/**
 	 * The embed field value shown when the clan badge id is updated.
@@ -191,11 +173,6 @@ export const Constants = {
 		)}` as const,
 
 	/**
-	 * The embed field name shown when the clan location is updated.
-	 */
-	clanLocationUpdatedFieldName: () => "Posizione" as const,
-
-	/**
 	 * The embed field value shown when the clan location is updated.
 	 * @param oldClanLocation - The old clan location
 	 * @param newClanLocation - The new clan location
@@ -209,11 +186,6 @@ export const Constants = {
 		)}` as const,
 
 	/**
-	 * The embed field name shown when the clan required trophies are updated.
-	 */
-	clanRequiredTrophiesUpdatedFieldName: () => "Trofei richiesti" as const,
-
-	/**
 	 * The embed field value shown when the clan required trophies are updated.
 	 * @param oldClanRequiredTrophies - The old clan required trophies
 	 * @param newClanRequiredTrophies - The new clan required trophies
@@ -225,22 +197,12 @@ export const Constants = {
 		`🏆 ${oldClanRequiredTrophies} => 🏆 ${newClanRequiredTrophies}` as const,
 
 	/**
-	 * The embed field name shown when the clan type is updated.
-	 */
-	clanTypeUpdatedFieldName: () => "Tipo" as const,
-
-	/**
 	 * The embed field value shown when the clan type is updated.
 	 * @param oldClanType - The old clan type
 	 * @param newClanType - The new clan type
 	 */
 	clanTypeUpdatedFieldValue: (oldClanType: ClanType, newClanType: ClanType) =>
 		`${ClanType[oldClanType]} => ${ClanType[newClanType]}` as const,
-
-	/**
-	 * The embed field name shown when a clan member left.
-	 */
-	clanMemberLeftFieldName: () => `Un membro è uscito` as const,
 
 	/**
 	 * The embed field value shown when a clan member left.
@@ -250,11 +212,6 @@ export const Constants = {
 		`#${member.rank} ${bold(Util.escapeMarkdown(member.name))} (${
 			member.tag
 		}) - 🏆 ${member.trophies}` as const,
-
-	/**
-	 * The embed field name shown when a clan member joined.
-	 */
-	clanMemberJoinedFieldName: () => `Un membro è entrato` as const,
 
 	/**
 	 * The embed field value shown when a clan member joined.
@@ -286,32 +243,11 @@ export const Constants = {
 	zeroWidthSpace: () => "\u200b" as const,
 
 	/**
-	 * No clan was found.
-	 */
-	noClanFound: () =>
-		"Non ho trovato nessun clan con queste caratteristiche!" as const,
-
-	/**
 	 * Description with information about a clan.
 	 * @param clan - The clan
 	 */
 	clanInfo: (clan: ClanResultPreview) =>
 		`${Emojis.People}${clan.memberCount}/50 - ${Emojis.Score}${clan.score} - ${Emojis.MoneyWithWings}${clan.donationsPerWeek} - ${Emojis.Trophy}${clan.requiredTrophies} - ${Emojis.Location}${clan.location.name}` as const,
-
-	/**
-	 * The placeholder for the clan info menu.
-	 */
-	clanInfoPlaceholder: () => "Scegli un clan..." as const,
-
-	/**
-	 * The label for the back button.
-	 */
-	backButtonLabel: () => "Precedente" as const,
-
-	/**
-	 * The label for the after button.
-	 */
-	afterButtonLabel: () => "Successivo" as const,
 
 	/**
 	 * The content of the message with the clan search results.
@@ -324,6 +260,7 @@ export const Constants = {
 		maxMembers?: number,
 		minScore?: number
 	) =>
+		// TODO: Translate
 		`Risultati per la seguente ricerca richiesta da <@${user}>:\n\n${bold(
 			"Nome"
 		)}: ${name != null ? Util.escapeMarkdown(name) : "-"}\n${bold(
@@ -333,12 +270,6 @@ export const Constants = {
 		}\n${bold("Massimo membri")}: ${maxMembers ?? "-"}\n${bold(
 			"Punteggio minimo"
 		)}: ${minScore ?? "-"}` as const,
-
-	/**
-	 * Invalid tag provided.
-	 */
-	invalidTag: () =>
-		"Hai inserito un tag non valido!\nI caratteri validi nei tag sono: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V" as const,
 
 	/**
 	 * Bot owners.
@@ -360,11 +291,6 @@ export const Constants = {
 		`${player.name} (${player.tag})` as const,
 
 	/**
-	 * The message to display when a subcommand is not recognized.
-	 */
-	subCommandNotRecognized: () => "Comando non riconosciuto!" as const,
-
-	/**
 	 * The message to log when a command is not recognized.
 	 * @param command - The command
 	 */
@@ -379,21 +305,11 @@ export const Constants = {
 		`${clan.name} (${clan.tag})` as const,
 
 	/**
-	 * The footer of the clan info embed.
-	 */
-	clanInfoFooter: () => "Ultimo aggiornamento" as const,
-
-	/**
 	 * The url of the clan info embed.
 	 * @param clan - The clan
 	 */
 	clanInfoUrl: (clan: ClanPreview) =>
 		`https://royaleapi.com/clan/${clan.tag.slice(1)}` as const,
-
-	/**
-	 * The clan info embed field name for war trophies.
-	 */
-	clanInfoWarTrophiesFieldName: () => "Trofei guerra tra clan" as const,
 
 	/**
 	 * The clan info embed field value for war trophies.
@@ -403,21 +319,11 @@ export const Constants = {
 		`${CustomEmojis.warTrophy} ${warTrophies}` as const,
 
 	/**
-	 * The clan info embed field name for the location.
-	 */
-	clanInfoLocationFieldName: () => "Posizione" as const,
-
-	/**
 	 * The clan info embed field value for the location.
 	 * @param location - The location
 	 */
 	clanInfoLocationFieldValue: (location: Location) =>
 		`${Emojis.Location} ${location.name}` as const,
-
-	/**
-	 * The clan info embed field name for the clan's required trophies.
-	 */
-	clanInfoRequiredTrophiesFieldName: () => "Trofei richiesti" as const,
 
 	/**
 	 * The clan info embed field value for the clan's required trophies.
@@ -427,21 +333,11 @@ export const Constants = {
 		`${Emojis.Trophy} ${requiredTrophies}` as const,
 
 	/**
-	 * The clan info embed field name for the clan's donations per week.
-	 */
-	clanInfoDonationsPerWeekFieldName: () => "Donazioni settimanali" as const,
-
-	/**
 	 * The clan info embed field value for the clan's donations per week.
 	 * @param donationsPerWeek - The clan's donations per week
 	 */
 	clanInfoDonationsPerWeekFieldValue: (donationsPerWeek: number) =>
 		`${CustomEmojis.donations} ${donationsPerWeek}` as const,
-
-	/**
-	 * The clan info embed field name for the clan's score.
-	 */
-	clanInfoScoreFieldName: () => "Punteggio" as const,
 
 	/**
 	 * The clan info embed field value for the clan's score.
@@ -451,21 +347,11 @@ export const Constants = {
 		`${Emojis.Score} ${score}` as const,
 
 	/**
-	 * The clan info embed field name for the clan's type.
-	 */
-	clanInfoTypeFieldName: () => "Tipo" as const,
-
-	/**
 	 * The clan info embed field value for the clan's type.
 	 * @param type - The clan's type
 	 */
 	clanInfoTypeFieldValue: (type: ClanType) =>
 		`${capitalize(ClanType[type])}` as const,
-
-	/**
-	 * The clan info embed field name for the clan's member count.
-	 */
-	clanInfoMemberCountFieldName: () => "Membri" as const,
 
 	/**
 	 * The clan info embed field value for the clan's member count.
@@ -491,16 +377,6 @@ export const Constants = {
 		`#${member.rank} ${member.name} (${member.tag})` as const,
 
 	/**
-	 * Placeholder for the clan members list.
-	 */
-	clanMembersPlaceholder: () => "Membri del clan" as const,
-
-	/**
-	 * Label for the clan river race log button.
-	 */
-	riverRaceLogLabel: () => "Guerre passate" as const,
-
-	/**
 	 * The embed title of a player info embed.
 	 * @param player - The player
 	 */
@@ -508,20 +384,10 @@ export const Constants = {
 		`${player.name} (${player.tag})` as const,
 
 	/**
-	 * The embed footer of a player info embed.
-	 */
-	playerInfoFooter: () => "Ultimo aggiornamento" as const,
-
-	/**
 	 * The url for player info.
 	 */
 	playerInfoUrl: (player: Player) =>
 		`https://royaleapi.com/player/${player.tag.slice(1)}` as const,
-
-	/**
-	 * The embed field name for the player's level.
-	 */
-	playerInfoLevelFieldName: () => "Livello" as const,
 
 	/**
 	 * The embed field value for the player's level.
@@ -533,11 +399,6 @@ export const Constants = {
 		)} exp)` as const,
 
 	/**
-	 * The embed field name for the player's trophies.
-	 */
-	playerInfoTrophiesFieldName: () => "Trofei" as const,
-
-	/**
 	 * The embed field value for the player's trophies.
 	 * @param trophies - The player's trophies
 	 */
@@ -545,21 +406,11 @@ export const Constants = {
 		`${Emojis.Trophy} ${trophies}` as const,
 
 	/**
-	 * The embed field name for the player's star points.
-	 */
-	playerInfoStarPointsFieldName: () => "Punti stella" as const,
-
-	/**
 	 * The embed field value for the player's star points.
 	 * @param starPoints - The player's star points
 	 */
 	playerInfoStarPointsFieldValue: (starPoints: number) =>
 		`${Emojis.Star} ${starPoints}` as const,
-
-	/**
-	 * The embed field name for the player's clan.
-	 */
-	playerInfoClanFieldName: () => "Clan" as const,
 
 	/**
 	 * The embed field value for the player's clan.
@@ -572,7 +423,8 @@ export const Constants = {
 						player.clan.name,
 						`https://royaleapi.com/clan/${player.clan.tag.slice(1)}`
 				  )} (${player.clan.tag}) - ${ClanMemberRole[player.role]}`
-				: "Nessuno"
+				: // TODO: Translate
+				  "Nessuno"
 		}` as const,
 
 	/**
@@ -581,11 +433,6 @@ export const Constants = {
 	 */
 	playerCardDescription: (card: PlayerCard) =>
 		`${bold(card.name)} (Liv. ${bold(card.displayLevel.toString())})` as const,
-
-	/**
-	 * The embed field name for the player's current deck.
-	 */
-	playerInfoCurrentDeckFieldName: () => "Mazzo battaglia" as const,
 
 	/**
 	 * The embed field value for the player's current deck.
@@ -597,18 +444,13 @@ export const Constants = {
 		return `${deck.slice(0, 4).join(", ")}\n${deck
 			.slice(4)
 			.join(", ")} - ${hyperlink(
+			// TODO: Translate
 			"Copia",
 			`https://link.clashroyale.com/deck/it?deck=${player.deck
 				.map((card) => card.id)
 				.join(";")}&id=${player.id.slice(1)}`
 		)} ${CustomEmojis.copyDeck}` as const;
 	},
-
-	/**
-	 * The embed field name for the player's best trophies in the current season.
-	 */
-	playerInfoCurrentBestTrophiesFieldName: () =>
-		"Trofei massimi in questa stagione" as const,
 
 	/**
 	 * The embed field value for the player's best trophies in the current season.
@@ -620,11 +462,6 @@ export const Constants = {
 		`${Emojis.Trophy} ${leagueStatistics.currentSeason.bestTrophies}` as const,
 
 	/**
-	 * The embed field name for the player's best trophies in the previous season.
-	 */
-	playerInfoPreviousBestTrophiesFieldName: () => "Stagione precedente" as const,
-
-	/**
 	 * The embed field value for the player's best trophies in the previous season.
 	 * @param leagueStatistics - The player's league statistics
 	 */
@@ -632,11 +469,6 @@ export const Constants = {
 		leagueStatistics: APILeagueStatistics
 	) =>
 		`${Emojis.Trophy} ${leagueStatistics.previousSeason.bestTrophies}` as const,
-
-	/**
-	 * The embed field name for the player's best season.
-	 */
-	playerInfoBestSeasonFieldName: () => "Stagione migliore" as const,
 
 	/**
 	 * The embed field value for the player's best season.
@@ -655,21 +487,11 @@ export const Constants = {
 		}` as const,
 
 	/**
-	 * The embed field name for the player's badges.
-	 */
-	playerInfoBadgesFieldName: () => "Emblemi" as const,
-
-	/**
 	 * The embed field value for the player's badges.
 	 * @param badges - The player's badges
 	 */
 	playerInfoBadgesFieldValue: (badges: PlayerBadgeManager) =>
 		badges.map(Constants.playerBadgeDescription).join(", "),
-
-	/**
-	 * The embed field name for the player's wins.
-	 */
-	playerInfoWinsFieldName: () => "Vittorie" as const,
 
 	/**
 	 * The embed field value for the player's wins.
@@ -681,11 +503,6 @@ export const Constants = {
 		)}%)` as const,
 
 	/**
-	 * The embed field name for the player's three crown wins.
-	 */
-	playerInfoThreeCrownWinsFieldName: () => "Vittorie con tre corone" as const,
-
-	/**
 	 * The embed field value for the player's three crown wins.
 	 * @param player - The player
 	 */
@@ -693,11 +510,6 @@ export const Constants = {
 		`${CustomEmojis.win}${CustomEmojis.win}${CustomEmojis.win} ${
 			player.threeCrownWins
 		} (${player.threeCrownWinPercentage.toFixed(1)}%)` as const,
-
-	/**
-	 * The embed field name for the player's losses.
-	 */
-	playerInfoLossesFieldName: () => "Sconfitte" as const,
 
 	/**
 	 * The embed field value for the player's losses.
@@ -709,21 +521,11 @@ export const Constants = {
 		)}%)` as const,
 
 	/**
-	 * The embed field name for the player's total matches.
-	 */
-	playerInfoTotalMatchesFieldName: () => "Totale partite" as const,
-
-	/**
 	 * The embed field value for the player's total matches.
 	 * @param player - The player
 	 */
 	playerInfoTotalMatchesFieldValue: (player: Player) =>
 		`${player.battleCount}` as const,
-
-	/**
-	 * The embed field name for the player's trophies record.
-	 */
-	playerInfoTrophiesRecordFieldName: () => "Record di trofei" as const,
 
 	/**
 	 * The embed field value for the player's trophies record.
@@ -733,22 +535,11 @@ export const Constants = {
 		`${Emojis.Trophy} ${player.bestTrophies}` as const,
 
 	/**
-	 * The embed field name for the player's card count.
-	 */
-	playerInfoCardCountFieldName: () => "Carte trovate" as const,
-
-	/**
 	 * The embed field value for the player's card count.
 	 * @param player - The player
 	 */
 	playerInfoCardCountFieldValue: (player: Player) =>
 		`${CustomEmojis.cards} ${player.cards.size}` as const,
-
-	/**
-	 * The embed field name for the player's week donations.
-	 */
-	playerInfoWeekDonationsFieldName: () =>
-		"Donazioni in questa settimana" as const,
 
 	/**
 	 * The embed field value for the player's week donations.
@@ -758,22 +549,11 @@ export const Constants = {
 		`${CustomEmojis.donations} ${player.donationsPerWeek}` as const,
 
 	/**
-	 * The embed field name for the player's week received donations.
-	 */
-	playerInfoWeekReceivedDonationsFieldName: () =>
-		"Donazioni ricevute in questa settimana" as const,
-
-	/**
 	 * The embed field value for the player's week received donations.
 	 * @param player - The player
 	 */
 	playerInfoWeekReceivedDonationsFieldValue: (player: Player) =>
 		`${CustomEmojis.donations} ${player.donationsReceivedPerWeek}` as const,
-
-	/**
-	 * The embed field name for the player's total donations.
-	 */
-	playerInfoTotalDonationsFieldName: () => "Totale donazioni" as const,
 
 	/**
 	 * The embed field value for the player's total donations.
@@ -783,64 +563,42 @@ export const Constants = {
 		`${CustomEmojis.donations} ${player.totalDonations}` as const,
 
 	/**
-	 * The embed field name for the player's favorite card.
-	 */
-	playerInfoFavoriteCardFieldName: () => "Carta preferita attuale" as const,
-
-	/**
 	 * The embed field value for the player's favorite card.
 	 * @param player - The player
 	 */
 	playerInfoFavoriteCardFieldValue: (player: Player) =>
+		// TODO: Translate
 		`${player.favouriteCard.name} (Liv. ${player.favouriteCard.displayLevel})` as const,
-
-	/**
-	 * The embed field name for the player's old war stats.
-	 */
-	playerInfoOldWarStatsFieldName: () =>
-		"Veterano delle guerre tra clan" as const,
 
 	/**
 	 * The embed field value for the player's old war stats.
 	 * @param player - The player
 	 */
 	playerInfoOldWarStatsFieldValue: (player: Player) =>
+		// TODO: Translate
 		`${bold("Vittorie giorno della guerra")}: ${player.oldWarDayWins} - ${bold(
 			"Carte del clan ottenute"
 		)}: ${player.oldClanCardsCollected}` as const,
-
-	/**
-	 * The embed field name for the player's challenge stats.
-	 */
-	playerInfoChallengeStatsFieldName: () => "Statistiche sfida" as const,
 
 	/**
 	 * The embed field value for the player's challenge stats.
 	 * @param player - The player
 	 */
 	playerInfoChallengeStatsFieldValue: (player: Player) =>
+		// TODO: Translate
 		`${bold("Record vittorie")}: ${player.maxWinsInChallenge}\n${bold(
 			"Carte vinte"
 		)}: ${player.cardsWonInChallenges}` as const,
-
-	/**
-	 * The embed field name for the player's tournament stats.
-	 */
-	playerInfoTournamentStatsFieldName: () => "Statistiche del torneo" as const,
 
 	/**
 	 * The embed field value for the player's tournament stats.
 	 * @param player - The player
 	 */
 	playerInfoTournamentStatsFieldValue: (player: Player) =>
+		// TODO: Translate
 		`${bold("Tornei giocati")}: ${player.tournamentBattleCount}\n${bold(
 			"Vittorie nel torneo"
 		)}: ${player.tournamentCardsWon}` as const,
-
-	/**
-	 * The embed field name for the player's achievements.
-	 */
-	playerInfoAchievementsFieldName: () => "Obiettivi" as const,
 
 	/**
 	 * The embed field value for the player's achievements.
@@ -861,32 +619,19 @@ export const Constants = {
 			.join("\n")}` as const,
 
 	/**
-	 * The label for clan info.
-	 */
-	clanInfoLabel: () => "Info clan" as const,
-
-	/**
-	 * The message to display when no war is found.
-	 */
-	noWarFoundMessage: () => "Nessuna guerra trovata." as const,
-
-	/**
 	 * The embed title for a clan river race.
 	 * @param race - The race
 	 */
 	riverRaceInfoTitle: (race: FinishedRiverRace) =>
+		// TODO: Translate
 		`Stagione ${race.seasonId} - Settimana ${race.weekNumber}` as const,
-
-	/**
-	 * The embed footer for a clan river race.
-	 */
-	riverRaceInfoFooter: () => "Guerra terminata il" as const,
 
 	/**
 	 * The embed field for a river race standing.
 	 * @param standing - The standing
 	 */
 	riverRaceInfoStandingField: (standing: RiverRaceWeekStanding) => {
+		// TODO: Translate
 		const values = new Collection<string, string>()
 			.set("Punti", `${CustomEmojis.warPoint} ${standing.clan.points}`)
 			.set(
@@ -943,106 +688,19 @@ export const Constants = {
 	 */
 	inviteUrl: () =>
 		`https://discord.com/api/oauth2/authorize?client_id=${process.env
-			.DISCORD_CLIENT_ID!}&scope=${
-			// TODO: This should be replaced with the discord application scopes provided by the API when they are ready.
-			// See https://github.com/discord/discord-api-docs/pull/4112
-			[OAuth2Scopes.ApplicationsCommands].join("%20")
-		}` as const,
+			.DISCORD_CLIENT_ID!}&scope=${[OAuth2Scopes.ApplicationsCommands].join(
+			"%20"
+		)}` as const,
 } as const;
 
 /**
- * Values used as custom identifiers for select menus
+ * The constants for every supported language
  */
-export const enum MenuActions {
-	/**
-	 * Show info about a player
-	 */
-	PlayerInfo = "player",
-
-	/**
-	 * Show info about a clan
-	 */
-	ClanInfo = "clan",
-}
-
-/**
- * Types of other arguments for button actions
- */
-
-export type MenuActionsTypes = {
-	[MenuActions.PlayerInfo]: [];
-	[MenuActions.ClanInfo]: [];
+export type LocaleConstants = {
+	[key in SupportedLocales]: typeof it;
 };
-
-/**
- * Values used as custom identifiers for buttons
- */
-
-export const enum ButtonActions {
-	/**
-	 * Show the next page
-	 */
-	NextPage = "after",
-
-	/**
-	 * Show the previous page
-	 */
-	PreviousPage = "before",
-
-	/**
-	 * Show the river race log of a clan
-	 */
-	RiverRaceLog = "rrlog",
-
-	/**
-	 * Show clan's info
-	 */
-	ClanInfo = "clan",
-}
-
-/**
- * Types of other arguments for button actions
- */
-
-export type ButtonActionsTypes = {
-	[ButtonActions.NextPage]: [cursor: string];
-	[ButtonActions.PreviousPage]: [cursor: string];
-	[ButtonActions.RiverRaceLog]: [
-		clan: APITag,
-		index?: number,
-		userId?: Snowflake
-	];
-	[ButtonActions.ClanInfo]: [clan: APITag];
+export const LocaleConstants = {
+	[SupportedLocales.Italiano]: it,
 };
-
-/**
- * The match level from comparing 2 strings
- */
-export const enum MatchLevel {
-	/**
-	 * The strings don't match at all
-	 */
-	None,
-
-	/**
-	 * The second string is a substring of the first one
-	 */
-	Partial,
-
-	/**
-	 * The second string is at the end of the first one
-	 */
-	End,
-
-	/**
-	 * The second string is at the beginning of the first one
-	 */
-	Start,
-
-	/**
-	 * The second string is the same as the first one
-	 */
-	Full,
-}
 
 export default Constants;
