@@ -1,28 +1,16 @@
-import { Location, ValueOf } from "apiroyale";
-import { LocaleConstants } from "./Constants";
-import { ReplyableInteraction, SupportedLocales } from "./types";
+import { Location } from "apiroyale";
+import { AutocompleteInteraction } from "discord.js";
+import { LocaleCodes, ReplyableInteraction } from "./types";
 
 /**
- * Check if a string is a supported locale.
- * @param locale - The locale to check
+ * Checks if a location has a valid Discord locale corrispondence.
+ * @param location - A Clash Royale location
  */
-export const isSupportedLocale = (
-	locale?: string
-): locale is SupportedLocales =>
-	typeof locale === "string" && Object.keys(SupportedLocales).includes(locale);
-
-/**
- * Convert a discord locale to a Clash Royale locale.
- * @param locale - The locale to get the name for
- * @returns The name of the locale, if it's supported
- */
-export const localeToRoyaleLocale = (
-	locale: string
-): SupportedLocales | undefined => {
-	const discordLocale = locale.split("-").at(-1)!.toUpperCase();
-
-	return isSupportedLocale(discordLocale) ? discordLocale : undefined;
-};
+export const isSupportedLocation = (
+	location: Location
+): location is Location & { countryCode: keyof typeof LocaleCodes } =>
+	location.isCountry() &&
+	Object.keys(LocaleCodes).includes(location.countryCode);
 
 /**
  * Get the locale for a discord interaction, or the default locale if it's not supported.
@@ -30,35 +18,15 @@ export const localeToRoyaleLocale = (
  * @returns The Clash Royale locale for the interaction
  */
 export const getInteractionLocale = (
-	_interaction: ReplyableInteraction
-): SupportedLocales =>
-	// TODO: change this to `discordLocaleToRoyaleLocale(interaction.locale) ?? SupportedLocales.Default`
-	SupportedLocales.Default;
+	_interaction: AutocompleteInteraction | ReplyableInteraction
+): string | undefined =>
+	// TODO: change this to `interaction.locale`
+	undefined;
 
 /**
  * Get the locale for a Location structure, or the default locale if it's not supported.
  * @param location - The location to get the locale for
  * @returns The Clash Royale locale for the location
  */
-export const locationToLocale = (location: Location): SupportedLocales =>
-	isSupportedLocale(location.countryCode)
-		? location.countryCode
-		: SupportedLocales.Default;
-
-/**
- * Get the constants for an element, or the default constants if it's not supported.
- * @param element - The element to get the constants for
- * @returns The constants for the element
- */
-export const getLocaleConstants = (
-	element: Location | ReplyableInteraction | string
-): ValueOf<LocaleConstants> =>
-	LocaleConstants[
-		(element instanceof Location
-			? locationToLocale(element)
-			: typeof element === "string"
-			? isSupportedLocale(element)
-				? element
-				: localeToRoyaleLocale(element)
-			: getInteractionLocale(element)) ?? SupportedLocales.Default
-	];
+export const locationToLocale = (location: Location): LocaleCodes | undefined =>
+	isSupportedLocation(location) ? LocaleCodes[location.countryCode] : undefined;

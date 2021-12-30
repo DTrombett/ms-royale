@@ -1,4 +1,7 @@
 import { config } from "dotenv";
+import { use } from "i18next";
+import Backend from "i18next-fs-backend";
+import { fileURLToPath, URL } from "node:url";
 import CustomClient from "./CustomClient";
 import Constants, {
 	ButtonActions,
@@ -7,7 +10,7 @@ import Constants, {
 	destructureCustomMenuId,
 	getInteractionLocale,
 	getSearchOptions,
-	handleSearchResults,
+	searchClan,
 	MenuActions,
 	playerInfo,
 	riverRaceLog,
@@ -18,6 +21,20 @@ config();
 console.time(Constants.clientOnlineLabel());
 
 const client = new CustomClient();
+
+await use(Backend).init({
+	backend: {
+		loadPath: fileURLToPath(
+			new URL("../locales/{{lng}}/{{ns}}.json", import.meta.url)
+		),
+	},
+	cleanCode: true,
+	fallbackLng: "it",
+	defaultNS: "translation",
+	lng: "it",
+	ns: ["translation"],
+	debug: true,
+});
 
 client.discord
 	.on("ready", async (discord) => {
@@ -32,7 +49,7 @@ client.discord
 		]);
 		console.timeEnd(Constants.clientOnlineLabel());
 	})
-	.on("interactionCreate", (interaction) => {
+	.on("interactionCreate", async (interaction) => {
 		if (interaction.isCommand()) {
 			void client.commands.get(interaction.commandName)?.run(interaction);
 			return;
@@ -45,13 +62,26 @@ client.discord
 		}
 		if (interaction.isSelectMenu()) {
 			const { action } = destructureCustomMenuId(interaction.customId);
+			const lng = getInteractionLocale(interaction);
 
 			switch (action) {
 				case MenuActions.ClanInfo:
-					void clanInfo(client, interaction, interaction.values[0], true);
+					interaction
+						.reply({
+							...(await clanInfo(client, interaction.values[0], {
+								lng,
+								ephemeral: true,
+							})),
+						})
+						.catch(console.error);
 					break;
 				case MenuActions.PlayerInfo:
-					void playerInfo(client, interaction, interaction.values[0], true);
+					await interaction.reply({
+						...(await playerInfo(client, interaction.values[0], {
+							ephemeral: true,
+							lng,
+						})),
+					});
 					break;
 				default:
 					console.error(`Received unknown action: ${action as string}`);
@@ -61,54 +91,78 @@ client.discord
 		}
 		if (interaction.isButton()) {
 			const { action, args } = destructureCustomButtonId(interaction.customId);
-			const locale = getInteractionLocale(interaction);
+			const lng = getInteractionLocale(interaction);
+			let messageOptions;
 
 			switch (action) {
 				case ButtonActions.NextPage:
-					void client.clans
-						.search(getSearchOptions(interaction, { after: args[0] }))
-						.then((results) =>
-							interaction.user.id ===
-							interaction.message.content.split("<@")[1].split(">")[0]
-								? interaction.update(handleSearchResults(results, locale))
-								: interaction.reply({
-										...handleSearchResults(results, locale),
-										content: interaction.message.content,
-										ephemeral: true,
-								  })
-						);
+					messageOptions = await searchClan(
+						client,
+						getSearchOptions(interaction, { after: args[0] }),
+						{ lng, ephemeral: true }
+					);
+
+					if (
+						interaction.user.id ===
+						interaction.message.content.split("<@")[1].split(">")[0]
+					)
+						interaction
+							.update({
+								...messageOptions,
+							})
+							.catch(console.error);
+					else
+						interaction
+							.reply({
+								...messageOptions,
+								content: interaction.message.content,
+							})
+							.catch(console.error);
 					break;
 				case ButtonActions.PreviousPage:
-					void client.clans
-						.search(getSearchOptions(interaction, { before: args[0] }))
-						.then((results) =>
-							interaction.user.id ===
-							interaction.message.content.split("<@")[1].split(">")[0]
-								? interaction.update(handleSearchResults(results, locale))
-								: interaction.reply({
-										...handleSearchResults(results, locale),
-										content: interaction.message.content,
-										ephemeral: true,
-								  })
-						);
+					messageOptions = await searchClan(
+						client,
+						getSearchOptions(interaction, { before: args[0] }),
+						{ lng, ephemeral: true }
+					);
+
+					if (
+						interaction.user.id ===
+						interaction.message.content.split("<@")[1].split(">")[0]
+					)
+						interaction
+							.update({
+								...messageOptions,
+							})
+							.catch(console.error);
+					else
+						interaction
+							.reply({
+								...messageOptions,
+								content: interaction.message.content,
+							})
+							.catch(console.error);
 					break;
 				case ButtonActions.RiverRaceLog:
-					void riverRaceLog(
-						client,
-						interaction,
-						args[0]!,
-						args[1] !== undefined ? Number(args[1]) : undefined,
-						true
-					).then(
-						(result) =>
-							result &&
-							(interaction.user.id === args[2]
-								? interaction.update(result)
-								: interaction.reply(result))
-					);
+					messageOptions = await riverRaceLog(client, args[0]!, {
+						lng,
+						ephemeral: true,
+						id: interaction.user.id,
+						index: args[1] !== undefined ? Number(args[1]) : undefined,
+					});
+					if (interaction.user.id === args[2])
+						interaction.update(messageOptions).catch(console.error);
+					else interaction.reply(messageOptions).catch(console.error);
 					break;
 				case ButtonActions.ClanInfo:
-					void clanInfo(client, interaction, args[0]!, true);
+					interaction
+						.reply(
+							await clanInfo(client, args[0]!, {
+								lng: getInteractionLocale(interaction),
+								ephemeral: true,
+							})
+						)
+						.catch(console.error);
 					break;
 				default:
 					console.error(`Received unknown action: ${action as string}`);

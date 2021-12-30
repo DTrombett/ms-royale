@@ -1,14 +1,8 @@
 import { Embed } from "@discordjs/builders";
 import Collection from "@discordjs/collection";
 import type ClientRoyale from "apiroyale";
-import type { APITag, FinishedRiverRace } from "apiroyale";
-import type { APIEmbedField } from "discord-api-types/v9";
-import type {
-	ButtonInteraction,
-	CommandInteraction,
-	ContextMenuInteraction,
-	SelectMenuInteraction,
-} from "discord.js";
+import { APITag, FinishedRiverRace, RiverRaceLogResults } from "apiroyale";
+import type { APIEmbedField, Snowflake } from "discord-api-types/v9";
 import {
 	Constants as DiscordCostants,
 	MessageActionRow,
@@ -16,9 +10,8 @@ import {
 	MessageSelectMenu,
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
-import Constants from "./Constants";
+import { t } from "i18next";
 import { buildCustomButtonId } from "./customId";
-import { getLocaleConstants } from "./locales";
 import normalizeTag from "./normalizeTag";
 import { ButtonActions, Emojis, MenuActions } from "./types";
 import validateTag from "./validateTag";
@@ -30,25 +23,20 @@ const cache = new Collection<
 
 export const riverRaceLog = async (
 	client: ClientRoyale,
-	interaction:
-		| ButtonInteraction
-		| CommandInteraction
-		| ContextMenuInteraction
-		| SelectMenuInteraction,
 	tag: string,
-	index?: number,
-	ephemeral?: boolean
+	{
+		ephemeral,
+		lng,
+		index,
+		id,
+	}: { lng?: string; ephemeral?: boolean; index?: number; id: Snowflake }
 ) => {
-	const constants = getLocaleConstants(interaction);
-
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
-		return interaction
-			.reply({
-				content: constants.INVALID_TAG,
-				ephemeral: true,
-			})
-			.catch(console.error);
+		return {
+			content: t("common.invalidTag", { lng }),
+			ephemeral: true,
+		};
 
 	let last: boolean, race;
 	if (index !== undefined) race = cache.get(tag)?.at(index);
@@ -57,11 +45,10 @@ export const riverRaceLog = async (
 			.fetchRiverRaceLog({ tag })
 			.catch((error: Error) => {
 				console.error(error);
-				return interaction.reply({ content: error.message, ephemeral: true });
-			})
-			.catch(console.error);
+				return { content: error.message, ephemeral: true };
+			});
 
-		if (!log) return undefined;
+		if (!(log instanceof RiverRaceLogResults)) return log;
 		race = index !== undefined ? log.at(index) : log.first();
 		last = index === log.size - 1;
 		for (const [key, value] of log)
@@ -73,37 +60,50 @@ export const riverRaceLog = async (
 	last ??= index === (cache.get(tag)?.size ?? 0) - 1;
 
 	if (race === undefined)
-		return interaction
-			.reply({
-				content: constants.RIVER_RACE_NOT_FOUND,
-				ephemeral: true,
-			})
-			.catch(console.error);
+		return {
+			content: t("commands.clan.riverRaceLog.notFound", { lng }),
+			ephemeral: true,
+		};
 	const embed = new Embed()
-		.setTitle(Constants.riverRaceInfoTitle(race))
+		.setTitle(t("commands.clan.riverRaceLog.title", { lng, race }))
 		.setColor(DiscordCostants.Colors.BLURPLE)
 		.setFooter({
-			text: constants.RIVER_RACE_FINISHED_AT,
+			text: t("commands.clan.riverRaceLog.footer", { lng }),
 		})
 		.setTimestamp(race.finishTime)
 		.addFields(
-			...race.leaderboard.map<APIEmbedField>(
-				Constants.riverRaceInfoStandingField
+			...race.leaderboard.map<APIEmbedField>((standing) =>
+				t("commands.clan.riverRaceLog.field", {
+					lng,
+					returnObjects: true,
+					standing,
+					finishedAt: standing.clan.finishedAt
+						? Math.round(standing.clan.finishedAt.getTime() / 1000)
+						: "",
+					finished: (standing.clan.finishedAt !== null).toString(),
+					participants: standing.clan.participants.filter(
+						(p) => p.decksUsed > 0
+					).size,
+				})
 			)
 		);
 	const row1 = new MessageActionRow().addComponents(
 		new MessageSelectMenu()
 			.setCustomId(MenuActions.PlayerInfo)
-			.setPlaceholder("Lista partecipanti")
+			.setPlaceholder(t("commands.clan.riverRaceLog.menu.placeholder", { lng }))
 			.addOptions(
 				[...race.leaderboard.get(tag)!.clan.participants.values()]
 					.filter((p) => p.medals)
 					.sort((a, b) => b.medals - a.medals)
 					.slice(0, 25)
-					.map((p, i) => ({
-						description: Constants.riverRaceParticipantDescription(p),
-						label: Constants.riverRaceParticipantLabel(p, i + 1),
-						value: p.tag,
+					.map((participant, i) => ({
+						...t("commands.clan.riverRaceLog.menu.options", {
+							lng,
+							returnObjects: true,
+							participant,
+							rank: i + 1,
+						}),
+						value: participant.tag,
 					}))
 			)
 	);
@@ -111,7 +111,7 @@ export const riverRaceLog = async (
 		new MessageButton()
 			.setCustomId(buildCustomButtonId(ButtonActions.ClanInfo, tag))
 			.setEmoji(Emojis.CrossedSwords)
-			.setLabel(constants.CLAN)
+			.setLabel(t("commands.clan.riverRaceLog.button.label", { lng }))
 			.setStyle(MessageButtonStyles.PRIMARY)
 	);
 	const row3 = new MessageActionRow().addComponents(
@@ -120,12 +120,12 @@ export const riverRaceLog = async (
 				buildCustomButtonId(
 					ButtonActions.RiverRaceLog,
 					tag,
-					index !== undefined ? index + 1 : 1,
-					interaction.user.id
+					`${index !== undefined ? index + 1 : 1}`,
+					id
 				)
 			)
 			.setEmoji(Emojis.BackArrow)
-			.setLabel(constants.BACK)
+			.setLabel(t("common.back", { lng }))
 			.setStyle(MessageButtonStyles.PRIMARY)
 			.setDisabled(last),
 		new MessageButton()
@@ -133,12 +133,12 @@ export const riverRaceLog = async (
 				buildCustomButtonId(
 					ButtonActions.RiverRaceLog,
 					tag,
-					index !== undefined ? index - 1 : 0,
-					interaction.user.id
+					`${index !== undefined ? index - 1 : 0}`,
+					id
 				)
 			)
 			.setEmoji(Emojis.ForwardArrow)
-			.setLabel(constants.AFTER)
+			.setLabel(t("common.next", { lng }))
 			.setStyle(MessageButtonStyles.PRIMARY)
 			.setDisabled(index === undefined || index === 0)
 	);

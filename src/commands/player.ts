@@ -4,10 +4,11 @@ import type {
 	ApplicationCommandOptionChoice,
 	AutocompleteInteraction,
 } from "discord.js";
+import { t } from "i18next";
 import type CustomClient from "../CustomClient";
 import Constants, {
 	CommandOptions,
-	getLocaleConstants,
+	getInteractionLocale,
 	MatchLevel,
 	matchStrings,
 	normalizeTag,
@@ -29,6 +30,7 @@ const autocompletePlayerTag = (
 	option: ApplicationCommandOptionChoice,
 	interaction: AutocompleteInteraction
 ) => {
+	const lng = getInteractionLocale(interaction);
 	const value = option.value as string;
 	/**
 	 * A record of player tags with their respective match level with the value provided
@@ -54,9 +56,9 @@ const autocompletePlayerTag = (
 	interaction
 		.respond(
 			// Take the first 25 clans as only 25 options are allowed
-			players.first(25).map((c) => ({
-				name: Constants.autocompletePlayerOptionName(c),
-				value: c.tag,
+			players.first(25).map((structure) => ({
+				name: t("common.tagPreview", { lng, structure }),
+				value: structure.tag,
 			}))
 		)
 		.catch(console.error);
@@ -83,16 +85,18 @@ export const command: CommandOptions = {
 				)
 		),
 	async run(interaction) {
-		const constants = getLocaleConstants(interaction);
+		const lng = getInteractionLocale(interaction);
 
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Info:
 				// Display the player info
-				await playerInfo(
-					this.client,
-					interaction,
-					interaction.options.getString(InfoOptions.Tag, true)
-				);
+				await interaction.reply({
+					...(await playerInfo(
+						this.client,
+						interaction.options.getString(InfoOptions.Tag, true),
+						{ lng }
+					)),
+				});
 				break;
 			default:
 				console.error(
@@ -102,7 +106,9 @@ export const command: CommandOptions = {
 						)
 					)
 				);
-				await interaction.reply(constants.INVALID_COMMAND);
+				await interaction.reply({
+					content: t("common.invalidCommand", { lng }),
+				});
 				break;
 		}
 	},

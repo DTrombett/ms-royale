@@ -47,7 +47,7 @@ export type ButtonActionsTypes = {
 	[ButtonActions.PreviousPage]: [cursor: string];
 	[ButtonActions.RiverRaceLog]: [
 		clan: APITag,
-		index?: number,
+		index?: `${number}`,
 		userId?: APISnowflake
 	];
 	[ButtonActions.ClanInfo]: [clan: APITag];
@@ -368,43 +368,22 @@ export const enum FaceEmojis {
 }
 
 /**
- * A list of all available locales
+ * A list of locale codes
  */
-export enum Locales {
-	Italiano = "IT",
-	English = "GB",
-	Español = "ES",
-	Deutsch = "DE",
-	France = "FR",
-	Nederlands = "NL",
-	Norsk = "NO",
-	Suomi = "FI",
-	Русский = "RU",
-	Türkçe = "TR",
-	"Tiếng Việt" = "VI",
-	ไทย = "TH",
-	繁體中文 = "TW",
-}
-
-/**
- * A list of locale emojis
- */
-export const enum LocaleEmojis {
-	Italiano = "🇮🇹",
-	English = "🇬🇧",
-	Español = "🇪🇸",
-	Deutsch = "🇩🇪",
-	France = "🇫🇷",
-	Nederlands = "🇳🇱",
-	Norsk = "🇳🇴",
-	Suomi = "🇫🇮",
-	Русский = "🇷🇺",
-	Türkçe = "🇹🇷",
-	"Tiếng Việt" = "🇻🇳",
-	ไทย = "🇹🇭",
-	日本語 = "🇯🇵",
-	繁體中文 = "🇹🇼",
-	한국어 = "🇰🇷",
+export enum LocaleCodes {
+	IT = "it",
+	GB = "en-US",
+	ES = "es-ES",
+	DE = "de",
+	FR = "fr",
+	NL = "nl",
+	NO = "no",
+	FI = "fi",
+	RU = "ru",
+	TR = "tr",
+	VI = "vi",
+	TH = "th",
+	TW = "zh-TW",
 }
 
 /**
@@ -468,12 +447,3 @@ export type ReplyableInteraction =
 	| CommandInteraction
 	| ContextMenuInteraction
 	| SelectMenuInteraction;
-
-/**
- * A list of all supported locales
- */
-export enum SupportedLocales {
-	Italiano = "IT",
-	// TODO: Change to English
-	Default = Italiano,
-}

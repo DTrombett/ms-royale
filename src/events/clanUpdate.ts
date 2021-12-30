@@ -1,72 +1,90 @@
 import { Embed } from "@discordjs/builders";
-import type { Clan } from "apiroyale";
-import type { TextChannel } from "discord.js";
-import { Constants as DiscordConstants } from "discord.js";
-import Constants, { cast, EventOptions, getLocaleConstants } from "../util";
+import { Clan } from "apiroyale";
+import { Constants as DiscordConstants, TextChannel } from "discord.js";
+import { t } from "i18next";
+import Constants, { cast, EventOptions, locationToLocale } from "../util";
 
 const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
-	const constants = getLocaleConstants(newClan.location);
+	const lng = locationToLocale(newClan.location);
 	const embed = new Embed()
-		.setTitle(constants.CLAN_UPDATED)
+		.setTitle(t("events.clanUpdate.title", { lng }))
 		.setURL(Constants.clanLink(newClan.tag))
 		.setAuthor({ name: newClan.name })
 		.setThumbnail(newClan.badgeUrl)
 		.setColor(DiscordConstants.Colors.BLURPLE);
 
 	if (oldClan.name !== newClan.name)
-		embed.addField({
-			name: constants.CLAN_INFO_NAME,
-			value: Constants.clanNameUpdatedFieldValue(oldClan.name, newClan.name),
-		});
+		embed.addField(
+			t("events.clanUpdate.name", {
+				lng,
+				returnObjects: true,
+				old: oldClan.name,
+				new: newClan.name,
+			})
+		);
 	if (oldClan.description !== newClan.description)
-		embed.addField({
-			name: constants.CLAN_INFO_DESCRIPTION,
-			value: Constants.clanDescriptionUpdatedFieldValue(
-				oldClan.description,
-				newClan.description
-			),
-		});
+		embed.addField(
+			t("events.clanUpdate.fields.description", {
+				lng,
+				returnObjects: true,
+				new: newClan.description,
+				old: oldClan.description,
+			})
+		);
 	if (oldClan.badgeId !== newClan.badgeId)
-		embed.addField({
-			name: constants.CLAN_INFO_BADGE_ID,
-			value: Constants.clanBadgeIdUpdatedFieldValue(
-				oldClan.badgeId,
-				newClan.badgeId
-			),
-		});
+		embed.addField(
+			t("events.clanUpdate.fields.badgeId", {
+				lng,
+				returnObjects: true,
+				old: oldClan.badgeId,
+				new: newClan.badgeId,
+			})
+		);
 	if (oldClan.locationName !== newClan.locationName)
-		embed.addField({
-			name: constants.CLAN_INFO_LOCATION,
-			value: Constants.clanLocationUpdatedFieldValue(
-				oldClan.locationName,
-				newClan.locationName
-			),
-		});
+		embed.addField(
+			t("events.clanUpdate.fields.location", {
+				lng,
+				returnObjects: true,
+				old: oldClan.locationName,
+				new: newClan.locationName,
+			})
+		);
 	if (oldClan.requiredTrophies !== newClan.requiredTrophies)
-		embed.addField({
-			name: constants.CLAN_INFO_REQUIRED_TROPHIES,
-			value: Constants.clanRequiredTrophiesUpdatedFieldValue(
-				oldClan.requiredTrophies,
-				newClan.requiredTrophies
-			),
-		});
+		embed.addField(
+			t("events.clanUpdate.fields.requiredTrophies", {
+				lng,
+				returnObjects: true,
+				old: oldClan.requiredTrophies,
+				new: newClan.requiredTrophies,
+			})
+		);
 	if (oldClan.type !== newClan.type)
-		embed.addField({
-			name: constants.CLAN_INFO_TYPE,
-			value: Constants.clanTypeUpdatedFieldValue(oldClan.type, newClan.type),
-		});
+		embed.addField(
+			t("events.clanUpdate.fields.type", {
+				lng,
+				returnObjects: true,
+				old: oldClan.type,
+				new: newClan.type,
+			})
+		);
 	for (const [tag, member] of oldClan.members)
 		if (!newClan.members.has(tag))
-			embed.addField({
-				name: constants.CLAN_MEMBER_LEFT,
-				value: Constants.clanMemberLeftFieldValue(member),
-			});
+			embed.addField(
+				t("events.clanUpdate.fields.memberLeft", {
+					lng,
+					returnObjects: true,
+					member,
+				})
+			);
 	for (const [tag, member] of newClan.members)
 		if (!oldClan.members.has(tag))
-			embed.addField({
-				name: constants.CLAN_MEMBER_JOINED,
-				value: Constants.clanMemberJoinedFieldValue(member),
-			});
+			embed.addField(
+				t("events.clanUpdate.fields.memberJoined", {
+					lng,
+					returnObjects: true,
+					member,
+				})
+			);
 	return embed;
 };
 

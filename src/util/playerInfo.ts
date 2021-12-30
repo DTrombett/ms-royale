@@ -1,44 +1,30 @@
 import { Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
-import type {
-	ButtonInteraction,
-	CommandInteraction,
-	ContextMenuInteraction,
-	SelectMenuInteraction,
-} from "discord.js";
+import { ClanMemberRole, Player } from "apiroyale";
 import {
 	Constants as DiscordCostants,
 	MessageActionRow,
 	MessageButton,
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
+import { t } from "i18next";
 import Constants, { TIME } from "./Constants";
 import { buildCustomButtonId } from "./customId";
-import { getLocaleConstants } from "./locales";
 import normalizeTag from "./normalizeTag";
 import { ButtonActions, Emojis } from "./types";
 import validateTag from "./validateTag";
 
 export const playerInfo = async (
 	client: ClientRoyale,
-	interaction:
-		| ButtonInteraction
-		| CommandInteraction
-		| ContextMenuInteraction
-		| SelectMenuInteraction,
 	tag: string,
-	ephemeral?: boolean
+	{ ephemeral, lng }: { lng?: string; ephemeral?: boolean }
 ) => {
-	const constants = getLocaleConstants(interaction);
-
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
-		return interaction
-			.reply({
-				content: constants.INVALID_TAG,
-				ephemeral: true,
-			})
-			.catch(console.error);
+		return {
+			content: t("commond.invalidTag", { lng }),
+			ephemeral: true,
+		};
 
 	const player = await client.players
 		.fetch(tag, {
@@ -46,134 +32,206 @@ export const playerInfo = async (
 		})
 		.catch((error: Error) => {
 			console.error(error);
-			return interaction.reply({ content: error.message, ephemeral: true });
-		})
-		.catch(console.error);
+			return { content: error.message, ephemeral: true };
+		});
 
-	if (!player) return undefined;
+	if (!(player instanceof Player)) return player;
 	const embed = new Embed()
-		.setTitle(Constants.playerInfoTitle(player))
+		.setTitle(t("commands.player.info.title", { lng, player }))
 		.setColor(DiscordCostants.Colors.BLUE)
-		.setFooter({ text: constants.LAST_UPDATED })
+		.setFooter({ text: t("common.lastUpdated", { lng }) })
 		.setTimestamp(player.lastUpdate)
 		.setURL(Constants.playerInfoUrl(player))
 		.addField({
-			name: constants.PLAYER_INFO_LEVEL,
-			value: Constants.playerInfoLevelFieldValue(player),
+			...t("commands.player.info.fields.level", {
+				lng,
+				returnObjects: true,
+				player,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_TROPHIES,
-			value: Constants.playerInfoTrophiesFieldValue(player.trophies),
+			...t("commands.player.info.fields.trophies", {
+				lng,
+				returnObjects: true,
+				trophies: player.trophies,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_STAR_POINTS,
-			value: Constants.playerInfoStarPointsFieldValue(player.starPoints),
+			...t("commands.player.info.fields.starPoints", {
+				lng,
+				returnObjects: true,
+				starPoints: player.starPoints,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.CLAN,
-			value: Constants.playerInfoClanFieldValue(player),
+			...t("commands.player.info.fields.clan", {
+				lng,
+				returnObjects: true,
+				clanName: player.clan?.name,
+				clanTag: player.clan?.tag.slice(1),
+				role: ClanMemberRole[player.role],
+				context: typeof player.clan,
+			}),
 		})
 		.addField({
-			name: constants.PLAYER_INFO_CURRENT_DECK,
+			...t("commands.player.info.fields.deck", {
+				lng,
+				returnObjects: true,
+			}),
 			value: Constants.playerInfoCurrentDeckFieldValue(player),
 		});
 	if (player.leagueStatistics)
 		embed
 			.addField({
-				name: constants.PLAYER_INFO_LEAGUE_STATISTICS_CURRENT_SEASON_BEST_TROPHIES,
-				value: Constants.playerInfoCurrentBestTrophiesFieldValue(
-					player.leagueStatistics
-				),
+				...t("commands.player.info.fields.leagueStatistics.currentSeason", {
+					lng,
+					returnObjects: true,
+					bestTrophies: player.leagueStatistics.currentSeason.bestTrophies,
+				}),
 				inline: true,
 			})
 			.addField({
-				name: constants.PLAYER_INFO_LEAGUE_STATISTICS_PREVIOUS_SEASON_BEST_TROPHIES,
-				value: Constants.playerInfoPreviousBestTrophiesFieldValue(
-					player.leagueStatistics
-				),
+				...t("commands.player.info.fields.leagueStatistics.previousSeason", {
+					lng,
+					returnObjects: true,
+					bestTrophies: player.leagueStatistics.previousSeason.bestTrophies,
+				}),
 				inline: true,
 			})
 			.addField({
-				name: constants.PLAYER_INFO_LEAGUE_STATISTICS_BEST_SEASON_TROPHIES,
-				value: Constants.playerInfoBestSeasonFieldValue(
-					player.leagueStatistics
-				),
+				...t("commands.player.info.fields.leagueStatistics.bestSeason", {
+					lng,
+					returnObjects: true,
+					trophies: player.leagueStatistics.bestSeason.trophies,
+				}),
 				inline: true,
 			});
 	embed
 		.addField({
-			name: constants.PLAYER_INFO_BADGES,
+			...t("commands.player.info.fields.badges", {
+				lng,
+				returnObjects: true,
+			}),
 			value: Constants.playerInfoBadgesFieldValue(player.badges),
 		})
 		.addField({
-			name: constants.PLAYER_INFO_WINS,
-			value: Constants.playerInfoWinsFieldValue(player),
+			...t("commands.player.info.fields.wins", {
+				lng,
+				returnObjects: true,
+				wins: player.wins,
+				winRatio: player.winPercentage.toFixed(Constants.percentageDigits()),
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_THREE_CROWN_WINS,
-			value: Constants.playerInfoThreeCrownWinsFieldValue(player),
+			...t("commands.player.info.fields.threeCrownWins", {
+				lng,
+				returnObjects: true,
+				threeCrownWins: player.threeCrownWins,
+				threeCrownWinRation: player.threeCrownWinPercentage.toFixed(
+					Constants.percentageDigits()
+				),
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_LOSSES,
-			value: Constants.playerInfoLossesFieldValue(player),
+			...t("commands.player.info.fields.losses", {
+				lng,
+				returnObjects: true,
+				losses: player.losses,
+				lossesPercent: player.lossPercentage.toFixed(
+					Constants.percentageDigits()
+				),
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_TOTAL_MATCHES,
-			value: Constants.playerInfoTotalMatchesFieldValue(player),
+			...t("commands.player.info.fields.battleCount", {
+				lng,
+				returnObjects: true,
+				battleCount: player.battleCount,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_BEST_TROPHIES,
-			value: Constants.playerInfoTrophiesRecordFieldValue(player),
+			...t("commands.player.info.fields.bestTrophies", {
+				lng,
+				returnObjects: true,
+				bestTrophies: player.bestTrophies,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_CARD_COUNT,
-			value: Constants.playerInfoCardCountFieldValue(player),
+			...t("commands.player.info.fields.cardCount", {
+				lng,
+				returnObjects: true,
+				cardCount: player.cards.size,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_WEEKLY_DONATIONS,
-			value: Constants.playerInfoWeekDonationsFieldValue(player),
+			...t("commands.player.info.fields.weeklyDonations", {
+				lng,
+				returnObjects: true,
+				weeklyDonations: player.donationsPerWeek,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_WEEKLY_RECEIVED_DONATIONS,
-			value: Constants.playerInfoWeekReceivedDonationsFieldValue(player),
+			...t("commands.player.info.fields.weeklyDonationsReceived", {
+				lng,
+				returnObjects: true,
+				weeklyDonationsReceived: player.donationsReceivedPerWeek,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_TOTAL_DONATIONS,
-			value: Constants.playerInfoTotalDonationsFieldValue(player),
+			...t("commands.player.info.fields.totalDonations", {
+				lng,
+				returnObjects: true,
+				totalDonations: player.totalDonations,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_FAVORITE_CARD,
-			value: Constants.playerInfoFavoriteCardFieldValue(player),
+			...t("commands.player.info.fields.currentFavouriteCard", {
+				lng,
+				returnObjects: true,
+				favouriteCard: player.favouriteCard,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_OLD_WAR_STATISTICS,
-			value: Constants.playerInfoOldWarStatsFieldValue(player),
+			...t("commands.player.info.fields.clanWarsVeteran", {
+				lng,
+				returnObjects: true,
+				player,
+			}),
 		})
 		.addField({
-			name: constants.PLAYER_INFO_CHALLENGE_STATISTICS,
-			value: Constants.playerInfoChallengeStatsFieldValue(player),
+			...t("commands.player.info.fields.challengeStatistics", {
+				lng,
+				returnObjects: true,
+				player,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_TOURNAMENT_STATISTICS,
-			value: Constants.playerInfoTournamentStatsFieldValue(player),
+			...t("commands.player.info.fields.tournamentStatistics", {
+				lng,
+				returnObjects: true,
+				player,
+			}),
 			inline: true,
 		})
 		.addField({
-			name: constants.PLAYER_INFO_ACHIEVEMENTS,
+			...t("commands.player.info.fields.achievements", {
+				lng,
+				returnObjects: true,
+			}),
 			value: Constants.playerInfoAchievementsFieldValue(player),
 		});
 
@@ -186,15 +244,13 @@ export const playerInfo = async (
 			)
 			.setDisabled(player.clan === undefined)
 			.setEmoji(Emojis.CrossedSwords)
-			.setLabel(constants.CLAN)
+			.setLabel(t("commands.player.info.button.label", { lng }))
 			.setStyle(MessageButtonStyles.PRIMARY)
 	);
 
-	return interaction
-		.reply({
-			embeds: [embed],
-			components: [row1],
-			ephemeral,
-		})
-		.catch(console.error);
+	return {
+		embeds: [embed],
+		components: [row1],
+		ephemeral,
+	};
 };

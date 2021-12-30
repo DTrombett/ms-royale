@@ -1,26 +1,40 @@
-import type { ClanSearchResults } from "apiroyale";
+import { ClanSearchResults, ClientRoyale, SearchClanOptions } from "apiroyale";
 import { MessageActionRow, MessageButton, MessageSelectMenu } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
-import Constants, { LocaleConstants } from "./Constants";
+import { t } from "i18next";
 import { buildCustomButtonId, buildCustomMenuId } from "./customId";
-import { ButtonActions, Emojis, MenuActions, SupportedLocales } from "./types";
+import { ButtonActions, Emojis, MenuActions } from "./types";
 
-export const handleSearchResults = (
-	results: ClanSearchResults,
-	locale: SupportedLocales
+export const searchClan = async (
+	client: ClientRoyale,
+	options: SearchClanOptions,
+	{ ephemeral, lng }: { lng?: string; ephemeral?: boolean }
 ) => {
-	const constants = LocaleConstants[locale];
+	const results = await client.clans.search(options).catch((error: Error) => {
+		console.error(error);
+		return { content: error.message, ephemeral: true };
+	});
+
+	if (!(results instanceof ClanSearchResults)) return results;
+	if (!results.size)
+		return {
+			content: t("commands.clan.search.notFound", { lng }),
+			ephemeral: true,
+		};
 	const row1 = new MessageActionRow().addComponents(
 		new MessageSelectMenu()
 			.setCustomId(buildCustomMenuId(MenuActions.ClanInfo))
 			.addOptions(
 				results.map((clan) => ({
-					label: clan.name,
+					...t("commands.clan.search.menu.options", {
+						lng,
+						returnObjects: true,
+						clan,
+					}),
 					value: clan.tag,
-					description: Constants.clanInfo(clan),
 				}))
 			)
-			.setPlaceholder(constants.CLAN_CHOOSE)
+			.setPlaceholder(t("commands.clan.search.menu.placeholder", { lng }))
 	);
 	const row2 = new MessageActionRow().addComponents(
 		new MessageButton()
@@ -31,7 +45,7 @@ export const handleSearchResults = (
 				)
 			)
 			.setEmoji(Emojis.BackArrow)
-			.setLabel(constants.BACK)
+			.setLabel(t("common.back", { lng }))
 			.setDisabled(results.paging.cursors.before == null)
 			.setStyle(MessageButtonStyles.PRIMARY),
 		new MessageButton()
@@ -42,12 +56,13 @@ export const handleSearchResults = (
 				)
 			)
 			.setEmoji(Emojis.ForwardArrow)
-			.setLabel(constants.AFTER)
+			.setLabel(t("common.next", { lng }))
 			.setDisabled(results.paging.cursors.after == null)
 			.setStyle(MessageButtonStyles.PRIMARY)
 	);
 
 	return {
 		components: [row1, row2],
+		ephemeral,
 	};
 };

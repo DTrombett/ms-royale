@@ -12,7 +12,7 @@ export * from "./getRandomColor";
 export * from "./getRandomInt";
 export * from "./getRandomString";
 export * from "./getSearchOptions";
-export * from "./handleSearchResults";
+export * from "./searchClan";
 export * from "./loadCommands";
 export * from "./loadEvents";
 export * from "./locales";
