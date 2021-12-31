@@ -13,9 +13,6 @@
     "start": "npm run build && node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings ./dist/index.js"
   },
   "author": "DTrombett",
-  "engines": {
-    "node": ">=14.13.1 || >=16.0.0"
-  },
   "license": "ISC",
   "keywords": [],
   "type": "module",
@@ -28,7 +25,7 @@
     "apiroyale": "github:DTrombett/apiroyale",
     "bufferutil": "^4.0.5",
     "discord-api-types": "^0.25.2",
-    "discord.js": "^13.5.0",
+    "discord.js": "^14.0.0-dev.1640865766.780b7ed",
     "dotenv": "^10.0.0",
     "i18next": "^21.6.3",
     "i18next-fs-backend": "^1.1.4",
