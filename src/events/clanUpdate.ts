@@ -2,6 +2,7 @@ import { Embed } from "@discordjs/builders";
 import { Clan } from "apiroyale";
 import { Constants as DiscordConstants, TextChannel } from "discord.js";
 import { t } from "i18next";
+import { env } from "node:process";
 import Constants, { cast, EventOptions, locationToLocale } from "../util";
 
 const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
@@ -97,7 +98,7 @@ export const event: EventOptions<"clanUpdate"> = {
 		 * The channel to send the embed to
 		 */
 		const channel = this.client.discord.channels.cache.get(
-			process.env.CLAN_CHANNEL_ID!
+			env.CLAN_CHANNEL_ID!
 		);
 
 		if (!channel) return;

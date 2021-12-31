@@ -5,11 +5,12 @@ import type {
 	Player,
 	PlayerBadge,
 	PlayerBadgeManager,
-	PlayerCard,
+	PlayerCard
 } from "apiroyale";
 import { OAuth2Scopes } from "discord-api-types/v9";
 import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
+import { env } from "node:process";
 import { CustomEmojis, Emojis } from "./types";
 
 /**
@@ -234,7 +235,7 @@ export const Constants = {
 	 * The invite URL for the bot.
 	 */
 	inviteUrl: () =>
-		`https://discord.com/api/oauth2/authorize?client_id=${process.env
+		`https://discord.com/api/oauth2/authorize?client_id=${env
 			.DISCORD_CLIENT_ID!}&scope=${[OAuth2Scopes.ApplicationsCommands].join(
 			"%20"
 		)}` as const,

@@ -10,6 +10,7 @@ import {
 import type { CommandInteraction } from "discord.js";
 import { Constants, Util } from "discord.js";
 import { exec as nativeExec } from "node:child_process";
+import { argv, cwd, env, exit, memoryUsage, uptime } from "node:process";
 import { promisify } from "node:util";
 import type { CommandOptions } from "../util";
 import { parseEval, restart } from "../util";
@@ -21,7 +22,7 @@ const enum SubCommands {
 	ram = "ram",
 	restartCmd = "restart",
 	shutdown = "shutdown",
-	uptime = "uptime",
+	uptimeCmd = "uptime",
 	pull = "pull",
 }
 const enum SubCommandOptions {
@@ -126,9 +127,9 @@ export const command: CommandOptions = {
 						)
 				)
 		)
-		.addSubcommand((uptime) =>
-			uptime
-				.setName(SubCommands.uptime)
+		.addSubcommand((uptimeCmd) =>
+			uptimeCmd
+				.setName(SubCommands.uptimeCmd)
 				.setDescription("Mostra l'uptime del bot")
 				.addBooleanOption((ephemeral) =>
 					ephemeral
@@ -228,9 +229,7 @@ export const command: CommandOptions = {
 					content: `Comando eseguito in ${bold(
 						`${Date.now() - now}ms`
 					)}\n${inlineCode(
-						`${process.cwd()}> ${Util.escapeInlineCode(
-							cmd.slice(0, 2000 - 100)
-						)}`
+						`${cwd()}> ${Util.escapeInlineCode(cmd.slice(0, 2000 - 100))}`
 					)}`,
 					embeds: embeds.map((e) => e),
 				});
@@ -263,7 +262,7 @@ export const command: CommandOptions = {
 				});
 				break;
 			case SubCommands.ram:
-				const mem = process.memoryUsage();
+				const mem = memoryUsage();
 				const ramEmbed = new Embed()
 					.setAuthor({
 						name: interaction.user.tag,
@@ -291,7 +290,7 @@ export const command: CommandOptions = {
 				break;
 			case SubCommands.restartCmd:
 				if (interaction.options.getBoolean(SubCommandOptions.process) ?? true) {
-					const argvs = process.argv
+					const argvs = argv
 						.map((arg) => inlineCode(Util.escapeInlineCode(arg)))
 						.join("\n");
 
@@ -301,7 +300,7 @@ export const command: CommandOptions = {
 					restart(this.client);
 				} else {
 					this.client.discord.destroy();
-					this.client.token = process.env.DISCORD_TOKEN!;
+					this.client.token = env.DISCORD_TOKEN!;
 					await this.client.discord.login();
 					await interaction.editReply({
 						content: `Ricollegato in ${bold(`${Date.now() - now}ms`)}.`,
@@ -313,10 +312,9 @@ export const command: CommandOptions = {
 					content: `Sto spegnendo il bot...`,
 				});
 				this.client.discord.destroy();
-				// eslint-disable-next-line no-process-exit
-				return process.exit(0);
-			case SubCommands.uptime:
-				const processUptime = new Date(Date.now() - process.uptime() * 1000);
+				return exit(0);
+			case SubCommands.uptimeCmd:
+				const processUptime = new Date(Date.now() - uptime() * 1000);
 				const botUptime = new Date(Date.now() - this.client.discord.uptime!);
 				const uptimeEmbed = new Embed()
 					.setAuthor({

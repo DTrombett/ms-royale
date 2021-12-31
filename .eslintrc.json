@@ -130,9 +130,15 @@
 				]
 			}
 		],
-		"node/prefer-global/buffer": "warn",
+		"node/prefer-global/buffer": [
+			"warn",
+			"never"
+		],
 		"node/prefer-global/console": "warn",
-		"node/prefer-global/process": "warn",
+		"node/prefer-global/process": [
+			"warn",
+			"never"
+		],
 		"node/prefer-global/text-decoder": "warn",
 		"node/prefer-global/text-encoder": "warn",
 		"node/prefer-global/url-search-params": "warn",

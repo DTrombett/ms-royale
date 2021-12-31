@@ -101,6 +101,7 @@
 				}
 			},
 			"info": {
+				"title": "$t(common.tagPreview, { \"structure\": \"{{clan}}\" })",
 				"button": {
 					"label": "Guerre passate"
 				},
@@ -114,7 +115,7 @@
 				"fields": {
 					"warTrophies": {
 						"name": "Trofei guerra tra clan",
-						"value": "$t(emojis.warTrophy){{warTrophies}}"
+						"value": "$t(emojis.warTrophy) {{warTrophies}}"
 					},
 					"location": {
 						"name": "Posizione",
@@ -122,15 +123,15 @@
 					},
 					"requiredTrophies": {
 						"name": "Trofei richiesti",
-						"value": "🏆{{requiredTrophies}}"
+						"value": "🏆 {{requiredTrophies}}"
 					},
 					"weeklyDonations": {
 						"name": "Donazioni a settimana",
-						"value": "$t(emojis.donations){{weeklyDonations}}"
+						"value": "$t(emojis.donations) {{weeklyDonations}}"
 					},
 					"score": {
 						"name": "Punteggio",
-						"value": "💯{{score}}"
+						"value": "💯 {{score}}"
 					},
 					"type": {
 						"name": "Tipo",

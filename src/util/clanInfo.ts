@@ -46,7 +46,7 @@ export const clanInfo = async (
 
 	if (!(clan instanceof Clan)) return clan;
 	const embed = new Embed()
-		.setTitle(t("common.tagPreview", { lng, structure: clan }))
+		.setTitle(t("commands.clan.info.title", { lng, clan }))
 		.setDescription(clan.description)
 		.setColor(DiscordCostants.Colors.BLUE)
 		.setFooter({ text: t("common.lastUpdated", { lng }) })

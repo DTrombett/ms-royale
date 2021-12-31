@@ -12,20 +12,21 @@ import {
 import { config } from "dotenv";
 import { promises } from "node:fs";
 import { join } from "node:path";
+import { cwd, env } from "node:process";
 import { URL } from "node:url";
 import type { CommandOptions } from "./util";
 import Constants from "./util";
 
 console.time("Register slash commands");
 
-config({ path: join(process.cwd(), ".env") });
+config({ path: join(cwd(), ".env") });
 
 const {
 	DISCORD_CLIENT_ID: applicationId,
 	TEST_GUILD: guildId,
 	DISCORD_TOKEN: token,
 	GLOBAL_COMMANDS,
-} = process.env;
+} = env;
 const registerGlobal = GLOBAL_COMMANDS === "true";
 const rest = new REST({ version: APIVersion }).setToken(token!);
 const commands = await promises
