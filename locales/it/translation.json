@@ -2,10 +2,11 @@
 	"common": {
 		"back": "Precedente",
 		"next": "Successivo",
-		"tagPreview": "{{structure.name}} ({{structure.tag}})",
+		"tagPreview": "{{- structure.name}} ({{structure.tag}})",
 		"invalidCommand": "Comando non riconosciuto!",
 		"invalidTag": "Hai inserito un tag non valido!\nI caratteri validi nei tag sono: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V",
-		"lastUpdated": "Ultimo aggiornamento"
+		"lastUpdated": "Ultimo aggiornamento",
+		"zeroWidthSpace": "\u200b"
 	},
 	"emojis": {
 		"warTrophy": "<:wartrophy:906920944868671498>",
@@ -44,19 +45,19 @@
 				},
 				"memberLeft": {
 					"name": "Un membro è uscito",
-					"value": "#{{member.rank}} **{{member.name}}** ({{member.tag}}) - 🏆 {{member.trophies}}"
+					"value": "#{{member.rank}} **{{- member.name}}** ({{member.tag}}) - 🏆 {{member.trophies}}"
 				},
 				"memberJoined": {
 					"name": "Un membro è entrato",
-					"value": "#{{member.rank}} **{{member.name}}** ({{member.tag}}) - 🏆 {{member.trophies}}"
+					"value": "#{{member.rank}} **{{- member.name}}** ({{member.tag}}) - 🏆 {{member.trophies}}"
 				},
 				"description": {
 					"name": "Descrizione",
-					"value": "**Prima**: {{old}}\n**Dopo**: {{new}}"
+					"value": "**Prima**: {{- old}}\n**Dopo**: {{- new}}"
 				},
 				"name": {
 					"name": "Nome",
-					"value": "**{{old}}** => **{{new}}**"
+					"value": "**{{- old}}** => **{{- new}}**"
 				}
 			},
 			"title": "Clan aggiornato!"
@@ -72,7 +73,7 @@
 					"placeholder": "Scegli un clan...",
 					"options": {
 						"description": "👥{{clan.memberCount}}/50 - 💯{{clan.score}} - 💸{{clan.donationsPerWeek}} - 🏆{{clan.requiredTrophies}} - 📍{{clan.locationName}}",
-						"label": "$t(common.tagPreview, { \"structure\": \"{{clan}}\" })"
+						"label": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{- clan.name}}\", \"tag\": \"{{clan.tag}}\" } })"
 					}
 				},
 				"notFound": "Nessun clan trovato!"
@@ -82,17 +83,17 @@
 				"notFound": "Nessuna guerra trovata!",
 				"title": "Stagione {{race.seasonId}} - Settimana {{race.weekNumber}}",
 				"field": {
-					"name": "{{standing.rank}}. $t(common.tagPreview, { \"structure\": \"{{standing.clan}}\" })",
-					"value": "**Punti**: $t(emojis.warPoint) {{standing.clan.points}}\n**Trofei guadagnati/persi**: $t(emojis.warTrophy) {{standing.trophyChange}}$t(commands.clan.riverRaceLog.pointsToOvertake, { \"pointsToOvertake\": \"{{standing.pointsToOvertake}}\", \"count\": \"{{standing.rank}}\" })$t(commands.clan.riverRaceLog.finishedAt, { \"finishedAt\": \"{{finishedAt}}\", \"context\": \"{{finished}}\" })\n**Punteggio del clan**: 💯 {{standing.clan.score}}\n**Partecipanti**: $t(emojis.members) {{participants}}"
+					"name": "{{standing.rank}}. $t(common.tagPreview, { \"structure\": { \"name\": \"{{- standing.clan.name}}\", \"tag\": \"{{standing.clan.tag}}\" } })",
+					"value": "**Punti**: $t(emojis.warPoint) {{standing.clan.points}}\n**Trofei guadagnati/persi**: $t(emojis.warTrophy) {{standing.trophyChange}}$t(commands.clan.riverRaceLog.pointsToOvertake, { \"pointsToOvertake\": \"{{standing.pointsToOvertake}}\", \"count\": {{standing.rank}} })$t(commands.clan.riverRaceLog.finishedAt, { \"finishedAt\": \"{{finishedAt}}\", \"context\": \"{{finished}}\" })\n**Punteggio del clan**: 💯 {{standing.clan.score}}\n**Partecipanti**: $t(emojis.members) {{participants}}"
 				},
-				"pointsToOvertake_one": "",
-				"pointsToOvertake_other": "\n**Differenza punti con clan successivo: $t(emojis.warPoint) {{pointsToOvertake}}",
-				"finishedAt_true": "**Corsa terminata**: <t:{{finishedAt}}:F> (<t:{{finishedAt}}:R>)",
-				"finishedAt_false": "",
+				"pointsToOvertake_one": "$t(common.zeroWidthSpace)",
+				"pointsToOvertake_other": "\n**Differenza punti con clan successivo**: $t(emojis.warPoint) {{pointsToOvertake}}",
+				"finishedAt_true": "\n**Corsa terminata**: <t:{{finishedAt}}:F> (<t:{{finishedAt}}:R>)",
+				"finishedAt_false": "$t(common.zeroWidthSpace)",
 				"menu": {
 					"options": {
 						"description": "🏅 {{participant.medals}} - ⛵🗡 {{participant.boatAttacks}} - 🎴 {{participant.decksUsed}}",
-						"label": "#{{rank}} $t(common.tagPreview, { \"structure\": \"{{participant}}\" })"
+						"label": "#{{rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{- participant.name}}\", \"tag\": \"{{participant.tag}}\" } })"
 					},
 					"placeholder": "Lista partecipanti"
 				},
@@ -101,14 +102,14 @@
 				}
 			},
 			"info": {
-				"title": "$t(common.tagPreview, { \"structure\": \"{{clan}}\" })",
+				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{- clan.name}}\", \"tag\": \"{{clan.tag}}\" } })",
 				"button": {
 					"label": "Guerre passate"
 				},
 				"menu": {
 					"options": {
 						"description": "{{role}} - 💸{{member.donationsPerWeek}} - 🏆{{member.trophies}}",
-						"label": "#{{member.rank}} $t(common.tagPreview, { \"structure\": \"{{member}}\" })"
+						"label": "#{{member.rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{- member.name}}\", \"tag\": \"{{member.tag}}\" } })"
 					},
 					"placeholder": "Membri del clan"
 				},
@@ -146,7 +147,7 @@
 		},
 		"player": {
 			"info": {
-				"title": "$t(common.tagPreview, { \"structure\": \"{{player}}\" })",
+				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{- player.name}}\", \"tag\": \"{{player.tag}}\" } })",
 				"button": {
 					"label": "Clan"
 				},
@@ -243,8 +244,9 @@
 					},
 					"clan": {
 						"name": "Clan",
+						"value": "$t(commands.player.info.fields.clan.value, { \"context\": \"{{context}}\" })",
 						"value_undefined": "Nessun clan",
-						"value_object": "$t(emojis.clanInvite) [{{clanName}}](https://royaleapi.com/clan/{{clanTag}}) (#{{clanTag}}) - {{role}}"
+						"value_object": "$t(emojis.clanInvite) [{{- clanName}}](https://royaleapi.com/clan/{{clanTag}}) (#{{clanTag}}) - {{role}}"
 					}
 				}
 			}

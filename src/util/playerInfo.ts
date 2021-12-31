@@ -131,7 +131,7 @@ export const playerInfo = async (
 				lng,
 				returnObjects: true,
 				threeCrownWins: player.threeCrownWins,
-				threeCrownWinRation: player.threeCrownWinPercentage.toFixed(
+				threeCrownWinRatio: player.threeCrownWinPercentage.toFixed(
 					Constants.percentageDigits()
 				),
 			}),

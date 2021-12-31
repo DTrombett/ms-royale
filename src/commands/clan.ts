@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { Clan, SearchClanOptions } from "apiroyale";
+import { Collection } from "@discordjs/collection";
+import type { APITag, Clan, ClanPreview, SearchClanOptions } from "apiroyale";
 import type {
 	ApplicationCommandOptionChoice,
 	AutocompleteInteraction,
@@ -56,10 +57,10 @@ const autocompleteClanTag = (
 	/**
 	 * A collection of all cached clans
 	 */
-	const clans = client.clanPreviews.concat(
+	const clans = (client.clanPreviews as Collection<APITag, unknown>).concat(
 		client.clanResultPreviews,
 		client.clans
-	);
+	) as Collection<APITag, ClanPreview>;
 
 	// If a value was provided, search for clans with a tag or a name that contains the value
 	if (value.length) {
