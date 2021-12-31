@@ -16,6 +16,9 @@
   "license": "ISC",
   "keywords": [],
   "type": "module",
+  "engines": {
+    "node": ">=14.13.1 || >=16.0.0"
+  },
   "dependencies": {
     "@discordjs/builders": "^0.11.0",
     "@discordjs/collection": "^0.4.0",
