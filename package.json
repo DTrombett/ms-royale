@@ -9,8 +9,8 @@
     "build": "tsc",
     "lint": "eslint src --fix",
     "prettier": "prettier --write src/**/*.ts",
-    "commands": "node --experimental-specifier-resolution=node --enable-source-maps dist/registerCommands.js",
-    "start": "npm run build && node --experimental-specifier-resolution=node --enable-source-maps ./dist/index.js"
+    "commands": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings dist/registerCommands.js",
+    "start": "npm run build && node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings ./dist/index.js"
   },
   "author": "DTrombett",
   "engines": {
@@ -20,24 +20,27 @@
   "keywords": [],
   "type": "module",
   "dependencies": {
-    "@discordjs/builders": "^0.9.0",
-    "@discordjs/collection": "^0.3.2",
+    "@discordjs/builders": "^0.11.0",
+    "@discordjs/collection": "^0.4.0",
     "@discordjs/rest": "^0.2.0-canary.0",
     "@tsconfig/node16": "^1.0.2",
     "@types/node": "^16.11.17",
     "apiroyale": "github:DTrombett/apiroyale",
     "bufferutil": "^4.0.5",
     "discord-api-types": "^0.25.2",
-    "discord.js": "^13.3.1",
+    "discord.js": "^13.5.0",
     "dotenv": "^10.0.0",
+    "i18next": "^21.6.3",
+    "i18next-fs-backend": "^1.1.4",
     "utf-8-validate": "^5.0.7",
     "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
-    "eslint-plugin-node": "^11.1.0",
-    "@typescript-eslint/eslint-plugin": "^5.8.0",
-    "@typescript-eslint/parser": "^5.8.0",
+    "@types/i18next-fs-backend": "^1.1.2",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
     "eslint": "^8.5.0",
+    "eslint-plugin-node": "^11.1.0",
     "prettier": "^2.5.1",
     "typescript": "^4.5.4"
   }

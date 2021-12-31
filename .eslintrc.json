@@ -130,9 +130,15 @@
 				]
 			}
 		],
-		"node/prefer-global/buffer": "warn",
+		"node/prefer-global/buffer": [
+			"warn",
+			"never"
+		],
 		"node/prefer-global/console": "warn",
-		"node/prefer-global/process": "warn",
+		"node/prefer-global/process": [
+			"warn",
+			"never"
+		],
 		"node/prefer-global/text-decoder": "warn",
 		"node/prefer-global/text-encoder": "warn",
 		"node/prefer-global/url-search-params": "warn",
@@ -144,7 +150,6 @@
 		"prefer-const": "warn",
 		"prefer-destructuring": "warn",
 		"prefer-numeric-literals": "warn",
-		"prefer-object-has-own": "warn",
 		"prefer-promise-reject-errors": "warn",
 		"prefer-regex-literals": "warn",
 		"prefer-rest-params": "warn",
@@ -161,7 +166,6 @@
 			"warn",
 			"type"
 		],
-		"@typescript-eslint/consistent-type-imports": "warn",
 		"@typescript-eslint/class-literal-property-style": "warn",
 		"@typescript-eslint/member-ordering": "warn",
 		"@typescript-eslint/no-confusing-non-null-assertion": "warn",

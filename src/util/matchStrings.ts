@@ -1,4 +1,4 @@
-import { MatchLevel } from "./Constants";
+import { MatchLevel } from "./types";
 
 /**
  * Search for a string in a string.

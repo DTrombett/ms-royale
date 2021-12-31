@@ -4,7 +4,6 @@ import { MessageButtonStyles } from "discord.js/typings/enums";
 import type { CommandOptions } from "../util";
 import { Constants, Emojis } from "../util";
 
-// TODO: Remove this command once the "Add to server" button is fully released by Discord
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder()
 		.setName("invite")

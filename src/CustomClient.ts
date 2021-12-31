@@ -1,6 +1,7 @@
 import Collection from "@discordjs/collection";
 import { ClientRoyale } from "apiroyale";
 import { Client, Constants, Options } from "discord.js";
+import { env } from "node:process";
 import type { Command, Event } from "./util";
 import { loadCommands, loadEvents } from "./util";
 
@@ -59,7 +60,7 @@ export class CustomClient extends ClientRoyale {
 		super();
 
 		void Promise.all([loadCommands(this), loadEvents(this)]).then(() =>
-			this.discord.login(process.env.DISCORD_TOKEN)
+			this.discord.login(env.DISCORD_TOKEN)
 		);
 	}
 }

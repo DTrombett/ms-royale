@@ -2,13 +2,56 @@ import type {
 	SlashCommandBuilder,
 	SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
-import type { ClientEvents } from "apiroyale";
+import type { APITag, ClientEvents } from "apiroyale";
+import type { Snowflake as APISnowflake } from "discord-api-types";
 import type {
 	AutocompleteInteraction,
 	Awaitable,
+	ButtonInteraction,
 	CommandInteraction,
+	ContextMenuInteraction,
+	SelectMenuInteraction,
 } from "discord.js";
 import type { Command, Event } from ".";
+
+/**
+ * Values used as custom identifiers for buttons
+ */
+export const enum ButtonActions {
+	/**
+	 * Show the next page
+	 */
+	NextPage = "after",
+
+	/**
+	 * Show the previous page
+	 */
+	PreviousPage = "before",
+
+	/**
+	 * Show the river race log of a clan
+	 */
+	RiverRaceLog = "rrlog",
+
+	/**
+	 * Show clan's info
+	 */
+	ClanInfo = "clan",
+}
+
+/**
+ * Types of other arguments for button actions
+ */
+export type ButtonActionsTypes = {
+	[ButtonActions.NextPage]: [cursor: string];
+	[ButtonActions.PreviousPage]: [cursor: string];
+	[ButtonActions.RiverRaceLog]: [
+		clan: APITag,
+		index?: `${number}`,
+		userId?: APISnowflake
+	];
+	[ButtonActions.ClanInfo]: [clan: APITag];
+};
 
 /**
  * Options to create a command
@@ -46,9 +89,83 @@ export type CommandOptions = {
 };
 
 /**
+ * Custom emojis for the bot
+ */
+export const enum CustomEmojis {
+	/**
+	 * The emoji of a war trophy
+	 */
+	warTrophy = "<:wartrophy:906920944868671498>",
+
+	/**
+	 * The profile emoji of a user
+	 */
+	user = "<:user:915686990723285022>",
+
+	/**
+	 * The emoji of donations
+	 */
+	donations = "<:donations:915687097984241685>",
+
+	/**
+	 * The emoji for clan members
+	 */
+	clanMembers = "<:members:915688913413210123>",
+
+	/**
+	 * The emoji of the king level
+	 */
+	kingLevel = "<:kinglevel:916016946774958101>",
+
+	/**
+	 * The emoji for copying a deck
+	 */
+	copyDeck = "<:copydeck:916029046700261417>",
+
+	/**
+	 * The emoji of a clan invite
+	 */
+	clanInvite = "<:claninvite:916032272631750698>",
+
+	/**
+	 * The emoji for a win
+	 */
+	win = "<:win:916339474403848223>",
+
+	/**
+	 * The emoji for a loss
+	 */
+	lose = "<:lose:916339513591222322>",
+
+	/**
+	 * The emoji for cards
+	 */
+	cards = "<:cards:916340767021203478>",
+
+	/**
+	 * The emoji for a medal
+	 */
+	medal = "<:medal:918514839670886400>",
+
+	/**
+	 * The emoji for a war point
+	 */
+	warPoint = "<:warpoint:918522796747915304>",
+
+	/**
+	 * The emoji for a boat attack
+	 */
+	boatAttack = "<:boatattack:918909257745825793>",
+
+	/**
+	 * The emoji for a war deck
+	 */
+	warDeck = "<:wardeck:918908890761035817>",
+}
+
+/**
  * Emojis for the bot
  */
-
 export const enum Emojis {
 	/**
 	 * The emoji for a check mark
@@ -212,6 +329,26 @@ export const enum Emojis {
 }
 
 /**
+ * The data for an event
+ */
+export type EventOptions<T extends keyof ClientEvents = keyof ClientEvents> = {
+	/**
+	 * The name of the event
+	 */
+	name: T;
+
+	/**
+	 * The function to execute when the event is received
+	 */
+	on?: (this: Event<T>, ...args: ClientEvents[T]) => Awaitable<void>;
+
+	/**
+	 * The function to execute when the event is received once
+	 */
+	once?: EventOptions<T>["on"];
+};
+
+/**
  * All the face emojis
  */
 export const enum FaceEmojis {
@@ -231,97 +368,82 @@ export const enum FaceEmojis {
 }
 
 /**
- * Custom emojis for the bot
+ * A list of locale codes
  */
-
-export const enum CustomEmojis {
-	/**
-	 * The emoji of a war trophy
-	 */
-	warTrophy = "<:wartrophy:906920944868671498>",
-
-	/**
-	 * The profile emoji of a user
-	 */
-	user = "<:user:915686990723285022>",
-
-	/**
-	 * The emoji of donations
-	 */
-	donations = "<:donations:915687097984241685>",
-
-	/**
-	 * The emoji for clan members
-	 */
-	clanMembers = "<:members:915688913413210123>",
-
-	/**
-	 * The emoji of the king level
-	 */
-	kingLevel = "<:kinglevel:916016946774958101>",
-
-	/**
-	 * The emoji for copying a deck
-	 */
-	copyDeck = "<:copydeck:916029046700261417>",
-
-	/**
-	 * The emoji of a clan invite
-	 */
-	clanInvite = "<:claninvite:916032272631750698>",
-
-	/**
-	 * The emoji for a win
-	 */
-	win = "<:win:916339474403848223>",
-
-	/**
-	 * The emoji for a loss
-	 */
-	lose = "<:lose:916339513591222322>",
-
-	/**
-	 * The emoji for cards
-	 */
-	cards = "<:cards:916340767021203478>",
-
-	/**
-	 * The emoji for a medal
-	 */
-	medal = "<:medal:918514839670886400>",
-
-	/**
-	 * The emoji for a war point
-	 */
-	warPoint = "<:warpoint:918522796747915304>",
-
-	/**
-	 * The emoji for a boat attack
-	 */
-	boatAttack = "<:boatattack:918909257745825793>",
-
-	/**
-	 * The emoji for a war deck
-	 */
-	warDeck = "<:wardeck:918908890761035817>",
+export enum LocaleCodes {
+	IT = "it",
+	GB = "en-US",
+	ES = "es-ES",
+	DE = "de",
+	FR = "fr",
+	NL = "nl",
+	NO = "no",
+	FI = "fi",
+	RU = "ru",
+	TR = "tr",
+	VI = "vi",
+	TH = "th",
+	TW = "zh-TW",
 }
 
 /**
- * The data for an event
+ * The match level from comparing 2 strings
  */
-export type EventOptions<T extends keyof ClientEvents = keyof ClientEvents> = {
+export const enum MatchLevel {
 	/**
-	 * The name of the event
+	 * The strings don't match at all
 	 */
-	name: T;
+	None,
 
 	/**
-	 * The function to execute when the event is received
+	 * The second string is a substring of the first one
 	 */
-	on?: (this: Event<T>, ...args: ClientEvents[T]) => Awaitable<void>;
+	Partial,
 
 	/**
-	 * The function to execute when the event is received once
+	 * The second string is at the end of the first one
 	 */
-	once?: EventOptions<T>["on"];
+	End,
+
+	/**
+	 * The second string is at the beginning of the first one
+	 */
+	Start,
+
+	/**
+	 * The second string is the same as the first one
+	 */
+	Full,
+}
+
+/**
+ * Values used as custom identifiers for select menus
+ */
+export const enum MenuActions {
+	/**
+	 * Show info about a player
+	 */
+	PlayerInfo = "player",
+
+	/**
+	 * Show info about a clan
+	 */
+	ClanInfo = "clan",
+}
+
+/**
+ * Types of other arguments for button actions
+ */
+export type MenuActionsTypes = {
+	[MenuActions.PlayerInfo]: [];
+	[MenuActions.ClanInfo]: [];
 };
+
+/**
+ * An interaction that can be replied to
+ */
+export type ReplyableInteraction =
+	| ButtonInteraction
+	| CommandInteraction
+	| ContextMenuInteraction
+	| SelectMenuInteraction;

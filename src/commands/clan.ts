@@ -1,14 +1,17 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { Clan, SearchClanOptions } from "apiroyale";
+import { Collection } from "@discordjs/collection";
+import type { APITag, Clan, ClanPreview, SearchClanOptions } from "apiroyale";
 import type {
 	ApplicationCommandOptionChoice,
 	AutocompleteInteraction,
 } from "discord.js";
+import { t } from "i18next";
 import type CustomClient from "../CustomClient";
-import type { CommandOptions } from "../util";
 import Constants, {
 	clanInfo,
-	handleSearchResults,
+	CommandOptions,
+	getInteractionLocale,
+	searchClan,
 	MatchLevel,
 	matchStrings,
 	normalizeTag,
@@ -45,6 +48,7 @@ const autocompleteClanTag = (
 	option: ApplicationCommandOptionChoice,
 	interaction: AutocompleteInteraction
 ) => {
+	const lng = getInteractionLocale(interaction);
 	const value = option.value as string;
 	/**
 	 * A record of clan tags with their respective match level with the value provided
@@ -53,10 +57,10 @@ const autocompleteClanTag = (
 	/**
 	 * A collection of all cached clans
 	 */
-	const clans = client.clanPreviews.concat(
+	const clans = (client.clanPreviews as Collection<APITag, unknown>).concat(
 		client.clanResultPreviews,
 		client.clans
-	);
+	) as Collection<APITag, ClanPreview>;
 
 	// If a value was provided, search for clans with a tag or a name that contains the value
 	if (value.length) {
@@ -73,9 +77,9 @@ const autocompleteClanTag = (
 	interaction
 		.respond(
 			// Take the first 25 clans as only 25 options are allowed
-			clans.first(25).map((c) => ({
-				name: Constants.autocompleteClanOptionName(c),
-				value: c.tag,
+			clans.first(25).map((structure) => ({
+				name: t("common.tagPreview", { lng, structure }),
+				value: structure.tag,
 			}))
 		)
 		.catch(console.error);
@@ -146,13 +150,19 @@ export const command: CommandOptions = {
 				)
 		),
 	async run(interaction) {
+		const lng = getInteractionLocale(interaction);
+
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Info:
 				// Display the clan info
-				await clanInfo(
-					this.client,
-					interaction,
-					interaction.options.getString(InfoOptions.Tag, true)
+				await interaction.reply(
+					await clanInfo(
+						this.client,
+						interaction.options.getString(InfoOptions.Tag, true),
+						{
+							lng: getInteractionLocale(interaction),
+						}
+					)
 				);
 				break;
 			case SubCommands.Search:
@@ -209,49 +219,28 @@ export const command: CommandOptions = {
 					name,
 				};
 
-				// Search the clans with the provided options
-				this.client.clans
-					.search(options)
-					.then((results) => {
-						// Display a message if no results were found
-						if (!results.size)
-							return interaction.reply(Constants.noClanFound());
-						// Display the results
-						return interaction.reply({
-							...handleSearchResults(results),
-							content: Constants.clanSearchResultsContent(
-								interaction.user.id,
-								name,
-								location,
-								minMembers,
-								maxMembers,
-								minScore
-							),
-						});
-					})
-					.catch((error: Error) => {
-						// Catch any errors
-						console.error(error);
-						// Display the error message
-						return interaction.reply({
-							content: error.message,
-							ephemeral: true,
-						});
-					})
-					.catch(console.error);
+				// Search the clans with the provided options and display them
+				await interaction.reply({
+					...(await searchClan(this.client, options, { lng })),
+					content: Constants.clanSearchResultsContent(
+						interaction.user.id,
+						name,
+						location,
+						minMembers,
+						maxMembers,
+						minScore
+					),
+				});
 				break;
 			case SubCommands.RiverRaceLog:
-				/**
-				 * The options for replying to the interaction
-				 */
-				const result = await riverRaceLog(
-					this.client,
-					interaction,
-					interaction.options.getString(RiverRaceLogOptions.Tag, true)
-				);
-
-				// If there weren't any errors then display the results
-				if (result) await interaction.reply(result);
+				// Fetch the river race log for the clan and display it
+				await interaction.reply({
+					...(await riverRaceLog(
+						this.client,
+						interaction.options.getString(RiverRaceLogOptions.Tag, true),
+						{ id: interaction.user.id, lng }
+					)),
+				});
 				break;
 			default:
 				console.error(
@@ -261,7 +250,7 @@ export const command: CommandOptions = {
 						)
 					)
 				);
-				await interaction.reply(Constants.subCommandNotRecognized());
+				await interaction.reply(t("common.invalidCommand", { lng }));
 				break;
 		}
 	},

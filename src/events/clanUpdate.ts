@@ -1,72 +1,91 @@
 import { Embed } from "@discordjs/builders";
-import type { Clan } from "apiroyale";
-import type { TextChannel } from "discord.js";
-import { Constants as DiscordConstants } from "discord.js";
-import type { EventOptions } from "../util";
-import Constants, { cast } from "../util";
+import { Clan } from "apiroyale";
+import { Constants as DiscordConstants, TextChannel } from "discord.js";
+import { t } from "i18next";
+import { env } from "node:process";
+import Constants, { cast, EventOptions, locationToLocale } from "../util";
 
 const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
+	const lng = locationToLocale(newClan.location);
 	const embed = new Embed()
-		.setTitle(Constants.clanUpdatedEmbedTitle())
+		.setTitle(t("events.clanUpdate.title", { lng }))
 		.setURL(Constants.clanLink(newClan.tag))
 		.setAuthor({ name: newClan.name })
 		.setThumbnail(newClan.badgeUrl)
 		.setColor(DiscordConstants.Colors.BLURPLE);
 
 	if (oldClan.name !== newClan.name)
-		embed.addField({
-			name: Constants.clanNameUpdatedFieldName(),
-			value: Constants.clanNameUpdatedFieldValue(oldClan.name, newClan.name),
-		});
+		embed.addField(
+			t("events.clanUpdate.name", {
+				lng,
+				returnObjects: true,
+				old: oldClan.name,
+				new: newClan.name,
+			})
+		);
 	if (oldClan.description !== newClan.description)
-		embed.addField({
-			name: Constants.clanDescriptionUpdatedFieldName(),
-			value: Constants.clanDescriptionUpdatedFieldValue(
-				oldClan.description,
-				newClan.description
-			),
-		});
+		embed.addField(
+			t("events.clanUpdate.fields.description", {
+				lng,
+				returnObjects: true,
+				new: newClan.description,
+				old: oldClan.description,
+			})
+		);
 	if (oldClan.badgeId !== newClan.badgeId)
-		embed.addField({
-			name: Constants.clanBadgeIdUpdatedFieldName(),
-			value: Constants.clanBadgeIdUpdatedFieldValue(
-				oldClan.badgeId,
-				newClan.badgeId
-			),
-		});
+		embed.addField(
+			t("events.clanUpdate.fields.badgeId", {
+				lng,
+				returnObjects: true,
+				old: oldClan.badgeId,
+				new: newClan.badgeId,
+			})
+		);
 	if (oldClan.locationName !== newClan.locationName)
-		embed.addField({
-			name: Constants.clanLocationUpdatedFieldName(),
-			value: Constants.clanLocationUpdatedFieldValue(
-				oldClan.locationName,
-				newClan.locationName
-			),
-		});
+		embed.addField(
+			t("events.clanUpdate.fields.location", {
+				lng,
+				returnObjects: true,
+				old: oldClan.locationName,
+				new: newClan.locationName,
+			})
+		);
 	if (oldClan.requiredTrophies !== newClan.requiredTrophies)
-		embed.addField({
-			name: Constants.clanRequiredTrophiesUpdatedFieldName(),
-			value: Constants.clanRequiredTrophiesUpdatedFieldValue(
-				oldClan.requiredTrophies,
-				newClan.requiredTrophies
-			),
-		});
+		embed.addField(
+			t("events.clanUpdate.fields.requiredTrophies", {
+				lng,
+				returnObjects: true,
+				old: oldClan.requiredTrophies,
+				new: newClan.requiredTrophies,
+			})
+		);
 	if (oldClan.type !== newClan.type)
-		embed.addField({
-			name: Constants.clanTypeUpdatedFieldName(),
-			value: Constants.clanTypeUpdatedFieldValue(oldClan.type, newClan.type),
-		});
+		embed.addField(
+			t("events.clanUpdate.fields.type", {
+				lng,
+				returnObjects: true,
+				old: oldClan.type,
+				new: newClan.type,
+			})
+		);
 	for (const [tag, member] of oldClan.members)
 		if (!newClan.members.has(tag))
-			embed.addField({
-				name: Constants.clanMemberLeftFieldName(),
-				value: Constants.clanMemberLeftFieldValue(member),
-			});
+			embed.addField(
+				t("events.clanUpdate.fields.memberLeft", {
+					lng,
+					returnObjects: true,
+					member,
+				})
+			);
 	for (const [tag, member] of newClan.members)
 		if (!oldClan.members.has(tag))
-			embed.addField({
-				name: Constants.clanMemberJoinedFieldName(),
-				value: Constants.clanMemberJoinedFieldValue(member),
-			});
+			embed.addField(
+				t("events.clanUpdate.fields.memberJoined", {
+					lng,
+					returnObjects: true,
+					member,
+				})
+			);
 	return embed;
 };
 
@@ -79,7 +98,7 @@ export const event: EventOptions<"clanUpdate"> = {
 		 * The channel to send the embed to
 		 */
 		const channel = this.client.discord.channels.cache.get(
-			process.env.CLAN_CHANNEL_ID!
+			env.CLAN_CHANNEL_ID!
 		);
 
 		if (!channel) return;
@@ -91,6 +110,6 @@ export const event: EventOptions<"clanUpdate"> = {
 		cast<TextChannel>(channel);
 		// Send the embed only if we have at least one field
 		if (embed.fields.length)
-			channel.send({ embeds: [embed.toJSON()] }).catch(console.error);
+			channel.send({ embeds: [embed] }).catch(console.error);
 	},
 };

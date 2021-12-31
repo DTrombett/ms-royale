@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import process, { argv, cwd, exit } from "node:process";
 import type CustomClient from "../CustomClient";
 
 /**
@@ -7,15 +8,14 @@ import type CustomClient from "../CustomClient";
  */
 export const restart = (client: CustomClient) => {
 	process.once("exit", () => {
-		spawn(process.argv[0], process.argv.slice(1), {
-			cwd: process.cwd(),
+		spawn(argv[0], argv.slice(1), {
+			cwd: cwd(),
 			detached: true,
 			stdio: "inherit",
 		}).unref();
 	});
 	client.discord.destroy();
-	// eslint-disable-next-line no-process-exit
-	process.exit(0);
+	exit(0);
 };
 
 export default restart;
