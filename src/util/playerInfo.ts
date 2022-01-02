@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import { t } from "i18next";
-import Constants, { TIME } from "./Constants";
+import Constants from "./Constants";
 import { buildCustomButtonId } from "./customId";
 import normalizeTag from "./normalizeTag";
 import { ButtonActions, Emojis } from "./types";
@@ -26,14 +26,10 @@ export const playerInfo = async (
 			ephemeral: true,
 		};
 
-	const player = await client.players
-		.fetch(tag, {
-			maxAge: TIME.millisecondsPerMinute * 5,
-		})
-		.catch((error: Error) => {
-			console.error(error);
-			return { content: error.message, ephemeral: true };
-		});
+	const player = await client.players.fetch(tag).catch((error: Error) => {
+		console.error(error);
+		return { content: error.message, ephemeral: true };
+	});
 
 	if (!(player instanceof Player)) return player;
 	const embed = new Embed()

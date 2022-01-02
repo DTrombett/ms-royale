@@ -10,7 +10,7 @@ import {
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import { t } from "i18next";
 import capitalize from "./capitalize";
-import Constants, { TIME } from "./Constants";
+import Constants from "./Constants";
 import { buildCustomButtonId, buildCustomMenuId } from "./customId";
 import normalizeTag from "./normalizeTag";
 import { ButtonActions, CustomEmojis, Emojis, MenuActions } from "./types";
@@ -35,14 +35,10 @@ export const clanInfo = async (
 			ephemeral: true,
 		};
 
-	const clan = await client.clans
-		.fetch(tag, {
-			maxAge: TIME.millisecondsPerMinute * 5,
-		})
-		.catch((error: Error) => {
-			console.error(error);
-			return { content: error.message, ephemeral: true };
-		});
+	const clan = await client.clans.fetch(tag).catch((error: Error) => {
+		console.error(error);
+		return { content: error.message, ephemeral: true };
+	});
 
 	if (!(clan instanceof Clan)) return clan;
 	const embed = new Embed()

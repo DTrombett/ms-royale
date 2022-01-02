@@ -14,7 +14,6 @@ import Constants, {
 	MenuActions,
 	playerInfo,
 	riverRaceLog,
-	TIME,
 } from "./util";
 
 config();
@@ -39,9 +38,7 @@ await use(Backend).init({
 client.discord
 	.on("ready", async (discord) => {
 		setInterval(() => {
-			client.clans
-				.fetch(Constants.mainClanTag(), { maxAge: TIME.millisecondsPerMinute })
-				.catch(console.error);
+			client.clans.fetch(Constants.mainClanTag()).catch(console.error);
 		}, Constants.mainClanFetchInterval());
 		await Promise.all([
 			discord.application.fetch(),
