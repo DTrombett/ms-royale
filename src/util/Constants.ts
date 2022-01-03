@@ -1,6 +1,5 @@
 import { bold, hyperlink } from "@discordjs/builders";
 import type {
-	APITag,
 	ClanPreview,
 	Player,
 	PlayerBadge,
@@ -164,13 +163,6 @@ export const Constants = {
 	mainClanTag: () => "#L2Y2L2PC" as const,
 
 	/**
-	 * The link of RoyaleAPI for a clan.
-	 * @param clanTag - The tag of the clan
-	 */
-	clanLink: (clanTag: APITag) =>
-		`https://royaleapi.com/clan/${clanTag.slice(1)}` as const,
-
-	/**
 	 * Number of milliseconds before fetching the main clan again.
 	 */
 	mainClanFetchInterval: () => TIME.millisecondsPerMinute * 5,
@@ -211,13 +203,14 @@ export const Constants = {
 	 * The url of the clan info embed.
 	 * @param clan - The clan
 	 */
-	clanInfoUrl: (clan: ClanPreview) =>
+	clanLink: (clan: ClanPreview) =>
 		`https://royaleapi.com/clan/${clan.tag.slice(1)}` as const,
 
 	/**
-	 * The url for player info.
+	 * The link for player info.
+	 * @param player - The player
 	 */
-	playerInfoUrl: (player: Player) =>
+	playerLink: (player: Player) =>
 		`https://royaleapi.com/player/${player.tag.slice(1)}` as const,
 
 	/**

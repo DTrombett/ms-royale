@@ -63,7 +63,7 @@ export const currentRiverRace = async (
 		.setFooter({ text: t("common.lastUpdated", { lng }) })
 		.setTimestamp(race.lastUpdate)
 		.setThumbnail(race.clan.badgeUrl)
-		.setURL(Constants.clanInfoUrl(race.clan))
+		.setURL(Constants.clanLink(race.clan))
 		.setDescription(
 			race.leaderboard
 				.map((standing) =>

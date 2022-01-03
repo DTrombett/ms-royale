@@ -9,7 +9,7 @@ const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
 	const lng = locationToLocale(newClan.location);
 	const embed = new Embed()
 		.setTitle(t("events.clanUpdate.title", { lng }))
-		.setURL(Constants.clanLink(newClan.tag))
+		.setURL(Constants.clanLink(newClan))
 		.setAuthor({ name: newClan.name })
 		.setThumbnail(newClan.badgeUrl)
 		.setColor(DiscordConstants.Colors.BLURPLE);

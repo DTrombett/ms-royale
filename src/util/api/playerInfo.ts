@@ -44,7 +44,7 @@ export const playerInfo = async (
 		.setColor(DiscordCostants.Colors.BLUE)
 		.setFooter({ text: t("common.lastUpdated", { lng }) })
 		.setTimestamp(player.lastUpdate)
-		.setURL(Constants.playerInfoUrl(player))
+		.setURL(Constants.playerLink(player))
 		.addField({
 			...t("commands.player.info.fields.level", {
 				lng,
