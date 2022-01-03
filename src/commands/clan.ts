@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Collection } from "@discordjs/collection";
-import type { APITag, Clan, ClanPreview, SearchClanOptions } from "apiroyale";
+import type { Clan, SearchClanOptions } from "apiroyale";
 import type {
 	ApplicationCommandOptionChoice,
 	AutocompleteInteraction,
@@ -10,18 +9,20 @@ import type CustomClient from "../CustomClient";
 import Constants, {
 	clanInfo,
 	CommandOptions,
+	currentRiverRace,
 	getInteractionLocale,
-	searchClan,
 	MatchLevel,
 	matchStrings,
 	normalizeTag,
 	riverRaceLog,
+	searchClan,
 } from "../util";
 
 const enum SubCommands {
 	Search = "cerca",
 	Info = "info",
 	RiverRaceLog = "guerre-passate",
+	CurrentRiverRace = "guerra",
 }
 const enum SearchOptions {
 	Name = "nome",
@@ -36,10 +37,16 @@ const enum InfoOptions {
 const enum RiverRaceLogOptions {
 	Tag = "tag",
 }
+const enum CurrentRiverRaceOptions {
+	Tag = "tag",
+}
 const enum AutoCompletableInfoOptions {
 	Tag = "tag",
 }
 const enum AutoCompletableRiverRaceLogOptions {
+	Tag = "tag",
+}
+const enum AutoCompletableRiverRaceOptions {
 	Tag = "tag",
 }
 
@@ -57,10 +64,7 @@ const autocompleteClanTag = (
 	/**
 	 * A collection of all cached clans
 	 */
-	const clans = (client.clanPreviews as Collection<APITag, unknown>).concat(
-		client.clanResultPreviews,
-		client.clans
-	) as Collection<APITag, ClanPreview>;
+	const clans = client.allClans;
 
 	// If a value was provided, search for clans with a tag or a name that contains the value
 	if (value.length) {
@@ -133,6 +137,20 @@ export const command: CommandOptions = {
 					minScore
 						.setName(SearchOptions.MinScore)
 						.setDescription("Punti clan minimi")
+				)
+		)
+		.addSubcommand((currentRiverRaceCmd) =>
+			currentRiverRaceCmd
+				.setName(SubCommands.CurrentRiverRace)
+				.setDescription("Mostra la guerra in corso")
+				.addStringOption((tag) =>
+					tag
+						.setName(CurrentRiverRaceOptions.Tag)
+						.setDescription(
+							"Il tag del clan. Non fa differenza tra maiuscole e minuscole ed è possibile omettere l'hashtag"
+						)
+						.setRequired(true)
+						.setAutocomplete(true)
 				)
 		)
 		.addSubcommand((riverRaceLogCmd) =>
@@ -242,6 +260,16 @@ export const command: CommandOptions = {
 					)),
 				});
 				break;
+			case SubCommands.CurrentRiverRace:
+				// Fetch the current river race for the clan and display it
+				await interaction.reply({
+					...(await currentRiverRace(
+						this.client,
+						interaction.options.getString(RiverRaceLogOptions.Tag, true),
+						{ lng }
+					)),
+				});
+				break;
 			default:
 				console.error(
 					new Error(
@@ -261,6 +289,7 @@ export const command: CommandOptions = {
 			option.name as
 				| AutoCompletableInfoOptions
 				| AutoCompletableRiverRaceLogOptions
+				| AutoCompletableRiverRaceOptions
 		) {
 			case AutoCompletableInfoOptions.Tag:
 				// Autocomplete the clan tag

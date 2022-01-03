@@ -167,3 +167,5 @@ client.discord
 			}
 		}
 	});
+
+await client.login();

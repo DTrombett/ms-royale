@@ -2,9 +2,16 @@ import { ClanSearchResults, ClientRoyale, SearchClanOptions } from "apiroyale";
 import { MessageActionRow, MessageButton, MessageSelectMenu } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import { t } from "i18next";
-import { buildCustomButtonId, buildCustomMenuId } from "./customId";
-import { ButtonActions, Emojis, MenuActions } from "./types";
+import { buildCustomButtonId, buildCustomMenuId } from "../customId";
+import { ButtonActions, Emojis, MenuActions } from "../types";
 
+/**
+ * Search a clan.
+ * @param client - The client
+ * @param tag - The options for the search
+ * @param options - Additional options
+ * @returns A promise that resolves with the message options
+ */
 export const searchClan = async (
 	client: ClientRoyale,
 	options: SearchClanOptions,

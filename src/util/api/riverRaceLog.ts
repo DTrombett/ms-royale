@@ -1,7 +1,6 @@
 import { Embed } from "@discordjs/builders";
-import Collection from "@discordjs/collection";
 import type ClientRoyale from "apiroyale";
-import { APITag, FinishedRiverRace, RiverRaceLogResults } from "apiroyale";
+import { FinishedRiverRaceManager, RiverRaceLogResults } from "apiroyale";
 import type { APIEmbedField, Snowflake } from "discord-api-types/v9";
 import {
 	Constants as DiscordCostants,
@@ -11,16 +10,18 @@ import {
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import { t } from "i18next";
-import { buildCustomButtonId } from "./customId";
-import normalizeTag from "./normalizeTag";
-import { ButtonActions, Emojis, MenuActions } from "./types";
-import validateTag from "./validateTag";
+import { buildCustomButtonId } from "../customId";
+import normalizeTag from "../normalizeTag";
+import { ButtonActions, Emojis, MenuActions } from "../types";
+import validateTag from "../validateTag";
 
-const cache = new Collection<
-	APITag,
-	Collection<FinishedRiverRace["id"], FinishedRiverRace>
->();
-
+/**
+ * Displays information about a river race log.
+ * @param client - The client
+ * @param tag - The tag of the clan
+ * @param options - Additional options
+ * @returns A promise that resolves with the message options
+ */
 export const riverRaceLog = async (
 	client: ClientRoyale,
 	tag: string,
@@ -38,35 +39,35 @@ export const riverRaceLog = async (
 			ephemeral: true,
 		};
 
-	let last: boolean, race;
-	if (index !== undefined) race = cache.get(tag)?.at(index);
-	if (!race) {
-		const log = await client
-			.fetchRiverRaceLog({ tag })
-			.catch((error: Error) => {
-				console.error(error);
-				return { content: error.message, ephemeral: true };
-			});
+	let log:
+		| FinishedRiverRaceManager
+		| RiverRaceLogResults
+		| { content: string; ephemeral: boolean }
+		| undefined = client.allClans.get(tag)?.riverRaceLog;
+	if (!log || log.size === 0)
+		log = await client.fetchRiverRaceLog({ tag }).catch((error: Error) => {
+			console.error(error);
+			return { content: error.message, ephemeral: true };
+		});
 
-		if (!(log instanceof RiverRaceLogResults)) return log;
-		race = index !== undefined ? log.at(index) : log.first();
-		last = index === log.size - 1;
-		for (const [key, value] of log)
-			(cache.get(tag) ?? cache.set(tag, new Collection()).get(tag))!.set(
-				key,
-				value
-			);
-	}
-	last ??= index === (cache.get(tag)?.size ?? 0) - 1;
+	if (
+		!(log instanceof RiverRaceLogResults) &&
+		!(log instanceof FinishedRiverRaceManager)
+	)
+		return log;
+	const race = index !== undefined ? log.at(index) : log.first();
+	const last = index === log.size - 1;
 
 	if (race === undefined)
 		return {
 			content: t("commands.clan.riverRaceLog.notFound", { lng }),
 			ephemeral: true,
 		};
+	const { clan } = race.leaderboard.get(tag)!;
 	const embed = new Embed()
 		.setTitle(t("commands.clan.riverRaceLog.title", { lng, race }))
 		.setColor(DiscordCostants.Colors.BLURPLE)
+		.setThumbnail(clan.badgeUrl)
 		.setFooter({
 			text: t("commands.clan.riverRaceLog.footer", { lng }),
 		})
@@ -92,7 +93,7 @@ export const riverRaceLog = async (
 			.setCustomId(MenuActions.PlayerInfo)
 			.setPlaceholder(t("commands.clan.riverRaceLog.menu.placeholder", { lng }))
 			.addOptions(
-				[...race.leaderboard.get(tag)!.clan.participants.values()]
+				[...clan.participants.values()]
 					.filter((p) => p.medals)
 					.sort((a, b) => b.medals - a.medals)
 					.slice(0, 25)
@@ -111,7 +112,7 @@ export const riverRaceLog = async (
 		new MessageButton()
 			.setCustomId(buildCustomButtonId(ButtonActions.ClanInfo, tag))
 			.setEmoji(Emojis.CrossedSwords)
-			.setLabel(t("commands.clan.riverRaceLog.button.label", { lng }))
+			.setLabel(t("commands.clan.riverRaceLog.buttons.clanInfo.label", { lng }))
 			.setStyle(MessageButtonStyles.PRIMARY)
 	);
 	const row3 = new MessageActionRow().addComponents(

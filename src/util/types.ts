@@ -161,6 +161,11 @@ export const enum CustomEmojis {
 	 * The emoji for a war deck
 	 */
 	warDeck = "<:wardeck:918908890761035817>",
+
+	/**
+	 * The emoji for a war in a training state
+	 */
+	training = "<:training:927624101219160207>",
 }
 
 /**
@@ -326,6 +331,11 @@ export const enum Emojis {
 	 * The emoji for a robot
 	 */
 	Robot = "🤖",
+
+	/**
+	 * The emoji for today
+	 */
+	Today = "📅",
 }
 
 /**

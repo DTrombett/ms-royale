@@ -9,19 +9,19 @@ import {
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import { t } from "i18next";
-import capitalize from "./capitalize";
-import Constants from "./Constants";
-import { buildCustomButtonId, buildCustomMenuId } from "./customId";
-import normalizeTag from "./normalizeTag";
-import { ButtonActions, CustomEmojis, Emojis, MenuActions } from "./types";
-import validateTag from "./validateTag";
+import capitalize from "../capitalize";
+import Constants from "../Constants";
+import { buildCustomButtonId, buildCustomMenuId } from "../customId";
+import normalizeTag from "../normalizeTag";
+import { ButtonActions, CustomEmojis, Emojis, MenuActions } from "../types";
+import validateTag from "../validateTag";
 
 /**
  * Displays information about a clan.
  * @param client - The client
- * @param interaction - The interaction
  * @param tag - The tag of the clan
- * @param ephemeral - Whether the message should be ephemeral
+ * @param options - Additional options
+ * @returns A promise that resolves with the message options
  */
 export const clanInfo = async (
 	client: ClientRoyale,
@@ -127,7 +127,7 @@ export const clanInfo = async (
 		new MessageButton()
 			.setCustomId(buildCustomButtonId(ButtonActions.RiverRaceLog, tag))
 			.setEmoji(Emojis.Log)
-			.setLabel(t("commands.clan.info.button.label", { lng }))
+			.setLabel(t("commands.clan.info.buttons.riverRaceLog.label", { lng }))
 			.setStyle(MessageButtonStyles.PRIMARY)
 	);
 

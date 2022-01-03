@@ -225,7 +225,9 @@ export const Constants = {
 	 * @param badges - The player's badges
 	 */
 	playerInfoBadgesFieldValue: (badges: PlayerBadgeManager) =>
-		badges.map(Constants.playerBadgeDescription).join(", "),
+		badges.size
+			? badges.map(Constants.playerBadgeDescription).join(", ")
+			: "None",
 	playerBadgeDescription: (badge: PlayerBadge) =>
 		`${bold(badge.name)}${
 			badge.isMultipleLevels() ? ` (Liv. ${badge.level}/${badge.levels})` : ""

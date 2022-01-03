@@ -22,7 +22,8 @@
 		"medal": "<:medal:918514839670886400>",
 		"warPoint": "<:warpoint:918522796747915304>",
 		"boatAttack": "<:boatattack:918909257745825793>",
-		"warDeck": "<:wardeck:918908890761035817>"
+		"warDeck": "<:wardeck:918908890761035817>",
+		"training": "<:training:927624101219160207>"
 	},
 	"events": {
 		"clanUpdate": {
@@ -97,14 +98,40 @@
 					},
 					"placeholder": "Lista partecipanti"
 				},
-				"button": {
-					"label": "Clan"
+				"buttons": {
+					"clanInfo": {
+						"label": "Clan"
+					}
 				}
+			},
+			"currentRiverRace": {
+				"title": "Settimana {{week}} - {{day}}° giorno $t(commands.clan.currentRiverRace.daySuffix, { \"context\": \"{{training}}\" })",
+				"daySuffix_true": "allenamento",
+				"daySuffix_false": "battaglia",
+				"menu": {
+					"options": {
+						"description": "🏅 {{participant.medals}} - ⛵🗡 {{participant.boatAttacks}} - 🎴 {{participant.decksUsed}} - 🎴📅 {{participant.decksUsedToday}}",
+						"label": "#{{rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{- participant.name}}\", \"tag\": \"{{participant.tag}}\" } })"
+					},
+					"placeholder": "Lista partecipanti"
+				},
+				"buttons": {
+					"riverRaceLog": {
+						"label": "Guerre passate"
+					},
+					"clanInfo": {
+						"label": "Clan"
+					}
+				},
+				"description_true": "$t(emojis.training) **$t(common.tagPreview, { \"structure\": { \"name\": \"{{- standing.name}}\", \"tag\": \"{{standing.tag}}\" } })**",
+				"description_false": "**$t(common.tagPreview, { \"structure\": { \"name\": \"{{- standing.name}}\", \"tag\": \"{{standing.tag}}\" } })**: $t(emojis.medal) {{standing.medals}} - $t(emojis.warPoint) {{standing.points}} - $t(emojis.members) {{participants}}"
 			},
 			"info": {
 				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{- clan.name}}\", \"tag\": \"{{clan.tag}}\" } })",
-				"button": {
-					"label": "Guerre passate"
+				"buttons": {
+					"riverRaceLog": {
+						"label": "Guerre passate"
+					}
 				},
 				"menu": {
 					"options": {
@@ -148,8 +175,10 @@
 		"player": {
 			"info": {
 				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{- player.name}}\", \"tag\": \"{{player.tag}}\" } })",
-				"button": {
-					"label": "Clan"
+				"buttons": {
+					"clanInfo": {
+						"label": "Clan"
+					}
 				},
 				"fields": {
 					"achievements": {

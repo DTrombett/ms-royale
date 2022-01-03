@@ -58,10 +58,15 @@ export class CustomClient extends ClientRoyale {
 
 	constructor() {
 		super({ baseURL: "https://proxy.royaleapi.dev/v1" });
+	}
 
-		void Promise.all([loadCommands(this), loadEvents(this)]).then(() =>
-			this.discord.login(env.DISCORD_TOKEN)
-		);
+	/**
+	 * Loads commands and events, then logs in with Discord.
+	 * @returns A promise that resolves when the client is ready
+	 */
+	async login() {
+		await Promise.all([loadCommands(this), loadEvents(this)]);
+		return this.discord.login(env.DISCORD_TOKEN);
 	}
 }
 

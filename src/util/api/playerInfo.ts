@@ -8,12 +8,19 @@ import {
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import { t } from "i18next";
-import Constants from "./Constants";
-import { buildCustomButtonId } from "./customId";
-import normalizeTag from "./normalizeTag";
-import { ButtonActions, Emojis } from "./types";
-import validateTag from "./validateTag";
+import Constants from "../Constants";
+import { buildCustomButtonId } from "../customId";
+import normalizeTag from "../normalizeTag";
+import { ButtonActions, Emojis } from "../types";
+import validateTag from "../validateTag";
 
+/**
+ * Displays information about a player.
+ * @param client - The client
+ * @param tag - The tag of the player
+ * @param options - Additional options
+ * @returns A promise that resolves with the message options
+ */
 export const playerInfo = async (
 	client: ClientRoyale,
 	tag: string,
@@ -240,7 +247,7 @@ export const playerInfo = async (
 			)
 			.setDisabled(player.clan === undefined)
 			.setEmoji(Emojis.CrossedSwords)
-			.setLabel(t("commands.player.info.button.label", { lng }))
+			.setLabel(t("commands.player.info.buttons.clanInfo.label", { lng }))
 			.setStyle(MessageButtonStyles.PRIMARY)
 	);
 
