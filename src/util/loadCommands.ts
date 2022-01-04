@@ -1,8 +1,7 @@
 import { promises } from "node:fs";
 import { join } from "node:path";
 import { URL } from "node:url";
-import type { CommandOptions } from ".";
-import type CustomClient from "../CustomClient";
+import type { CommandOptions, CustomClient } from ".";
 import Command from "./Command";
 import Constants from "./Constants";
 

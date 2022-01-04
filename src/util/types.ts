@@ -2,6 +2,7 @@ import type {
 	SlashCommandBuilder,
 	SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
+import { ClientEvents as DiscordEvents } from "discord.js";
 import type { APITag, ClientEvents } from "apiroyale";
 import type { Snowflake as APISnowflake } from "discord-api-types";
 import type {
@@ -341,22 +342,53 @@ export const enum Emojis {
 /**
  * The data for an event
  */
-export type EventOptions<T extends keyof ClientEvents = keyof ClientEvents> = {
+export type EventOptions<
+	T extends EventType = EventType,
+	K extends T extends EventType.APIRoyale
+		? keyof ClientEvents
+		: T extends EventType.Discord
+		? keyof DiscordEvents
+		: never = T extends EventType.APIRoyale
+		? keyof ClientEvents
+		: T extends EventType.Discord
+		? keyof DiscordEvents
+		: never
+> = {
 	/**
 	 * The name of the event
 	 */
-	name: T;
+	name: K;
+
+	/**
+	 * The type of the event
+	 */
+	type: T;
 
 	/**
 	 * The function to execute when the event is received
 	 */
-	on?: (this: Event<T>, ...args: ClientEvents[T]) => Awaitable<void>;
+	on?: (
+		this: Event<T, K>,
+		...args: K extends keyof ClientEvents
+			? ClientEvents[K]
+			: K extends keyof DiscordEvents
+			? DiscordEvents[K]
+			: never
+	) => Awaitable<void>;
 
 	/**
 	 * The function to execute when the event is received once
 	 */
-	once?: EventOptions<T>["on"];
+	once?: EventOptions<T, K>["on"];
 };
+
+/**
+ * The type for an event
+ */
+export const enum EventType {
+	Discord = "discord",
+	APIRoyale = "royale",
+}
 
 /**
  * All the face emojis

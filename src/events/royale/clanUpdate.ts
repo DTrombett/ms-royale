@@ -3,7 +3,13 @@ import { Clan } from "apiroyale";
 import { Constants as DiscordConstants, TextChannel } from "discord.js";
 import { t } from "i18next";
 import { env } from "node:process";
-import Constants, { cast, EventOptions, locationToLocale } from "../util";
+import Constants, {
+	cast,
+	CustomClient,
+	EventOptions,
+	EventType,
+	locationToLocale,
+} from "../../util";
 
 const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
 	const lng = locationToLocale(newClan.location);
@@ -89,8 +95,9 @@ const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
 	return embed;
 };
 
-export const event: EventOptions<"clanUpdate"> = {
+export const event: EventOptions<EventType.APIRoyale, "clanUpdate"> = {
 	name: "clanUpdate",
+	type: EventType.APIRoyale,
 	on(oldClan, newClan) {
 		// Prepare the embed only if it's the main clan
 		if (newClan.tag !== Constants.mainClanTag()) return;
@@ -110,6 +117,6 @@ export const event: EventOptions<"clanUpdate"> = {
 		cast<TextChannel>(channel);
 		// Send the embed only if we have at least one field
 		if (embed.fields.length)
-			channel.send({ embeds: [embed] }).catch(console.error);
+			channel.send({ embeds: [embed] }).catch(CustomClient.printToStderr);
 	},
 };

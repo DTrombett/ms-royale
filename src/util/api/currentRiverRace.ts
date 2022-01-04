@@ -10,6 +10,7 @@ import {
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import { t } from "i18next";
 import Constants from "../Constants";
+import CustomClient from "../CustomClient";
 import { buildCustomButtonId, buildCustomMenuId } from "../customId";
 import normalizeTag from "../normalizeTag";
 import { ButtonActions, Emojis, MenuActions } from "../types";
@@ -35,7 +36,7 @@ export const currentRiverRace = async (
 		};
 
 	const race = await client.races.fetch(tag).catch((error: Error) => {
-		console.error(error);
+		CustomClient.printToStderr(error);
 		return { content: error.message, ephemeral: true };
 	});
 
@@ -51,7 +52,7 @@ export const currentRiverRace = async (
 			t("commands.clan.currentRiverRace.title", {
 				lng,
 				week: Math.ceil(race.monthDay / 7),
-				day: training ? race.weekDay : race.weekDay - 3,
+				day: training ? race.monthDay % 7 : race.weekDay,
 				training,
 			})
 		)

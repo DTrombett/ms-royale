@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import process, { argv, cwd, exit } from "node:process";
-import type CustomClient from "../CustomClient";
+import type { CustomClient } from ".";
 
 /**
  * Restarts the process.

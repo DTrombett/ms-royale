@@ -11,6 +11,7 @@ import { MessageButtonStyles } from "discord.js/typings/enums";
 import { t } from "i18next";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
+import CustomClient from "../CustomClient";
 import { buildCustomButtonId, buildCustomMenuId } from "../customId";
 import normalizeTag from "../normalizeTag";
 import { ButtonActions, CustomEmojis, Emojis, MenuActions } from "../types";
@@ -36,7 +37,7 @@ export const clanInfo = async (
 		};
 
 	const clan = await client.clans.fetch(tag).catch((error: Error) => {
-		console.error(error);
+		CustomClient.printToStderr(error);
 		return { content: error.message, ephemeral: true };
 	});
 

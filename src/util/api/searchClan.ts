@@ -2,6 +2,7 @@ import { ClanSearchResults, ClientRoyale, SearchClanOptions } from "apiroyale";
 import { MessageActionRow, MessageButton, MessageSelectMenu } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import { t } from "i18next";
+import CustomClient from "../CustomClient";
 import { buildCustomButtonId, buildCustomMenuId } from "../customId";
 import { ButtonActions, Emojis, MenuActions } from "../types";
 
@@ -18,7 +19,7 @@ export const searchClan = async (
 	{ ephemeral, lng }: { lng?: string; ephemeral?: boolean }
 ) => {
 	const results = await client.clans.search(options).catch((error: Error) => {
-		console.error(error);
+		CustomClient.printToStderr(error);
 		return { content: error.message, ephemeral: true };
 	});
 

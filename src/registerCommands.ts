@@ -15,7 +15,7 @@ import { join } from "node:path";
 import { cwd, env } from "node:process";
 import { URL } from "node:url";
 import type { CommandOptions } from "./util";
-import Constants from "./util";
+import Constants, { CustomClient } from "./util";
 
 console.time("Register slash commands");
 
@@ -78,5 +78,5 @@ if (!registerGlobal)
 		}
 	);
 
-console.log(APICommands);
+CustomClient.printToStdout(APICommands);
 console.timeEnd("Register slash commands");

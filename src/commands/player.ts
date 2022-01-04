@@ -5,9 +5,9 @@ import type {
 	AutocompleteInteraction,
 } from "discord.js";
 import { t } from "i18next";
-import type CustomClient from "../CustomClient";
 import Constants, {
 	CommandOptions,
+	CustomClient,
 	getInteractionLocale,
 	MatchLevel,
 	matchStrings,
@@ -61,7 +61,7 @@ const autocompletePlayerTag = (
 				value: structure.tag,
 			}))
 		)
-		.catch(console.error);
+		.catch(CustomClient.printToStderr);
 };
 
 export const command: CommandOptions = {
@@ -99,7 +99,7 @@ export const command: CommandOptions = {
 				});
 				break;
 			default:
-				console.error(
+				CustomClient.printToStderr(
 					new Error(
 						Constants.optionNotRecognizedLog(
 							interaction.options.getSubcommand()
@@ -121,7 +121,9 @@ export const command: CommandOptions = {
 				autocompletePlayerTag(this.client, option, interaction);
 				break;
 			default:
-				console.error(new Error(Constants.optionNotRecognizedLog(option.name)));
+				CustomClient.printToStderr(
+					new Error(Constants.optionNotRecognizedLog(option.name))
+				);
 				break;
 		}
 	},

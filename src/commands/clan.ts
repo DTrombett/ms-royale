@@ -5,11 +5,11 @@ import type {
 	AutocompleteInteraction,
 } from "discord.js";
 import { t } from "i18next";
-import type CustomClient from "../CustomClient";
 import Constants, {
 	clanInfo,
 	CommandOptions,
 	currentRiverRace,
+	CustomClient,
 	getInteractionLocale,
 	MatchLevel,
 	matchStrings,
@@ -86,7 +86,7 @@ const autocompleteClanTag = (
 				value: structure.tag,
 			}))
 		)
-		.catch(console.error);
+		.catch(CustomClient.printToStderr);
 };
 
 export const command: CommandOptions = {
@@ -271,7 +271,7 @@ export const command: CommandOptions = {
 				});
 				break;
 			default:
-				console.error(
+				CustomClient.printToStderr(
 					new Error(
 						Constants.optionNotRecognizedLog(
 							interaction.options.getSubcommand()
@@ -296,7 +296,9 @@ export const command: CommandOptions = {
 				autocompleteClanTag(this.client, option, interaction);
 				break;
 			default:
-				console.error(new Error(Constants.optionNotRecognizedLog(option.name)));
+				CustomClient.printToStderr(
+					new Error(Constants.optionNotRecognizedLog(option.name))
+				);
 				break;
 		}
 	},

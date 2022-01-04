@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import type { AutocompleteInteraction, CommandInteraction } from "discord.js";
 import type { CommandOptions } from ".";
-import type CustomClient from "../CustomClient";
 import Constants from "./Constants";
+import CustomClient from "./CustomClient";
 
 /**
  * A class representing a Discord slash command
@@ -72,7 +72,7 @@ export class Command {
 				return;
 			await this._autocomplete?.(interaction);
 		} catch (message) {
-			console.error(message);
+			CustomClient.printToStderr(message);
 		}
 	}
 
@@ -104,7 +104,7 @@ export class Command {
 			}
 			await this._execute(interaction);
 		} catch (message) {
-			console.error(message);
+			CustomClient.printToStderr(message);
 		}
 	}
 }

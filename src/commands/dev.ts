@@ -13,7 +13,7 @@ import { exec as nativeExec } from "node:child_process";
 import { argv, cwd, env, exit, memoryUsage, uptime } from "node:process";
 import { promisify } from "node:util";
 import type { CommandOptions } from "../util";
-import { parseEval, restart } from "../util";
+import { CustomClient, parseEval, restart } from "../util";
 
 const enum SubCommands {
 	shell = "shell",
@@ -38,7 +38,7 @@ const enum SubCommandOptions {
 const exec = promisify(nativeExec);
 const catchPullError =
 	(interaction: CommandInteraction) => async (err: Error) => {
-		console.error(err);
+		CustomClient.printToStderr(err);
 		await interaction.editReply({
 			content: `Errore durante il pull: ${err.message}`,
 		});
@@ -193,7 +193,7 @@ export const command: CommandOptions = {
 				const embeds: Embed[] = [];
 
 				if (stdout) {
-					console.log(stdout);
+					CustomClient.printToStdout(stdout);
 					embeds.push(
 						new Embed()
 							.setAuthor({
@@ -209,7 +209,7 @@ export const command: CommandOptions = {
 					);
 				}
 				if (stderr) {
-					console.error(stderr);
+					CustomClient.printToStderr(stderr);
 					embeds.push(
 						new Embed()
 							.setAuthor({
@@ -256,6 +256,7 @@ export const command: CommandOptions = {
 					.setColor(Constants.Colors.BLURPLE)
 					.setTimestamp();
 
+				CustomClient.printToStdout(parsed);
 				await interaction.editReply({
 					content: `Eval elaborato in ${bold(`${Date.now() - now}ms`)}`,
 					embeds: [evalEmbed],
@@ -348,7 +349,7 @@ export const command: CommandOptions = {
 					false;
 
 				if (interaction.options.getBoolean(SubCommandOptions.packages) ?? false)
-					cmds.push("npm ci");
+					cmds.push("rm -rf node_modules", "npm i");
 				if (interaction.options.getBoolean(SubCommandOptions.rebuild) ?? false)
 					cmds.push("rm -rf dist", "npm run build");
 				if (

@@ -9,6 +9,7 @@ import {
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import { t } from "i18next";
 import Constants from "../Constants";
+import CustomClient from "../CustomClient";
 import { buildCustomButtonId } from "../customId";
 import normalizeTag from "../normalizeTag";
 import { ButtonActions, Emojis } from "../types";
@@ -34,7 +35,7 @@ export const playerInfo = async (
 		};
 
 	const player = await client.players.fetch(tag).catch((error: Error) => {
-		console.error(error);
+		CustomClient.printToStderr(error);
 		return { content: error.message, ephemeral: true };
 	});
 

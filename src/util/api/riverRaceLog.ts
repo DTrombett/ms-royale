@@ -10,6 +10,7 @@ import {
 } from "discord.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
 import { t } from "i18next";
+import CustomClient from "../CustomClient";
 import { buildCustomButtonId } from "../customId";
 import normalizeTag from "../normalizeTag";
 import { ButtonActions, Emojis, MenuActions } from "../types";
@@ -46,7 +47,7 @@ export const riverRaceLog = async (
 		| undefined = client.allClans.get(tag)?.riverRaceLog;
 	if (!log || log.size === 0)
 		log = await client.fetchRiverRaceLog({ tag }).catch((error: Error) => {
-			console.error(error);
+			CustomClient.printToStderr(error);
 			return { content: error.message, ephemeral: true };
 		});
 

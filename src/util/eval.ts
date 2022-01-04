@@ -1,4 +1,4 @@
-import { inspect } from "node:util";
+import CustomClient from "./CustomClient";
 
 /**
  * Execute some code and return the result.
@@ -19,30 +19,7 @@ export async function runEval(code: string): Promise<unknown> {
  * @param thisArg - The value of `this` in the code
  * @returns The result of the code
  */
-export async function parseEval(
+export const parseEval = async (
 	code: string,
 	thisArg?: unknown
-): Promise<string> {
-	let result;
-
-	result = await runEval.bind(thisArg)(code);
-	switch (typeof result) {
-		case "string":
-			result = `"${result.replaceAll("\n", "\\n").replaceAll("\r", "\\r")}"`;
-			break;
-		case "bigint":
-		case "number":
-		case "boolean":
-		case "function":
-		case "symbol":
-			result = result.toString();
-			break;
-		case "object":
-			result = inspect(result);
-			break;
-		default:
-			result = "undefined";
-	}
-
-	return result;
-}
+): Promise<string> => CustomClient.inspect(await runEval.bind(thisArg)(code));
