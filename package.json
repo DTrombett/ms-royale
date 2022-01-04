@@ -4,7 +4,7 @@
   "description": "A Discord Bot that interacts with the Clash Royale API to provide statistics. \nDiscord invite: https://discord.com/api/oauth2/authorize?client_id=903267050775007283&scope=applications.commands \nThis content is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy (http://www.supercell.com/fan-content-policy).",
   "exports": "./dist/index.js",
   "scripts": {
-    "test": "eslint src && prettier --check src/**/*.ts && tsc --noEmit",
+    "test": "eslint src && tsc --noEmit",
     "prepare": "npm run test",
     "build": "tsc",
     "lint": "eslint src --fix",
