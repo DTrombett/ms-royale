@@ -2,6 +2,7 @@
   "name": "ms-royale",
   "version": "0.0.1",
   "description": "A Discord Bot that interacts with the Clash Royale API to provide statistics. \nDiscord invite: https://discord.com/api/oauth2/authorize?client_id=903267050775007283&scope=applications.commands \nThis content is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy (http://www.supercell.com/fan-content-policy).",
+  "homepage": "https://github.com/DTrombett/ms-royale#readme",
   "exports": "./dist/index.js",
   "scripts": {
     "test": "eslint src && tsc --noEmit",
@@ -18,6 +19,13 @@
   "type": "module",
   "engines": {
     "node": ">=14.13.1 || >=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DTrombett/ms-royale.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DTrombett/ms-royale/issues"
   },
   "dependencies": {
     "@discordjs/builders": "^0.11.0",
