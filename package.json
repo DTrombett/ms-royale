@@ -34,21 +34,21 @@
     "@tsconfig/node16": "^1.0.2",
     "@types/node": "^16.11.18",
     "apiroyale": "github:DTrombett/apiroyale",
+    "bufferutil": "^4.0.6",
     "discord-api-types": "^0.25.2",
     "discord.js": "^14.0.0-dev.1640865766.780b7ed",
+    "dotenv": "^10.0.0",
     "i18next": "^21.6.3",
     "i18next-fs-backend": "^1.1.4",
-    "bufferutil": "^4.0.6",
-    "dotenv": "^10.0.0",
     "utf-8-validate": "^5.0.8",
     "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
     "@types/i18next-fs-backend": "^1.1.2",
-    "eslint-plugin-node": "^11.1.0",
     "@typescript-eslint/eslint-plugin": "^5.9.0",
     "@typescript-eslint/parser": "^5.9.0",
     "eslint": "^8.6.0",
+    "eslint-plugin-node": "^11.1.0",
     "prettier": "^2.5.1",
     "typescript": "^4.5.4"
   }

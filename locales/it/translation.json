@@ -66,7 +66,7 @@
 	},
 	"commands": {
 		"ping": {
-			"content": "Pong! (WS: **{{ws}}**ms, interazione: **{{ping}}**ms)"
+			"content": "🏓 Pong! (**{{ws}}ms**)"
 		},
 		"clan": {
 			"search": {

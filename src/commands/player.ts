@@ -39,11 +39,11 @@ const autocompletePlayerTag = (
 	/**
 	 * A collection of all cached players
 	 */
-	const { players } = client;
+	const players = client.players.clone();
 
 	// If a value was provided, search for players with a tag or a name that contains the value
 	if (value.length) {
-		// Remove any clan that doesn't match the value
+		// Remove any player that doesn't match the value
 		players.sweep(
 			(c) =>
 				(matches[c.tag] =
@@ -55,7 +55,7 @@ const autocompletePlayerTag = (
 	}
 	interaction
 		.respond(
-			// Take the first 25 clans as only 25 options are allowed
+			// Take the first 25 players as only 25 options are allowed
 			players.first(25).map((structure) => ({
 				name: t("common.tagPreview", { lng, structure }),
 				value: structure.tag,

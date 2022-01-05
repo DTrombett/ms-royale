@@ -42,17 +42,15 @@ export const currentRiverRace = async (
 
 	if (!(race instanceof CurrentRiverRace)) return race;
 	const training = race.type === RiverRacePeriodType.training;
-	const participants = race.clan.participants
-		.filter((p) => Boolean(p.decksUsed))
-		.sort((a, b) =>
-			race.warDays.size ? b.medals - a.medals : b.decksUsed - a.decksUsed
-		);
+	const participants = race.clan.participants.filter((p) =>
+		Boolean(p.decksUsed)
+	);
 	const embed = new Embed()
 		.setTitle(
 			t("commands.clan.currentRiverRace.title", {
 				lng,
 				week: Math.ceil(race.monthDay / 7),
-				day: training ? race.monthDay % 7 : race.weekDay,
+				day: race.weekDay ?? race.monthDay % 7,
 				training,
 			})
 		)

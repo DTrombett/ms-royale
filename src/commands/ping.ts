@@ -11,7 +11,6 @@ export const command: CommandOptions = {
 			content: t("commands.ping.content", {
 				lng,
 				ws: interaction.client.ws.ping,
-				ping: Date.now() - interaction.createdTimestamp,
 			}),
 		});
 	},
