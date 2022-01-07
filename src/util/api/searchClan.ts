@@ -1,9 +1,15 @@
 import { ClanSearchResults, ClientRoyale, SearchClanOptions } from "apiroyale";
-import { MessageActionRow, MessageButton, MessageSelectMenu } from "discord.js";
-import { MessageButtonStyles } from "discord.js/typings/enums";
-import { t } from "i18next";
+import {
+	Constants as DiscordConstants,
+	MessageActionRow,
+	MessageButton,
+	MessageSelectMenu,
+	Snowflake,
+} from "discord.js";
+import Constants from "../Constants";
 import CustomClient from "../CustomClient";
 import { buildCustomButtonId, buildCustomMenuId } from "../customId";
+import { translate } from "../translate";
 import { ButtonActions, Emojis, MenuActions } from "../types";
 
 /**
@@ -16,7 +22,7 @@ import { ButtonActions, Emojis, MenuActions } from "../types";
 export const searchClan = async (
 	client: ClientRoyale,
 	options: SearchClanOptions,
-	{ ephemeral, lng }: { lng?: string; ephemeral?: boolean }
+	{ ephemeral, lng, id }: { lng?: string; ephemeral?: boolean; id: Snowflake }
 ) => {
 	const results = await client.clans.search(options).catch((error: Error) => {
 		CustomClient.printToStderr(error);
@@ -26,7 +32,7 @@ export const searchClan = async (
 	if (!(results instanceof ClanSearchResults)) return results;
 	if (!results.size)
 		return {
-			content: t("commands.clan.search.notFound", { lng }),
+			content: translate("commands.clan.search.notFound", { lng }),
 			ephemeral: true,
 		};
 	const row1 = new MessageActionRow().addComponents(
@@ -34,7 +40,7 @@ export const searchClan = async (
 			.setCustomId(buildCustomMenuId(MenuActions.ClanInfo))
 			.addOptions(
 				results.map((clan) => ({
-					...t("commands.clan.search.menu.options", {
+					...translate("commands.clan.search.menu.options", {
 						lng,
 						returnObjects: true,
 						clan,
@@ -42,7 +48,9 @@ export const searchClan = async (
 					value: clan.tag,
 				}))
 			)
-			.setPlaceholder(t("commands.clan.search.menu.placeholder", { lng }))
+			.setPlaceholder(
+				translate("commands.clan.search.menu.placeholder", { lng })
+			)
 	);
 	const row2 = new MessageActionRow().addComponents(
 		new MessageButton()
@@ -53,9 +61,9 @@ export const searchClan = async (
 				)
 			)
 			.setEmoji(Emojis.BackArrow)
-			.setLabel(t("common.back", { lng }))
+			.setLabel(translate("common.back", { lng }))
 			.setDisabled(results.paging.cursors.before == null)
-			.setStyle(MessageButtonStyles.PRIMARY),
+			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY),
 		new MessageButton()
 			.setCustomId(
 				buildCustomButtonId(
@@ -64,13 +72,14 @@ export const searchClan = async (
 				)
 			)
 			.setEmoji(Emojis.ForwardArrow)
-			.setLabel(t("common.next", { lng }))
+			.setLabel(translate("common.next", { lng }))
 			.setDisabled(results.paging.cursors.after == null)
-			.setStyle(MessageButtonStyles.PRIMARY)
+			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
 	);
 
 	return {
 		components: [row1, row2],
+		content: Constants.clanSearchResultsContent(id, options),
 		ephemeral,
 	};
 };

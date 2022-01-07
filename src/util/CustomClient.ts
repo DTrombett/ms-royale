@@ -1,9 +1,15 @@
 import Collection from "@discordjs/collection";
 import { ClientRoyale } from "apiroyale";
-import { Client, Constants, Intents, Options } from "discord.js";
+import {
+	Client,
+	Constants as DiscordConstants,
+	Intents,
+	Options,
+} from "discord.js";
 import { env, stderr, stdout } from "node:process";
 import { inspect } from "node:util";
 import Command from "./Command";
+import Constants from "./Constants";
 import Event from "./Event";
 import loadCommands from "./loadCommands";
 import loadEvents from "./loadEvents";
@@ -46,7 +52,7 @@ export class CustomClient extends ClientRoyale {
 		}),
 		presence: {
 			activities: [
-				{ name: "Clash Royale", type: Constants.ActivityTypes.PLAYING },
+				{ name: "Clash Royale", type: DiscordConstants.ActivityTypes.PLAYING },
 			],
 		},
 		rejectOnRateLimit: () => true,
@@ -113,7 +119,7 @@ export class CustomClient extends ClientRoyale {
 	 */
 	private static format(this: void, message: unknown): string {
 		return `${CustomClient.inspect(message)} (${new Date().toLocaleString(
-			"it-IT",
+			Constants.locale(),
 			{
 				timeZone: "Europe/Rome",
 			}

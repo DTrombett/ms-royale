@@ -410,6 +410,17 @@ export const enum FaceEmojis {
 }
 
 /**
+ * If a translation key refers to an object
+ */
+export type IsTranslationObject<
+	K extends string,
+	R extends TranslationResult<K, TranslationSample> = TranslationResult<
+		K,
+		TranslationSample
+	>
+> = R extends string ? false : R extends never ? never : true;
+
+/**
  * A list of locale codes
  */
 export enum LocaleCodes {
@@ -489,3 +500,47 @@ export type ReplyableInteraction =
 	| CommandInteraction
 	| ContextMenuInteraction
 	| SelectMenuInteraction;
+
+/**
+ * A string or an object with a string
+ */
+export type StringElement = StringElement[] | string;
+
+/**
+ * A string identifier for a translation value
+ */
+export type TranslationKeys<
+	T = TranslationSample,
+	K extends keyof T = keyof T
+> = K extends string
+	? `${K extends `${infer U}_${string}` ? U : K}${
+			| ""
+			| (T[K] extends string
+					? never
+					: `.${TranslationKeys<T[K], keyof T[K]>}`)}`
+	: never;
+
+/**
+ * A translation value
+ */
+export type TranslationResult<
+	K extends string,
+	T = TranslationSample,
+	G extends string = K extends `${infer U}.${string}` ? U : K,
+	F extends Exclude<keyof T, symbol> = Exclude<
+		Extract<keyof T, G extends keyof T ? G : `${G}_${string}`>,
+		symbol
+	>
+> = F extends never
+	? never
+	: T[F] extends string
+	? T[F]
+	: K extends `${F}.${infer U}`
+	? TranslationResult<U, T[F]>
+	: T[F];
+
+/**
+ * A sample of a translation
+ */
+export type TranslationSample =
+	typeof import("../../locales/it/translation.json");

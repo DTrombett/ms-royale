@@ -5,6 +5,7 @@ import type {
 	PlayerBadge,
 	PlayerBadgeManager,
 	PlayerCard,
+	SearchClanOptions,
 } from "apiroyale";
 import { OAuth2Scopes } from "discord-api-types/v9";
 import type { Snowflake } from "discord.js";
@@ -103,23 +104,16 @@ export const TIME = {
 } as const;
 
 export const Constants = {
-	clanSearchResultsContent: (
-		user: Snowflake,
-		name?: string,
-		locationId?: number | `${number}`,
-		minMembers?: number,
-		maxMembers?: number,
-		minScore?: number
-	) =>
+	clanSearchResultsContent: (user: Snowflake, options: SearchClanOptions) =>
 		` Risultati per la seguente ricerca richiesta da <@${user}>:\n\n${bold(
 			"Nome"
-		)}: ${name != null ? Util.escapeMarkdown(name) : "-"}\n${bold(
-			"Id posizione"
-		)}: ${locationId ?? "-"}\n${bold("Minimo membri")}: ${
-			minMembers ?? "-"
-		}\n${bold("Massimo membri")}: ${maxMembers ?? "-"}\n${bold(
-			"Punteggio minimo"
-		)}: ${minScore ?? "-"}`,
+		)}: ${
+			options.name != null ? Util.escapeMarkdown(options.name) : "-"
+		}\n${bold("Id posizione")}: ${options.location?.toString() ?? "-"}\n${bold(
+			"Minimo membri"
+		)}: ${options.minMembers ?? "-"}\n${bold("Massimo membri")}: ${
+			options.maxMembers ?? "-"
+		}\n${bold("Punteggio minimo")}: ${options.minScore ?? "-"}`,
 
 	playerCardDescription: (card: PlayerCard) =>
 		`${bold(card.name)} (Liv. ${bold(card.displayLevel.toString())})` as const,
@@ -233,6 +227,11 @@ export const Constants = {
 		`https://discord.com/api/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID!}&scope=${[
 			OAuth2Scopes.ApplicationsCommands,
 		].join("%20")}` as const,
+
+	/**
+	 * The bot's locale.
+	 */
+	locale: () => "it-IT" as const,
 } as const;
 
 export default Constants;

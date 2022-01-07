@@ -1,6 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { MessageActionRow, MessageButton } from "discord.js";
-import { MessageButtonStyles } from "discord.js/typings/enums";
+import {
+	Constants as DiscordConstants,
+	MessageActionRow,
+	MessageButton,
+} from "discord.js";
 import type { CommandOptions } from "../util";
 import { Constants, Emojis } from "../util";
 
@@ -17,7 +20,7 @@ export const command: CommandOptions = {
 					new MessageButton()
 						.setEmoji(Emojis.Robot)
 						.setLabel("Aggiungi al server")
-						.setStyle(MessageButtonStyles.LINK)
+						.setStyle(DiscordConstants.MessageButtonStyles.LINK)
 						.setURL(Constants.inviteUrl())
 				),
 			],

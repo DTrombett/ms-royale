@@ -2,16 +2,15 @@ import { Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { ClanMemberRole, Player } from "apiroyale";
 import {
-	Constants as DiscordCostants,
+	Constants as DiscordConstants,
 	MessageActionRow,
 	MessageButton,
 } from "discord.js";
-import { MessageButtonStyles } from "discord.js/typings/enums";
-import { t } from "i18next";
 import Constants from "../Constants";
 import CustomClient from "../CustomClient";
 import { buildCustomButtonId } from "../customId";
 import normalizeTag from "../normalizeTag";
+import { translate } from "../translate";
 import { ButtonActions, Emojis } from "../types";
 import validateTag from "../validateTag";
 
@@ -30,7 +29,7 @@ export const playerInfo = async (
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
 		return {
-			content: t("commond.invalidTag", { lng }),
+			content: translate("common.invalidTag", { lng }),
 			ephemeral: true,
 		};
 
@@ -41,13 +40,13 @@ export const playerInfo = async (
 
 	if (!(player instanceof Player)) return player;
 	const embed = new Embed()
-		.setTitle(t("commands.player.info.title", { lng, player }))
-		.setColor(DiscordCostants.Colors.BLUE)
-		.setFooter({ text: t("common.lastUpdated", { lng }) })
+		.setTitle(translate("commands.player.info.title", { lng, player }))
+		.setColor(DiscordConstants.Colors.BLUE)
+		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(player.lastUpdate)
 		.setURL(Constants.playerLink(player))
 		.addField({
-			...t("commands.player.info.fields.level", {
+			...translate("commands.player.info.fields.level", {
 				lng,
 				returnObjects: true,
 				player,
@@ -55,7 +54,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.trophies", {
+			...translate("commands.player.info.fields.trophies", {
 				lng,
 				returnObjects: true,
 				trophies: player.trophies,
@@ -63,7 +62,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.starPoints", {
+			...translate("commands.player.info.fields.starPoints", {
 				lng,
 				returnObjects: true,
 				starPoints: player.starPoints,
@@ -71,7 +70,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.clan", {
+			...translate("commands.player.info.fields.clan", {
 				lng,
 				returnObjects: true,
 				clanName: player.clan?.name,
@@ -81,7 +80,7 @@ export const playerInfo = async (
 			}),
 		})
 		.addField({
-			...t("commands.player.info.fields.deck", {
+			...translate("commands.player.info.fields.deck", {
 				lng,
 				returnObjects: true,
 			}),
@@ -90,39 +89,48 @@ export const playerInfo = async (
 	if (player.leagueStatistics)
 		embed
 			.addField({
-				...t("commands.player.info.fields.leagueStatistics.currentSeason", {
-					lng,
-					returnObjects: true,
-					bestTrophies: player.leagueStatistics.currentSeason.bestTrophies,
-				}),
+				...translate(
+					"commands.player.info.fields.leagueStatistics.currentSeason",
+					{
+						lng,
+						returnObjects: true,
+						bestTrophies: player.leagueStatistics.currentSeason.bestTrophies,
+					}
+				),
 				inline: true,
 			})
 			.addField({
-				...t("commands.player.info.fields.leagueStatistics.previousSeason", {
-					lng,
-					returnObjects: true,
-					bestTrophies: player.leagueStatistics.previousSeason.bestTrophies,
-				}),
+				...translate(
+					"commands.player.info.fields.leagueStatistics.previousSeason",
+					{
+						lng,
+						returnObjects: true,
+						bestTrophies: player.leagueStatistics.previousSeason.bestTrophies,
+					}
+				),
 				inline: true,
 			})
 			.addField({
-				...t("commands.player.info.fields.leagueStatistics.bestSeason", {
-					lng,
-					returnObjects: true,
-					trophies: player.leagueStatistics.bestSeason.trophies,
-				}),
+				...translate(
+					"commands.player.info.fields.leagueStatistics.bestSeason",
+					{
+						lng,
+						returnObjects: true,
+						trophies: player.leagueStatistics.bestSeason.trophies,
+					}
+				),
 				inline: true,
 			});
 	embed
 		.addField({
-			...t("commands.player.info.fields.badges", {
+			...translate("commands.player.info.fields.badges", {
 				lng,
 				returnObjects: true,
 			}),
 			value: Constants.playerInfoBadgesFieldValue(player.badges),
 		})
 		.addField({
-			...t("commands.player.info.fields.wins", {
+			...translate("commands.player.info.fields.wins", {
 				lng,
 				returnObjects: true,
 				wins: player.wins,
@@ -131,7 +139,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.threeCrownWins", {
+			...translate("commands.player.info.fields.threeCrownWins", {
 				lng,
 				returnObjects: true,
 				threeCrownWins: player.threeCrownWins,
@@ -142,7 +150,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.losses", {
+			...translate("commands.player.info.fields.losses", {
 				lng,
 				returnObjects: true,
 				losses: player.losses,
@@ -153,7 +161,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.battleCount", {
+			...translate("commands.player.info.fields.battleCount", {
 				lng,
 				returnObjects: true,
 				battleCount: player.battleCount,
@@ -161,7 +169,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.bestTrophies", {
+			...translate("commands.player.info.fields.bestTrophies", {
 				lng,
 				returnObjects: true,
 				bestTrophies: player.bestTrophies,
@@ -169,7 +177,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.cardCount", {
+			...translate("commands.player.info.fields.cardCount", {
 				lng,
 				returnObjects: true,
 				cardCount: player.cards.size,
@@ -177,7 +185,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.weeklyDonations", {
+			...translate("commands.player.info.fields.weeklyDonations", {
 				lng,
 				returnObjects: true,
 				weeklyDonations: player.donationsPerWeek,
@@ -185,7 +193,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.weeklyDonationsReceived", {
+			...translate("commands.player.info.fields.weeklyDonationsReceived", {
 				lng,
 				returnObjects: true,
 				weeklyDonationsReceived: player.donationsReceivedPerWeek,
@@ -193,7 +201,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.totalDonations", {
+			...translate("commands.player.info.fields.totalDonations", {
 				lng,
 				returnObjects: true,
 				totalDonations: player.totalDonations,
@@ -201,7 +209,7 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.currentFavouriteCard", {
+			...translate("commands.player.info.fields.currentFavouriteCard", {
 				lng,
 				returnObjects: true,
 				favouriteCard: player.favouriteCard,
@@ -209,22 +217,14 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.clanWarsVeteran", {
+			...translate("commands.player.info.fields.clanWarsVeteran", {
 				lng,
 				returnObjects: true,
 				player,
 			}),
 		})
 		.addField({
-			...t("commands.player.info.fields.challengeStatistics", {
-				lng,
-				returnObjects: true,
-				player,
-			}),
-			inline: true,
-		})
-		.addField({
-			...t("commands.player.info.fields.tournamentStatistics", {
+			...translate("commands.player.info.fields.challengeStatistics", {
 				lng,
 				returnObjects: true,
 				player,
@@ -232,7 +232,15 @@ export const playerInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.player.info.fields.achievements", {
+			...translate("commands.player.info.fields.tournamentStatistics", {
+				lng,
+				returnObjects: true,
+				player,
+			}),
+			inline: true,
+		})
+		.addField({
+			...translate("commands.player.info.fields.achievements", {
 				lng,
 				returnObjects: true,
 			}),
@@ -248,8 +256,10 @@ export const playerInfo = async (
 			)
 			.setDisabled(player.clan === undefined)
 			.setEmoji(Emojis.CrossedSwords)
-			.setLabel(t("commands.player.info.buttons.clanInfo.label", { lng }))
-			.setStyle(MessageButtonStyles.PRIMARY)
+			.setLabel(
+				translate("commands.player.info.buttons.clanInfo.label", { lng })
+			)
+			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
 	);
 
 	return {

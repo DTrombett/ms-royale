@@ -14,7 +14,7 @@ export const loadEvents = (client: CustomClient, subfolder: EventType) =>
 	promises
 		.readdir(
 			new URL(
-				join("..", Constants.eventsFolderName(), subfolder),
+				join(Constants.eventsFolderName(), subfolder),
 				import.meta.url
 			)
 		)
@@ -25,7 +25,7 @@ export const loadEvents = (client: CustomClient, subfolder: EventType) =>
 					.map(
 						(fileName) =>
 							import(
-								`../${Constants.eventsFolderName()}/${subfolder}/${fileName}`
+								`./${Constants.eventsFolderName()}/${subfolder}/${fileName}`
 							) as Promise<{
 								event: EventOptions;
 							}>

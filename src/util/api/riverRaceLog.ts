@@ -3,16 +3,15 @@ import type ClientRoyale from "apiroyale";
 import { FinishedRiverRaceManager, RiverRaceLogResults } from "apiroyale";
 import type { APIEmbedField, Snowflake } from "discord-api-types/v9";
 import {
-	Constants as DiscordCostants,
+	Constants as DiscordConstants,
 	MessageActionRow,
 	MessageButton,
 	MessageSelectMenu,
 } from "discord.js";
-import { MessageButtonStyles } from "discord.js/typings/enums";
-import { t } from "i18next";
 import CustomClient from "../CustomClient";
 import { buildCustomButtonId } from "../customId";
 import normalizeTag from "../normalizeTag";
+import { translate } from "../translate";
 import { ButtonActions, Emojis, MenuActions } from "../types";
 import validateTag from "../validateTag";
 
@@ -36,7 +35,7 @@ export const riverRaceLog = async (
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
 		return {
-			content: t("common.invalidTag", { lng }),
+			content: translate("common.invalidTag", { lng }),
 			ephemeral: true,
 		};
 
@@ -61,21 +60,21 @@ export const riverRaceLog = async (
 
 	if (race === undefined)
 		return {
-			content: t("commands.clan.riverRaceLog.notFound", { lng }),
+			content: translate("commands.clan.riverRaceLog.notFound", { lng }),
 			ephemeral: true,
 		};
 	const { clan } = race.leaderboard.get(tag)!;
 	const embed = new Embed()
-		.setTitle(t("commands.clan.riverRaceLog.title", { lng, race }))
-		.setColor(DiscordCostants.Colors.BLURPLE)
+		.setTitle(translate("commands.clan.riverRaceLog.title", { lng, race }))
+		.setColor(DiscordConstants.Colors.BLURPLE)
 		.setThumbnail(clan.badgeUrl)
 		.setFooter({
-			text: t("commands.clan.riverRaceLog.footer", { lng }),
+			text: translate("commands.clan.riverRaceLog.footer", { lng }),
 		})
 		.setTimestamp(race.finishTime)
 		.addFields(
 			...race.leaderboard.map<APIEmbedField>((standing) =>
-				t("commands.clan.riverRaceLog.field", {
+				translate("commands.clan.riverRaceLog.field", {
 					lng,
 					returnObjects: true,
 					standing,
@@ -92,14 +91,16 @@ export const riverRaceLog = async (
 	const row1 = new MessageActionRow().addComponents(
 		new MessageSelectMenu()
 			.setCustomId(MenuActions.PlayerInfo)
-			.setPlaceholder(t("commands.clan.riverRaceLog.menu.placeholder", { lng }))
+			.setPlaceholder(
+				translate("commands.clan.riverRaceLog.menu.placeholder", { lng })
+			)
 			.addOptions(
 				[...clan.participants.values()]
 					.filter((p) => p.medals)
 					.sort((a, b) => b.medals - a.medals)
 					.slice(0, 25)
 					.map((participant, i) => ({
-						...t("commands.clan.riverRaceLog.menu.options", {
+						...translate("commands.clan.riverRaceLog.menu.options", {
 							lng,
 							returnObjects: true,
 							participant,
@@ -113,8 +114,10 @@ export const riverRaceLog = async (
 		new MessageButton()
 			.setCustomId(buildCustomButtonId(ButtonActions.ClanInfo, tag))
 			.setEmoji(Emojis.CrossedSwords)
-			.setLabel(t("commands.clan.riverRaceLog.buttons.clanInfo.label", { lng }))
-			.setStyle(MessageButtonStyles.PRIMARY)
+			.setLabel(
+				translate("commands.clan.riverRaceLog.buttons.clanInfo.label", { lng })
+			)
+			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
 	);
 	const row3 = new MessageActionRow().addComponents(
 		new MessageButton()
@@ -127,8 +130,8 @@ export const riverRaceLog = async (
 				)
 			)
 			.setEmoji(Emojis.BackArrow)
-			.setLabel(t("common.back", { lng }))
-			.setStyle(MessageButtonStyles.PRIMARY)
+			.setLabel(translate("common.back", { lng }))
+			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
 			.setDisabled(last),
 		new MessageButton()
 			.setCustomId(
@@ -140,8 +143,8 @@ export const riverRaceLog = async (
 				)
 			)
 			.setEmoji(Emojis.ForwardArrow)
-			.setLabel(t("common.next", { lng }))
-			.setStyle(MessageButtonStyles.PRIMARY)
+			.setLabel(translate("common.next",{ lng }))
+			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
 			.setDisabled(index === undefined || index === 0)
 	);
 

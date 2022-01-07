@@ -2,18 +2,17 @@ import { Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { Clan, ClanMemberRole, ClanType } from "apiroyale";
 import {
-	Constants as DiscordCostants,
+	Constants as DiscordConstants,
 	MessageActionRow,
 	MessageButton,
 	MessageSelectMenu,
 } from "discord.js";
-import { MessageButtonStyles } from "discord.js/typings/enums";
-import { t } from "i18next";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
 import CustomClient from "../CustomClient";
 import { buildCustomButtonId, buildCustomMenuId } from "../customId";
 import normalizeTag from "../normalizeTag";
+import { translate } from "../translate";
 import { ButtonActions, CustomEmojis, Emojis, MenuActions } from "../types";
 import validateTag from "../validateTag";
 
@@ -32,7 +31,7 @@ export const clanInfo = async (
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
 		return {
-			content: t("commond.invalidTag", { lng }),
+			content: translate("common.invalidTag", { lng }),
 			ephemeral: true,
 		};
 
@@ -43,24 +42,24 @@ export const clanInfo = async (
 
 	if (!(clan instanceof Clan)) return clan;
 	const embed = new Embed()
-		.setTitle(t("commands.clan.info.title", { lng, clan }))
+		.setTitle(translate("commands.clan.info.title", { lng, clan }))
 		.setDescription(clan.description)
-		.setColor(DiscordCostants.Colors.BLUE)
-		.setFooter({ text: t("common.lastUpdated", { lng }) })
+		.setColor(DiscordConstants.Colors.BLUE)
+		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(clan.lastUpdate)
 		.setThumbnail(clan.badgeUrl)
 		.setURL(Constants.clanLink(clan));
 
 	embed
 		.addField({
-			...t("commands.clan.info.fields.warTrophies", {
+			...translate("commands.clan.info.fields.warTrophies", {
 				lng,
 				returnObjects: true,
 				warTrophies: clan.warTrophies,
 			}),
 		})
 		.addField({
-			...t("commands.clan.info.fields.location", {
+			...translate("commands.clan.info.fields.location", {
 				lng,
 				returnObjects: true,
 				location: clan.locationName,
@@ -68,7 +67,7 @@ export const clanInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.clan.info.fields.requiredTrophies", {
+			...translate("commands.clan.info.fields.requiredTrophies", {
 				lng,
 				returnObjects: true,
 				requiredTrophies: clan.requiredTrophies,
@@ -76,7 +75,7 @@ export const clanInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.clan.info.fields.weeklyDonations", {
+			...translate("commands.clan.info.fields.weeklyDonations", {
 				lng,
 				returnObjects: true,
 				weeklyDonations: clan.donationsPerWeek,
@@ -84,7 +83,7 @@ export const clanInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.clan.info.fields.score", {
+			...translate("commands.clan.info.fields.score", {
 				lng,
 				returnObjects: true,
 				score: clan.score,
@@ -92,7 +91,7 @@ export const clanInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.clan.info.fields.type", {
+			...translate("commands.clan.info.fields.type", {
 				lng,
 				returnObjects: true,
 				type: capitalize(ClanType[clan.type]),
@@ -100,7 +99,7 @@ export const clanInfo = async (
 			inline: true,
 		})
 		.addField({
-			...t("commands.clan.info.fields.memberCount", {
+			...translate("commands.clan.info.fields.memberCount", {
 				lng,
 				returnObjects: true,
 				memberCount: clan.members.size,
@@ -111,7 +110,7 @@ export const clanInfo = async (
 		new MessageSelectMenu()
 			.addOptions(
 				clan.members.first(25).map((member) => ({
-					...t("commands.clan.info.menu.options", {
+					...translate("commands.clan.info.menu.options", {
 						lng,
 						returnObjects: true,
 						member,
@@ -121,15 +120,17 @@ export const clanInfo = async (
 					value: member.tag,
 				}))
 			)
-			.setPlaceholder(t("commands.clan.info.menu.placeholder", { lng }))
+			.setPlaceholder(translate("commands.clan.info.menu.placeholder", { lng }))
 			.setCustomId(buildCustomMenuId(MenuActions.PlayerInfo))
 	);
 	const row2 = new MessageActionRow().addComponents(
 		new MessageButton()
 			.setCustomId(buildCustomButtonId(ButtonActions.RiverRaceLog, tag))
 			.setEmoji(Emojis.Log)
-			.setLabel(t("commands.clan.info.buttons.riverRaceLog.label", { lng }))
-			.setStyle(MessageButtonStyles.PRIMARY)
+			.setLabel(
+				translate("commands.clan.info.buttons.riverRaceLog.label", { lng })
+			)
+			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
 	);
 
 	return {

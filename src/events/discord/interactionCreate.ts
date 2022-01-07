@@ -8,6 +8,7 @@ import {
 	EventType,
 	getInteractionLocale,
 	getSearchOptions,
+	interactionCommand,
 	MenuActions,
 	playerInfo,
 	riverRaceLog,
@@ -18,21 +19,39 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 	name: "interactionCreate",
 	type: EventType.Discord,
 	async on(interaction) {
-		if (this.client.blocked) return;
+		if (this.client.blocked) {
+			CustomClient.printToStderr(
+				"Received interactionCreate event, but client is blocked."
+			);
+			return;
+		}
 		if (interaction.isCommand()) {
 			void this.client.commands.get(interaction.commandName)?.run(interaction);
+			CustomClient.printToStdout(
+				`Received command ${interactionCommand(interaction)}`
+			);
 			return;
 		}
 		if (interaction.isAutocomplete()) {
 			void this.client.commands
 				.get(interaction.commandName)
 				?.autocomplete(interaction);
+			CustomClient.printToStdout(
+				`Received autocomplete request for command ${interactionCommand(
+					interaction
+				)}`
+			);
 			return;
 		}
 		if (interaction.isSelectMenu()) {
-			const { action } = destructureCustomMenuId(interaction.customId);
+			const { action, args } = destructureCustomMenuId(interaction.customId);
 			const lng = getInteractionLocale(interaction);
 
+			CustomClient.printToStdout(
+				`Received select menu interaction ${action} with args [${args.join(
+					", "
+				)}] and values [${interaction.values.join(", ")}]`
+			);
 			switch (action) {
 				case MenuActions.ClanInfo:
 					interaction
@@ -65,12 +84,15 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 			const lng = getInteractionLocale(interaction);
 			let messageOptions;
 
+			CustomClient.printToStdout(
+				`Received button interaction ${action} with args [${args.join(", ")}]`
+			);
 			switch (action) {
 				case ButtonActions.NextPage:
 					messageOptions = await searchClan(
 						this.client,
 						getSearchOptions(interaction, { after: args[0] }),
-						{ lng, ephemeral: true }
+						{ lng, ephemeral: true, id: interaction.user.id }
 					);
 
 					if (
@@ -94,7 +116,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 					messageOptions = await searchClan(
 						this.client,
 						getSearchOptions(interaction, { before: args[0] }),
-						{ lng, ephemeral: true }
+						{ lng, ephemeral: true, id: interaction.user.id }
 					);
 
 					if (

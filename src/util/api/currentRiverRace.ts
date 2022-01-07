@@ -1,18 +1,18 @@
 import { Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { CurrentRiverRace, RiverRacePeriodType } from "apiroyale";
+import { APIEmbedField } from "discord-api-types/v9";
 import {
-	Constants as DiscordCostants,
+	Constants as DiscordConstants,
 	MessageActionRow,
 	MessageButton,
 	MessageSelectMenu,
 } from "discord.js";
-import { MessageButtonStyles } from "discord.js/typings/enums";
-import { t } from "i18next";
 import Constants from "../Constants";
 import CustomClient from "../CustomClient";
 import { buildCustomButtonId, buildCustomMenuId } from "../customId";
 import normalizeTag from "../normalizeTag";
+import { translate } from "../translate";
 import { ButtonActions, Emojis, MenuActions } from "../types";
 import validateTag from "../validateTag";
 
@@ -31,7 +31,7 @@ export const currentRiverRace = async (
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
 		return {
-			content: t("commond.invalidTag", { lng }),
+			content: translate("common.invalidTag", { lng }),
 			ephemeral: true,
 		};
 
@@ -47,26 +47,25 @@ export const currentRiverRace = async (
 	);
 	const embed = new Embed()
 		.setTitle(
-			t("commands.clan.currentRiverRace.title", {
+			translate("commands.clan.currentRiverRace.title", {
 				lng,
-				week: Math.ceil(race.monthDay / 7),
-				day: race.weekDay ?? race.monthDay % 7,
+				race,
 				training,
 			})
 		)
 		.setColor(
 			training
-				? DiscordCostants.Colors.GREEN
-				: DiscordCostants.Colors.DARK_PURPLE
+				? DiscordConstants.Colors.GREEN
+				: DiscordConstants.Colors.DARK_PURPLE
 		)
-		.setFooter({ text: t("common.lastUpdated", { lng }) })
+		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(race.lastUpdate)
 		.setThumbnail(race.clan.badgeUrl)
 		.setURL(Constants.clanLink(race.clan))
 		.setDescription(
 			race.leaderboard
 				.map((standing) =>
-					t("commands.clan.currentRiverRace.description", {
+					translate("commands.clan.currentRiverRace.description", {
 						lng,
 						standing,
 						participants: (race.warDays.size
@@ -77,6 +76,24 @@ export const currentRiverRace = async (
 					})
 				)
 				.join("\n")
+		)
+		.addFields(
+			...race.warDays.map<APIEmbedField>((period) => ({
+				name: translate("commands.clan.currentRiverRace.field.name", {
+					lng,
+					period,
+					p: period,
+				}),
+				value: period.leaderboard
+					.map((standing) =>
+						translate("commands.clan.currentRiverRace.field.value", {
+							lng,
+							standing,
+							clanName: race.leaderboard.get(standing.clanTag)!.name,
+						})
+					)
+					.join("\n"),
+			}))
 		);
 
 	const row1 = new MessageActionRow().addComponents(
@@ -86,7 +103,7 @@ export const currentRiverRace = async (
 					.first(25)
 					.map<{ description: string; label: string; value: string }>(
 						(participant, i) => ({
-							...t("commands.clan.currentRiverRace.menu.options", {
+							...translate("commands.clan.currentRiverRace.menu.options", {
 								lng,
 								returnObjects: true,
 								participant,
@@ -97,7 +114,7 @@ export const currentRiverRace = async (
 					)
 			)
 			.setPlaceholder(
-				t("commands.clan.currentRiverRace.menu.placeholder", { lng })
+				translate("commands.clan.currentRiverRace.menu.placeholder", { lng })
 			)
 			.setCustomId(buildCustomMenuId(MenuActions.PlayerInfo))
 	);
@@ -106,16 +123,20 @@ export const currentRiverRace = async (
 			.setCustomId(buildCustomButtonId(ButtonActions.ClanInfo, tag))
 			.setEmoji(Emojis.CrossedSwords)
 			.setLabel(
-				t("commands.clan.currentRiverRace.buttons.clanInfo.label", { lng })
+				translate("commands.clan.currentRiverRace.buttons.clanInfo.label", {
+					lng,
+				})
 			)
-			.setStyle(MessageButtonStyles.PRIMARY),
+			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY),
 		new MessageButton()
 			.setCustomId(buildCustomButtonId(ButtonActions.RiverRaceLog, tag))
 			.setEmoji(Emojis.Log)
 			.setLabel(
-				t("commands.clan.currentRiverRace.buttons.riverRaceLog.label", { lng })
+				translate("commands.clan.currentRiverRace.buttons.riverRaceLog.label", {
+					lng,
+				})
 			)
-			.setStyle(MessageButtonStyles.PRIMARY)
+			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
 	);
 
 	return {

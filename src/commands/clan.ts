@@ -4,7 +4,6 @@ import type {
 	ApplicationCommandOptionChoice,
 	AutocompleteInteraction,
 } from "discord.js";
-import { t } from "i18next";
 import Constants, {
 	clanInfo,
 	CommandOptions,
@@ -16,6 +15,7 @@ import Constants, {
 	normalizeTag,
 	riverRaceLog,
 	searchClan,
+	translate,
 } from "../util";
 
 const enum SubCommands {
@@ -82,7 +82,7 @@ const autocompleteClanTag = (
 		.respond(
 			// Take the first 25 clans as only 25 options are allowed
 			clans.first(25).map((structure) => ({
-				name: t("common.tagPreview", { lng, structure }),
+				name: translate("common.tagPreview", { lng, structure }),
 				value: structure.tag,
 			}))
 		)
@@ -239,15 +239,10 @@ export const command: CommandOptions = {
 
 				// Search the clans with the provided options and display them
 				await interaction.reply({
-					...(await searchClan(this.client, options, { lng })),
-					content: Constants.clanSearchResultsContent(
-						interaction.user.id,
-						name,
-						location,
-						minMembers,
-						maxMembers,
-						minScore
-					),
+					...(await searchClan(this.client, options, {
+						lng,
+						id: interaction.user.id,
+					})),
 				});
 				break;
 			case SubCommands.RiverRaceLog:
@@ -278,7 +273,7 @@ export const command: CommandOptions = {
 						)
 					)
 				);
-				await interaction.reply(t("common.invalidCommand", { lng }));
+				await interaction.reply(translate("common.invalidCommand", { lng }));
 				break;
 		}
 	},

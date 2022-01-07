@@ -4,7 +4,6 @@ import type {
 	ApplicationCommandOptionChoice,
 	AutocompleteInteraction,
 } from "discord.js";
-import { t } from "i18next";
 import Constants, {
 	CommandOptions,
 	CustomClient,
@@ -13,6 +12,7 @@ import Constants, {
 	matchStrings,
 	normalizeTag,
 	playerInfo,
+	translate,
 } from "../util";
 
 const enum SubCommands {
@@ -57,7 +57,7 @@ const autocompletePlayerTag = (
 		.respond(
 			// Take the first 25 players as only 25 options are allowed
 			players.first(25).map((structure) => ({
-				name: t("common.tagPreview", { lng, structure }),
+				name: translate("common.tagPreview", { lng, structure }),
 				value: structure.tag,
 			}))
 		)
@@ -107,7 +107,7 @@ export const command: CommandOptions = {
 					)
 				);
 				await interaction.reply({
-					content: t("common.invalidCommand", { lng }),
+					content: translate("common.invalidCommand", { lng }),
 				});
 				break;
 		}

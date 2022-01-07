@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { t } from "i18next";
-import { CommandOptions, getInteractionLocale } from "../util";
+import { CommandOptions, getInteractionLocale, translate } from "../util";
 
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder().setName("ping").setDescription("Pong!"),
@@ -8,7 +7,7 @@ export const command: CommandOptions = {
 		const lng = getInteractionLocale(interaction);
 
 		return interaction.reply({
-			content: t("commands.ping.content", {
+			content: translate("commands.ping.content", {
 				lng,
 				ws: interaction.client.ws.ping,
 			}),
