@@ -1,7 +1,7 @@
 name: Typescript, eslint and tsup tests
 on: [push, pull_request]
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
