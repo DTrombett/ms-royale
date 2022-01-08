@@ -134,7 +134,7 @@ export const riverRaceLog = async (
 				disabled,
 			},
 			tag,
-			`${index !== undefined ? index - 1 : 0}`,
+			`${index !== undefined ? index + 1 : 1}`,
 			id
 		),
 		createActionButton(
@@ -145,7 +145,7 @@ export const riverRaceLog = async (
 				disabled: index === undefined || index === 0,
 			},
 			tag,
-			`${index !== undefined ? index + 1 : 1}`,
+			`${index !== undefined ? index - 1 : 0}`,
 			id
 		)
 	);

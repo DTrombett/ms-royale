@@ -65,12 +65,14 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						.catch(CustomClient.printToStderr);
 					break;
 				case MenuActions.PlayerInfo:
-					await interaction.reply({
-						...(await playerInfo(this.client, interaction.values[0], {
-							ephemeral: true,
-							lng,
-						})),
-					});
+					interaction
+						.reply({
+							...(await playerInfo(this.client, interaction.values[0], {
+								ephemeral: true,
+								lng,
+							})),
+						})
+						.catch(CustomClient.printToStderr);
 					break;
 				default:
 					CustomClient.printToStderr(
