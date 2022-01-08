@@ -37,7 +37,7 @@
     "apiroyale": "github:DTrombett/apiroyale",
     "bufferutil": "^4.0.6",
     "discord-api-types": "^0.26.1",
-    "discord.js": "^14.0.0-dev.1640865766.780b7ed",
+    "discord.js": "^13.5.1",
     "dotenv": "^10.0.0",
     "i18next": "^21.6.3",
     "i18next-fs-backend": "^1.1.4",
