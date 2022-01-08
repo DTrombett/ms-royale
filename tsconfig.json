@@ -14,9 +14,11 @@
 		"noImplicitThis": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"resolveJsonModule": true,
 		"outDir": "dist",
 		"pretty": true,
-		"sourceMap": true
+		"resolveJsonModule": true,
+		"sourceMap": true,
+		"module": "ESNext",
+		"target": "ESNext",
 	}
 }

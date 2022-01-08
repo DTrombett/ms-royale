@@ -1,26 +1,33 @@
 import { config } from "dotenv";
-import CustomClient from "./CustomClient";
-import Constants, { time } from "./util";
+import { use } from "i18next";
+import Backend from "i18next-fs-backend";
+import { stdin } from "node:process";
+import { fileURLToPath, URL } from "node:url";
+import Constants, { CustomClient, runEval } from "./util";
 
 config();
 console.time(Constants.clientOnlineLabel());
 
 const client = new CustomClient();
 
-client.discord
-	.on("ready", async (discord) => {
-		setInterval(() => {
-			client.clans
-				.fetch(Constants.mainClanTag(), { maxAge: time.millisecondsPerMinute })
-				.catch(console.error);
-		}, Constants.mainClanFetchInterval());
-		await Promise.all([
-			discord.application.fetch(),
-			client.clans.fetch(Constants.mainClanTag()),
-		]);
-		console.timeEnd(Constants.clientOnlineLabel());
-	})
-	.on("interactionCreate", (interaction) => {
-		if (interaction.isCommand())
-			client.commands.get(interaction.commandName)?.run(interaction);
-	});
+stdin.on("data", async (data) => {
+	const input = data.toString().trim();
+
+	if (!input) return;
+	CustomClient.printToStdout(await runEval.bind(client)(input));
+});
+await use(Backend).init({
+	backend: {
+		loadPath: fileURLToPath(
+			new URL("../locales/{{lng}}/{{ns}}.json", import.meta.url)
+		),
+	},
+	cleanCode: true,
+	fallbackLng: "it",
+	defaultNS: "translation",
+	lng: "it",
+	ns: ["translation"],
+	debug: true,
+});
+
+await client.login();

@@ -1,18 +1,33 @@
 {
-  "name": "clash-royale-stats",
+  "name": "ms-royale",
   "version": "0.0.1",
   "description": "A Discord Bot that interacts with the Clash Royale API to provide statistics. \nDiscord invite: https://discord.com/api/oauth2/authorize?client_id=903267050775007283&scope=applications.commands \nThis content is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy (http://www.supercell.com/fan-content-policy).",
-  "main": "dist/index.js",
+  "homepage": "https://github.com/DTrombett/ms-royale#readme",
+  "exports": "./dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "commands": "node dist/registerCommands.js",
-    "lint": "eslint src --fix && prettier --write src/*/**.ts",
-    "start": "npm run lint && npm run build && node .",
-    "test": "tsc --noEmit"
+    "test": "eslint src && tsc --noEmit",
+    "prepare": "npm run test",
+    "build": "tsup",
+    "lint": "eslint src --fix",
+    "prettier": "prettier --write src/**/*.ts",
+    "commands": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings dist/registerCommands.js",
+    "start": "npm run build && npm run start:no-build",
+    "start:no-build": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings ./dist/index.js"
   },
   "author": "DTrombett",
   "license": "ISC",
   "keywords": [],
+  "type": "module",
+  "engines": {
+    "node": ">=14.13.1 || >=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DTrombett/ms-royale.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DTrombett/ms-royale/issues"
+  },
   "dependencies": {
     "@discordjs/builders": "^0.11.0",
     "@discordjs/collection": "^0.4.0",
@@ -21,16 +36,22 @@
     "@types/node": "^16.11.19",
     "apiroyale": "github:DTrombett/apiroyale",
     "bufferutil": "^4.0.6",
-    "discord.js": "^13.5.0",
+    "discord-api-types": "^0.25.2",
+    "discord.js": "^14.0.0-dev.1640865766.780b7ed",
     "dotenv": "^10.0.0",
+    "i18next": "^21.6.3",
+    "i18next-fs-backend": "^1.1.4",
     "utf-8-validate": "^5.0.8",
     "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
+    "@types/i18next-fs-backend": "^1.1.2",
     "@typescript-eslint/eslint-plugin": "^5.9.0",
     "@typescript-eslint/parser": "^5.9.0",
     "eslint": "^8.6.0",
+    "eslint-plugin-node": "^11.1.0",
     "prettier": "^2.5.1",
+    "tsup": "^5.11.11",
     "typescript": "^4.5.4"
   }
 }

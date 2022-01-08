@@ -1,12 +1,22 @@
-import { bold, italic, underscore } from "@discordjs/builders";
+import { bold, hyperlink } from "@discordjs/builders";
+import type {
+	ClanPreview,
+	Player,
+	PlayerBadge,
+	PlayerBadgeManager,
+	PlayerCard,
+	SearchClanOptions,
+} from "apiroyale";
+import { OAuth2Scopes } from "discord-api-types/v9";
+import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
-import type { APITag, Clan, ClanMember } from "apiroyale";
-import { ClanMemberRole, ClanType } from "apiroyale";
+import { env } from "node:process";
+import { CustomEmojis, Emojis } from "./types";
 
 /**
  * Constants about time
  */
-export const time = {
+export const TIME = {
 	/**
 	 * The number of milliseconds in a day
 	 */
@@ -94,6 +104,48 @@ export const time = {
 } as const;
 
 export const Constants = {
+	clanSearchResultsContent: (user: Snowflake, options: SearchClanOptions) =>
+		` Risultati per la seguente ricerca richiesta da <@${user}>:\n\n${bold(
+			"Nome"
+		)}: ${
+			options.name != null ? Util.escapeMarkdown(options.name) : "-"
+		}\n${bold("Id posizione")}: ${options.location?.toString() ?? "-"}\n${bold(
+			"Minimo membri"
+		)}: ${options.minMembers ?? "-"}\n${bold("Massimo membri")}: ${
+			options.maxMembers ?? "-"
+		}\n${bold("Punteggio minimo")}: ${options.minScore ?? "-"}`,
+
+	playerCardDescription: (card: PlayerCard) =>
+		`${bold(card.name)} (Liv. ${bold(card.displayLevel.toString())})` as const,
+	playerInfoCurrentDeckFieldValue: (player: Player) => {
+		const deck = player.deck.map(Constants.playerCardDescription);
+
+		return `${deck.slice(0, 4).join(", ")}\n${deck
+			.slice(4)
+			.join(", ")} - ${hyperlink(
+			"Copia",
+			`https://link.clashroyale.com/deck/it?deck=${player.deck
+				.map((card) => card.id)
+				.join(";")}&id=${player.id.slice(1)}`
+		)} ${CustomEmojis.copyDeck}` as const;
+	},
+
+	playerInfoAchievementsFieldValue: (player: Player) =>
+		player.achievements
+			.map(
+				(achievement) =>
+					`• ${bold(achievement.name)}: ${achievement.info}${
+						achievement.level ? ` ${Emojis.Star.repeat(achievement.level)}` : ""
+					} - ${achievement.progress}/${achievement.target}${
+						achievement.completed
+							? ""
+							: ` (${achievement.percentage.toFixed(
+									Constants.percentageDigits()
+							  )}%)`
+					}`
+			)
+			.join("\n"),
+
 	/**
 	 * The label used for the online event of the client.
 	 */
@@ -105,138 +157,9 @@ export const Constants = {
 	mainClanTag: () => "#L2Y2L2PC" as const,
 
 	/**
-	 * The embed title shown when the clan is updated.
-	 */
-	clanUpdatedEmbedTitle: () => "Clan aggiornato!" as const,
-
-	/**
-	 * The link of RoyaleAPI for a clan.
-	 * @param clanTag - The tag of the clan
-	 */
-	clanLink: (clanTag: APITag) =>
-		`https://royaleapi.com/clan/${clanTag.slice(1)}` as const,
-
-	/**
-	 * The embed field name shown when the clan name is updated.
-	 */
-	clanNameUpdatedFieldName: () => "Nome" as const,
-
-	/**
-	 * The embed field value shown when the clan name is updated.
-	 * @param oldClanName - The old clan name
-	 * @param newClanName - The new clan name
-	 */
-	clanNameUpdatedFieldValue: (
-		oldClanName: Clan["name"],
-		newClanName: Clan["name"]
-	) =>
-		`${bold(Util.escapeMarkdown(oldClanName))} => ${bold(
-			Util.escapeMarkdown(newClanName)
-		)}` as const,
-
-	/**
-	 * The embed field name shown when the clan description is updated.
-	 */
-	clanDescriptionUpdatedFieldName: () => "Descrizione" as const,
-
-	/**
-	 * The embed field value shown when the clan description is updated.
-	 * @param oldClanDescription - The old clan description
-	 * @param newClanDescription - The new clan description
-	 */
-	clanDescriptionUpdatedFieldValue: (
-		oldClanDescription: Clan["description"],
-		newClanDescription: Clan["description"]
-	) =>
-		`${underscore(Util.escapeMarkdown(oldClanDescription))}\n=> ${underscore(
-			Util.escapeMarkdown(newClanDescription)
-		)}` as const,
-
-	/**
-	 * The embed field name shown when the clan location is updated.
-	 */
-	clanLocationUpdatedFieldName: () => "Posizione" as const,
-
-	/**
-	 * The embed field value shown when the clan location is updated.
-	 * @param oldClanLocation - The old clan location
-	 * @param newClanLocation - The new clan location
-	 */
-	clanLocationUpdatedFieldValue: (
-		oldClanLocation: Clan["locationName"],
-		newClanLocation: Clan["locationName"]
-	) =>
-		`${italic(Util.escapeMarkdown(oldClanLocation))} => ${italic(
-			Util.escapeMarkdown(newClanLocation)
-		)}` as const,
-
-	/**
-	 * The embed field name shown when the clan required trophies are updated.
-	 */
-	clanRequiredTrophiesUpdatedFieldName: () => "Trofei richiesti" as const,
-
-	/**
-	 * The embed field value shown when the clan required trophies are updated.
-	 * @param oldClanRequiredTrophies - The old clan required trophies
-	 * @param newClanRequiredTrophies - The new clan required trophies
-	 */
-	clanRequiredTrophiesUpdatedFieldValue: (
-		oldClanRequiredTrophies: Clan["requiredTrophies"],
-		newClanRequiredTrophies: Clan["requiredTrophies"]
-	) =>
-		`🏆 ${oldClanRequiredTrophies} => 🏆 ${newClanRequiredTrophies}` as const,
-
-	/**
-	 * The embed field name shown when the clan type is updated.
-	 */
-	clanTypeUpdatedFieldName: () => "Tipo" as const,
-
-	/**
-	 * The embed field value shown when the clan type is updated.
-	 * @param oldClanType - The old clan type
-	 * @param newClanType - The new clan type
-	 */
-	clanTypeUpdatedFieldValue: (
-		oldClanType: Clan["type"],
-		newClanType: Clan["type"]
-	) => `${ClanType[oldClanType]} => ${ClanType[newClanType]}` as const,
-
-	/**
-	 * The embed field name shown when a clan member left.
-	 * @param member - The member that left
-	 */
-	clanMemberLeftFieldName: (member: ClanMember) =>
-		`A ${ClanMemberRole[member.role]} left` as const,
-
-	/**
-	 * The embed field value shown when a clan member left.
-	 * @param member - The member that left
-	 */
-	clanMemberLeftFieldValue: (member: ClanMember) =>
-		`${Util.escapeMarkdown(member.name)} (${member.tag}) - 🏆 ${
-			member.trophies
-		} (#${member.rank})` as const,
-
-	/**
-	 * The embed field name shown when a clan member joined.
-	 * @param member - The member that joined
-	 */
-	clanMemberJoinedFieldName: (member: ClanMember) =>
-		`A ${ClanMemberRole[member.role]} joined` as const,
-
-	/**
-	 * The embed field value shown when a clan member joined.
-	 * @param member - The member that joined
-	 */
-	clanMemberJoinedFieldValue: (member: ClanMember) =>
-		`${Util.escapeMarkdown(member.name)} (${member.tag}) - 🏆 ${
-			member.trophies
-		} (#${member.rank})` as const,
-
-	/**
 	 * Number of milliseconds before fetching the main clan again.
 	 */
-	mainClanFetchInterval: () => time.millisecondsPerMinute * 2,
+	mainClanFetchInterval: () => TIME.millisecondsPerMinute * 5,
 
 	/**
 	 * The name of the folder with commands.
@@ -247,6 +170,68 @@ export const Constants = {
 	 * The name of the folder with events.
 	 */
 	eventsFolderName: () => "events" as const,
+
+	/**
+	 * A zero-width space.
+	 */
+	zeroWidthSpace: () => "\u200b" as const,
+
+	/**
+	 * Number of digits after the decimal point for percentage.
+	 */
+	percentageDigits: () => 2 as const,
+
+	/**
+	 * Bot owners.
+	 */
+	owners: () => ["597505862449496065", "584465680506814465"],
+
+	/**
+	 * The message to log when a command is not recognized.
+	 * @param command - The command
+	 */
+	optionNotRecognizedLog: (command: string) =>
+		`Option not recognized: ${command}` as const,
+
+	/**
+	 * The url of the clan info embed.
+	 * @param clan - The clan
+	 */
+	clanLink: (clan: ClanPreview) =>
+		`https://royaleapi.com/clan/${clan.tag.slice(1)}` as const,
+
+	/**
+	 * The link for player info.
+	 * @param player - The player
+	 */
+	playerLink: (player: Player) =>
+		`https://royaleapi.com/player/${player.tag.slice(1)}` as const,
+
+	/**
+	 * The embed field value for the player's badges.
+	 * @param badges - The player's badges
+	 */
+	playerInfoBadgesFieldValue: (badges: PlayerBadgeManager) =>
+		badges.size
+			? badges.map(Constants.playerBadgeDescription).join(", ")
+			: "None",
+	playerBadgeDescription: (badge: PlayerBadge) =>
+		`${bold(badge.name)}${
+			badge.isMultipleLevels() ? ` (Liv. ${badge.level}/${badge.levels})` : ""
+		}` as const,
+
+	/**
+	 * The invite URL for the bot.
+	 */
+	inviteUrl: () =>
+		`https://discord.com/api/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID!}&scope=${[
+			OAuth2Scopes.ApplicationsCommands,
+		].join("%20")}` as const,
+
+	/**
+	 * The bot's locale.
+	 */
+	locale: () => "it-IT" as const,
 } as const;
 
 export default Constants;
