@@ -20,6 +20,7 @@ export * from "./locales";
 export * from "./matchStrings";
 export * from "./normalizeTag";
 export * from "./restart";
+export * from "./toLocaleString";
 export * from "./translate";
 export * from "./types";
 export * from "./validateTag";

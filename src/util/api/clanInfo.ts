@@ -12,6 +12,7 @@ import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import { buildCustomMenuId } from "../customId";
 import normalizeTag from "../normalizeTag";
+import toLocaleString from "../toLocaleString";
 import translate from "../translate";
 import { ButtonActions, CustomEmojis, MenuActions } from "../types";
 import validateTag from "../validateTag";
@@ -115,6 +116,7 @@ export const clanInfo = async (
 						returnObjects: true,
 						member,
 						role: capitalize(ClanMemberRole[member.role]),
+						lastSeen: toLocaleString(member.lastSeen, lng),
 					}),
 					emoji: CustomEmojis.user,
 					value: member.tag,

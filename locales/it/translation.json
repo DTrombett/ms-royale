@@ -133,7 +133,7 @@
 				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{clan.name}}\", \"tag\": \"{{clan.tag}}\" } })",
 				"menu": {
 					"options": {
-						"description": "{{role}} - 💸{{member.donationsPerWeek}} - 🏆{{member.trophies}}",
+						"description": "{{role}} - 💸{{member.donationsPerWeek}} - 🏆{{member.trophies}} - Ultimo accesso: {{- lastSeen}}",
 						"label": "#{{member.rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{member.name}}\", \"tag\": \"{{member.tag}}\" } })"
 					},
 					"placeholder": "Membri del clan"
