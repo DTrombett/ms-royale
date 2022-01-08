@@ -1,5 +1,5 @@
 import { exit, memoryUsage } from "node:process";
-import Constants, { EventOptions, EventType, CustomClient } from "../../util";
+import Constants, { CustomClient, EventOptions, EventType } from "../../util";
 
 export const event: EventOptions<EventType.Discord, "invalidated"> = {
 	name: "invalidated",

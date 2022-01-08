@@ -1,6 +1,7 @@
 import {
 	ButtonActions,
 	clanInfo,
+	currentRiverRace,
 	CustomClient,
 	destructureCustomButtonId,
 	destructureCustomMenuId,
@@ -154,6 +155,16 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 					interaction
 						.reply(
 							await clanInfo(this.client, args[0]!, {
+								lng: getInteractionLocale(interaction),
+								ephemeral: true,
+							})
+						)
+						.catch(CustomClient.printToStderr);
+					break;
+				case ButtonActions.CurrentRiverRace:
+					interaction
+						.reply(
+							await currentRiverRace(this.client, args[0]!, {
 								lng: getInteractionLocale(interaction),
 								ephemeral: true,
 							})

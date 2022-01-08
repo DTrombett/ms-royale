@@ -1,17 +1,13 @@
 import { Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { ClanMemberRole, Player } from "apiroyale";
-import {
-	Constants as DiscordConstants,
-	MessageActionRow,
-	MessageButton,
-} from "discord.js";
+import { Constants as DiscordConstants, MessageActionRow } from "discord.js";
 import Constants from "../Constants";
+import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
-import { buildCustomButtonId } from "../customId";
 import normalizeTag from "../normalizeTag";
-import { translate } from "../translate";
-import { ButtonActions, Emojis } from "../types";
+import translate from "../translate";
+import { ButtonActions } from "../types";
 import validateTag from "../validateTag";
 
 /**
@@ -73,8 +69,8 @@ export const playerInfo = async (
 			...translate("commands.player.info.fields.clan", {
 				lng,
 				returnObjects: true,
-				clanName: player.clan?.name,
-				clanTag: player.clan?.tag.slice(1),
+				clan: player.clan,
+				clanLink: player.clan && Constants.clanLink(player.clan),
 				role: ClanMemberRole[player.role],
 				context: typeof player.clan,
 			}),
@@ -248,18 +244,11 @@ export const playerInfo = async (
 		});
 
 	const row1 = new MessageActionRow().addComponents(
-		new MessageButton()
-			.setCustomId(
-				player.clan
-					? buildCustomButtonId(ButtonActions.ClanInfo, player.clan.tag)
-					: "-"
-			)
-			.setDisabled(player.clan === undefined)
-			.setEmoji(Emojis.CrossedSwords)
-			.setLabel(
-				translate("commands.player.info.buttons.clanInfo.label", { lng })
-			)
-			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
+		createActionButton(
+			ButtonActions.ClanInfo,
+			{label:translate("commands.clan.buttons.clanInfo.label", { lng })},
+			player.clan?.tag ?? "#"
+		)
 	);
 
 	return {

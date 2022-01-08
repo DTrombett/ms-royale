@@ -9,21 +9,22 @@
 		"zeroWidthSpace": "\u200b"
 	},
 	"emojis": {
-		"warTrophy": "<:wartrophy:906920944868671498>",
-		"user": "<:user:915686990723285022>",
-		"donations": "<:donations:915687097984241685>",
-		"members": "<:members:915688913413210123>",
-		"kingLevel": "<:kinglevel:916016946774958101>",
-		"copyDeck": "<:copydeck:916029046700261417>",
-		"clanInvite": "<:claninvite:916032272631750698>",
-		"win": "<:win:916339474403848223>",
-		"lose": "<:lose:916339513591222322>",
-		"cards": "<:cards:916340767021203478>",
-		"medal": "<:medal:918514839670886400>",
-		"warPoint": "<:warpoint:918522796747915304>",
-		"boatAttack": "<:boatattack:918909257745825793>",
-		"warDeck": "<:wardeck:918908890761035817>",
-		"training": "<:training:927624101219160207>"
+		"warTrophy": "<:_:906920944868671498>",
+		"user": "<:_:915686990723285022>",
+		"donations": "<:_:915687097984241685>",
+		"members": "<:_:915688913413210123>",
+		"kingLevel": "<:_:916016946774958101>",
+		"copyDeck": "<:_:916029046700261417>",
+		"clanInvite": "<:_:916032272631750698>",
+		"win": "<:_:916339474403848223>",
+		"lose": "<:_:916339513591222322>",
+		"cards": "<:_:916340767021203478>",
+		"medal": "<:_:918514839670886400>",
+		"warPoint": "<:_:918522796747915304>",
+		"boatAttack": "<:_:918909257745825793>",
+		"warDeck": "<:_:918908890761035817>",
+		"training": "<:_:927624101219160207>",
+		"clanWar": "<:_:929338139540066327>"
 	},
 	"events": {
 		"clanUpdate": {
@@ -69,6 +70,17 @@
 			"content": "🏓 Pong! (**{{ws}}ms**)"
 		},
 		"clan": {
+			"buttons": {
+				"clanInfo": {
+					"label": "Clan"
+				},
+				"currentRiverRace": {
+					"label": "Guerra"
+				},
+				"riverRaceLog": {
+					"label": "Guerre passate"
+				}
+			},
 			"search": {
 				"menu": {
 					"placeholder": "Scegli un clan...",
@@ -97,11 +109,6 @@
 						"label": "#{{rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{participant.name}}\", \"tag\": \"{{participant.tag}}\" } })"
 					},
 					"placeholder": "Lista partecipanti"
-				},
-				"buttons": {
-					"clanInfo": {
-						"label": "Clan"
-					}
 				}
 			},
 			"currentRiverRace": {
@@ -109,8 +116,8 @@
 				"daySuffix_true": "allenamento",
 				"daySuffix_false": "battaglia",
 				"field": {
-					"name": "Settimana {{period.week}} - {{period.day}}° giorno battaglia",
-					"value": "{{standing.rank}}) **$t(common.tagPreview, { \"structure\": { \"name\": \"{{clanName}}\", \"tag\": \"{{standing.clanTag}}\" } })**: $t(emojis.medal) {{standing.medals}} - $t(emojis.warPoint) +{{standing.pointsEarned}} (+{{standing.pointsEarnedFromDefenses}} $t(emojis.boatAttack)) - $t(emojis.boatAttack) {{standing.defensesRemaining}}"
+					"name": "{{period.day}}° giorno battaglia",
+					"value": "{{standing.rank}}) **$t(common.tagPreview, { \"structure\": { \"name\": \"{{clanName}}\", \"tag\": \"{{standing.clanTag}}\" } })**\n$t(emojis.medal) {{standing.medals}} - $t(emojis.warPoint) +{{standing.pointsEarned}} - $t(emojis.boatAttack) {{standing.defensesRemaining}}/15 ($t(emojis.warPoint) {{standing.pointsEarnedFromDefenses}})"
 				},
 				"menu": {
 					"options": {
@@ -119,24 +126,11 @@
 					},
 					"placeholder": "Lista partecipanti"
 				},
-				"buttons": {
-					"riverRaceLog": {
-						"label": "Guerre passate"
-					},
-					"clanInfo": {
-						"label": "Clan"
-					}
-				},
 				"description_true": "$t(emojis.training) **$t(common.tagPreview, { \"structure\": { \"name\": \"{{standing.name}}\", \"tag\": \"{{standing.tag}}\" } })**",
-				"description_false": "{{standing.rank}}) **$t(common.tagPreview, { \"structure\": { \"name\": \"{{standing.name}}\", \"tag\": \"{{standing.tag}}\" } })**: $t(emojis.warPoint) {{standing.points}} - $t(emojis.medal) {{standing.medals}} - $t(emojis.members) {{participants}}"
+				"description_false": "{{standing.rank}}) **$t(common.tagPreview, { \"structure\": { \"name\": \"{{standing.name}}\", \"tag\": \"{{standing.tag}}\" } })**\n$t(emojis.warPoint) {{standing.points}} - $t(emojis.medal) {{standing.medals}} - $t(emojis.members) {{participants}}"
 			},
 			"info": {
 				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{clan.name}}\", \"tag\": \"{{clan.tag}}\" } })",
-				"buttons": {
-					"riverRaceLog": {
-						"label": "Guerre passate"
-					}
-				},
 				"menu": {
 					"options": {
 						"description": "{{role}} - 💸{{member.donationsPerWeek}} - 🏆{{member.trophies}}",
@@ -179,11 +173,6 @@
 		"player": {
 			"info": {
 				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })",
-				"buttons": {
-					"clanInfo": {
-						"label": "Clan"
-					}
-				},
 				"fields": {
 					"achievements": {
 						"name": "Obiettivi",
@@ -279,7 +268,7 @@
 						"name": "Clan",
 						"value": "$t(commands.player.info.fields.clan.value, { \"context\": \"{{context}}\" })",
 						"value_undefined": "Nessun clan",
-						"value_object": "$t(emojis.clanInvite) [{{clanName}}](https://royaleapi.com/clan/{{clanTag}}) (#{{clanTag}}) - {{role}}"
+						"value_object": "$t(emojis.clanInvite) [{{clan.name}}]({{clanLink}}) ({{clan.tag}}) - {{role}}"
 					}
 				}
 			}

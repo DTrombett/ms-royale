@@ -18,35 +18,35 @@ import Constants, {
 	translate,
 } from "../util";
 
-const enum SubCommands {
+enum SubCommands {
 	Search = "cerca",
 	Info = "info",
 	RiverRaceLog = "guerre-passate",
 	CurrentRiverRace = "guerra",
 }
-const enum SearchOptions {
+enum SearchOptions {
 	Name = "nome",
 	Location = "posizione",
 	MinMembers = "min-membri",
 	MaxMembers = "max-membri",
 	MinScore = "min-punteggio",
 }
-const enum InfoOptions {
+enum InfoOptions {
 	Tag = "tag",
 }
-const enum RiverRaceLogOptions {
+enum RiverRaceLogOptions {
 	Tag = "tag",
 }
-const enum CurrentRiverRaceOptions {
+enum CurrentRiverRaceOptions {
 	Tag = "tag",
 }
-const enum AutoCompletableInfoOptions {
+enum AutoCompletableInfoOptions {
 	Tag = "tag",
 }
-const enum AutoCompletableRiverRaceLogOptions {
+enum AutoCompletableRiverRaceLogOptions {
 	Tag = "tag",
 }
-const enum AutoCompletableRiverRaceOptions {
+enum AutoCompletableRiverRaceOptions {
 	Tag = "tag",
 }
 

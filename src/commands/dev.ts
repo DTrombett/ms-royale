@@ -15,7 +15,7 @@ import { promisify } from "node:util";
 import type { CommandOptions } from "../util";
 import { CustomClient, parseEval, restart } from "../util";
 
-const enum SubCommands {
+enum SubCommands {
 	shell = "shell",
 	evalCmd = "eval",
 	test = "test",
@@ -25,7 +25,7 @@ const enum SubCommands {
 	uptimeCmd = "uptime",
 	pull = "pull",
 }
-const enum SubCommandOptions {
+enum SubCommandOptions {
 	cmd = "cmd",
 	ephemeral = "ephemeral",
 	process = "process",

@@ -7,9 +7,10 @@ import {
 	Snowflake,
 } from "discord.js";
 import Constants from "../Constants";
+import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import { buildCustomButtonId, buildCustomMenuId } from "../customId";
-import { translate } from "../translate";
+import translate from "../translate";
 import { ButtonActions, Emojis, MenuActions } from "../types";
 
 /**
@@ -74,7 +75,23 @@ export const searchClan = async (
 			.setEmoji(Emojis.ForwardArrow)
 			.setLabel(translate("common.next", { lng }))
 			.setDisabled(results.paging.cursors.after == null)
-			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
+			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY),
+		createActionButton(
+			ButtonActions.PreviousPage,
+			{
+				label: translate("common.back", { lng }),
+				disabled: results.paging.cursors.before == null,
+			},
+			results.paging.cursors.before ?? ""
+		),
+		createActionButton(
+			ButtonActions.NextPage,
+			{
+				label: translate("common.next", { lng }),
+				disabled: results.paging.cursors.after == null,
+			},
+			results.paging.cursors.after ?? ""
+		)
 	);
 
 	return {

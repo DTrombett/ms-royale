@@ -2,7 +2,6 @@ import type {
 	SlashCommandBuilder,
 	SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
-import { ClientEvents as DiscordEvents } from "discord.js";
 import type { APITag, ClientEvents } from "apiroyale";
 import type { Snowflake as APISnowflake } from "discord-api-types";
 import type {
@@ -13,12 +12,13 @@ import type {
 	ContextMenuInteraction,
 	SelectMenuInteraction,
 } from "discord.js";
+import { ClientEvents as DiscordEvents } from "discord.js";
 import type { Command, Event } from ".";
 
 /**
  * Values used as custom identifiers for buttons
  */
-export const enum ButtonActions {
+export enum ButtonActions {
 	/**
 	 * Show the next page
 	 */
@@ -32,12 +32,17 @@ export const enum ButtonActions {
 	/**
 	 * Show the river race log of a clan
 	 */
-	RiverRaceLog = "rrlog",
+	RiverRaceLog = "rrl",
 
 	/**
 	 * Show clan's info
 	 */
-	ClanInfo = "clan",
+	ClanInfo = "ci",
+
+	/**
+	 * Show the current river race of a clan
+	 */
+	CurrentRiverRace = "crr",
 }
 
 /**
@@ -52,6 +57,7 @@ export type ButtonActionsTypes = {
 		userId?: APISnowflake
 	];
 	[ButtonActions.ClanInfo]: [clan: APITag];
+	[ButtonActions.CurrentRiverRace]: [clan: APITag];
 };
 
 /**
@@ -92,7 +98,8 @@ export type CommandOptions = {
 /**
  * Custom emojis for the bot
  */
-export const enum CustomEmojis {
+
+export enum CustomEmojis {
 	/**
 	 * The emoji of a war trophy
 	 */
@@ -167,12 +174,17 @@ export const enum CustomEmojis {
 	 * The emoji for a war in a training state
 	 */
 	training = "<:training:927624101219160207>",
+
+	/**
+	 * The emoji for a clan war
+	 */
+	clanWar = "<:clanwar:929338139540066327>",
 }
 
 /**
  * Emojis for the bot
  */
-export const enum Emojis {
+export enum Emojis {
 	/**
 	 * The emoji for a check mark
 	 */
@@ -385,7 +397,7 @@ export type EventOptions<
 /**
  * The type for an event
  */
-export const enum EventType {
+export enum EventType {
 	Discord = "discord",
 	APIRoyale = "royale",
 }
@@ -393,7 +405,7 @@ export const enum EventType {
 /**
  * All the face emojis
  */
-export const enum FaceEmojis {
+export enum FaceEmojis {
 	":)" = "😊",
 	":D" = "😀",
 	":P" = "😛",
@@ -442,7 +454,7 @@ export enum LocaleCodes {
 /**
  * The match level from comparing 2 strings
  */
-export const enum MatchLevel {
+export enum MatchLevel {
 	/**
 	 * The strings don't match at all
 	 */
@@ -472,7 +484,7 @@ export const enum MatchLevel {
 /**
  * Values used as custom identifiers for select menus
  */
-export const enum MenuActions {
+export enum MenuActions {
 	/**
 	 * Show info about a player
 	 */
@@ -500,11 +512,6 @@ export type ReplyableInteraction =
 	| CommandInteraction
 	| ContextMenuInteraction
 	| SelectMenuInteraction;
-
-/**
- * A string or an object with a string
- */
-export type StringElement = StringElement[] | string;
 
 /**
  * A string identifier for a translation value

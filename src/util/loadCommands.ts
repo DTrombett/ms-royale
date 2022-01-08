@@ -10,9 +10,7 @@ import Constants from "./Constants";
  */
 export const loadCommands = (client: CustomClient) =>
 	promises
-		.readdir(
-			new URL(Constants.commandsFolderName(), import.meta.url)
-		)
+		.readdir(new URL(Constants.commandsFolderName(), import.meta.url))
 		.then((fileNames) =>
 			Promise.all(
 				fileNames

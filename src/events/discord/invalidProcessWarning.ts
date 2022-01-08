@@ -1,5 +1,5 @@
 import { setTimeout } from "node:timers/promises";
-import { EventOptions, EventType, CustomClient } from "../../util";
+import { CustomClient, EventOptions, EventType } from "../../util";
 
 export const event: EventOptions<EventType.Discord, "invalidRequestWarning"> = {
 	name: "invalidRequestWarning",

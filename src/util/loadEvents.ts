@@ -1,7 +1,7 @@
 import { promises } from "node:fs";
 import { join } from "node:path";
 import { URL } from "node:url";
-import type { EventOptions, EventType, CustomClient } from ".";
+import type { CustomClient, EventOptions, EventType } from ".";
 import Constants from "./Constants";
 import Event from "./Event";
 
@@ -13,10 +13,7 @@ import Event from "./Event";
 export const loadEvents = (client: CustomClient, subfolder: EventType) =>
 	promises
 		.readdir(
-			new URL(
-				join(Constants.eventsFolderName(), subfolder),
-				import.meta.url
-			)
+			new URL(join(Constants.eventsFolderName(), subfolder), import.meta.url)
 		)
 		.then((fileNames) =>
 			Promise.all(

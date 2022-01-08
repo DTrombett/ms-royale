@@ -5,6 +5,7 @@ export * from "./capitalize";
 export * from "./cast";
 export * from "./Command";
 export * from "./Constants";
+export * from "./createActionButton";
 export * from "./CustomClient";
 export * from "./customId";
 export * from "./eval";

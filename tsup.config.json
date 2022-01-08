@@ -12,5 +12,6 @@
 	"minify": true,
 	"sourcemap": true,
 	"target": "ESNext",
-	"platform": "node"
+	"platform": "node",
+	"bundle": true
 }

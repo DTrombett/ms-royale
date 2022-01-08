@@ -5,13 +5,12 @@ import type { APIEmbedField, Snowflake } from "discord-api-types/v9";
 import {
 	Constants as DiscordConstants,
 	MessageActionRow,
-	MessageButton,
 	MessageSelectMenu,
 } from "discord.js";
+import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
-import { buildCustomButtonId } from "../customId";
 import normalizeTag from "../normalizeTag";
-import { translate } from "../translate";
+import translate from "../translate";
 import { ButtonActions, Emojis, MenuActions } from "../types";
 import validateTag from "../validateTag";
 
@@ -56,7 +55,7 @@ export const riverRaceLog = async (
 	)
 		return log;
 	const race = index !== undefined ? log.at(index) : log.first();
-	const last = index === log.size - 1;
+	const disabled = index === log.size - 1;
 
 	if (race === undefined)
 		return {
@@ -111,41 +110,44 @@ export const riverRaceLog = async (
 			)
 	);
 	const row2 = new MessageActionRow().addComponents(
-		new MessageButton()
-			.setCustomId(buildCustomButtonId(ButtonActions.ClanInfo, tag))
-			.setEmoji(Emojis.CrossedSwords)
-			.setLabel(
-				translate("commands.clan.riverRaceLog.buttons.clanInfo.label", { lng })
-			)
-			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
+		createActionButton(
+			ButtonActions.ClanInfo,
+			{ label: translate("commands.clan.buttons.clanInfo.label", { lng }) },
+			tag
+		),
+		createActionButton(
+			ButtonActions.CurrentRiverRace,
+			{
+				label: translate("commands.clan.buttons.currentRiverRace.label", {
+					lng,
+				}),
+			},
+			tag
+		)
 	);
 	const row3 = new MessageActionRow().addComponents(
-		new MessageButton()
-			.setCustomId(
-				buildCustomButtonId(
-					ButtonActions.RiverRaceLog,
-					tag,
-					`${index !== undefined ? index + 1 : 1}`,
-					id
-				)
-			)
-			.setEmoji(Emojis.BackArrow)
-			.setLabel(translate("common.back", { lng }))
-			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
-			.setDisabled(last),
-		new MessageButton()
-			.setCustomId(
-				buildCustomButtonId(
-					ButtonActions.RiverRaceLog,
-					tag,
-					`${index !== undefined ? index - 1 : 0}`,
-					id
-				)
-			)
-			.setEmoji(Emojis.ForwardArrow)
-			.setLabel(translate("common.next",{ lng }))
-			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
-			.setDisabled(index === undefined || index === 0)
+		createActionButton(
+			ButtonActions.RiverRaceLog,
+			{
+				emoji: Emojis.BackArrow,
+				label: translate("common.back", { lng }),
+				disabled,
+			},
+			tag,
+			`${index !== undefined ? index - 1 : 0}`,
+			id
+		),
+		createActionButton(
+			ButtonActions.RiverRaceLog,
+			{
+				emoji: Emojis.ForwardArrow,
+				label: translate("common.next", { lng }),
+				disabled: index === undefined || index === 0,
+			},
+			tag,
+			`${index !== undefined ? index + 1 : 1}`,
+			id
+		)
 	);
 
 	return {

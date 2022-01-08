@@ -1,28 +1,9 @@
 import { t, TOptionsBase } from "i18next";
 import type {
 	IsTranslationObject,
-	StringElement,
 	TranslationKeys,
 	TranslationResult,
 } from ".";
-
-/**
- * Sanitize a string to ne wrapped in JSON quotes.
- * @param element - The element to sanitize
- * @returns The sanitized element
- */
-export const sanitizeElement = <T extends StringElement>(
-	element: T
-): StringElement => {
-	if (typeof element === "string")
-		return element
-			.replaceAll('"', '\\"')
-			.replaceAll("\n", "\\n")
-			.replaceAll("\r", "\\r")
-			.replaceAll("\t", "\\t")
-			.replaceAll("\b", "\\b");
-	return element.map(sanitizeElement);
-};
 
 /**
  * Get a translated string for a key using i18next.
@@ -37,3 +18,5 @@ export const translate = <K extends TranslationKeys>(
 			? { returnObjects: true }
 			: { returnObjects?: false })
 ): TranslationResult<K> => t(key, options);
+
+export default translate;

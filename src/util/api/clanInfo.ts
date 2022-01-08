@@ -4,16 +4,16 @@ import { Clan, ClanMemberRole, ClanType } from "apiroyale";
 import {
 	Constants as DiscordConstants,
 	MessageActionRow,
-	MessageButton,
 	MessageSelectMenu,
 } from "discord.js";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
+import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
-import { buildCustomButtonId, buildCustomMenuId } from "../customId";
+import { buildCustomMenuId } from "../customId";
 import normalizeTag from "../normalizeTag";
-import { translate } from "../translate";
-import { ButtonActions, CustomEmojis, Emojis, MenuActions } from "../types";
+import translate from "../translate";
+import { ButtonActions, CustomEmojis, MenuActions } from "../types";
 import validateTag from "../validateTag";
 
 /**
@@ -124,13 +124,20 @@ export const clanInfo = async (
 			.setCustomId(buildCustomMenuId(MenuActions.PlayerInfo))
 	);
 	const row2 = new MessageActionRow().addComponents(
-		new MessageButton()
-			.setCustomId(buildCustomButtonId(ButtonActions.RiverRaceLog, tag))
-			.setEmoji(Emojis.Log)
-			.setLabel(
-				translate("commands.clan.info.buttons.riverRaceLog.label", { lng })
-			)
-			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
+		createActionButton(
+			ButtonActions.RiverRaceLog,
+			{ label: translate("commands.clan.buttons.riverRaceLog.label", { lng }) },
+			tag
+		),
+		createActionButton(
+			ButtonActions.CurrentRiverRace,
+			{
+				label: translate("commands.clan.buttons.currentRiverRace.label", {
+					lng,
+				}),
+			},
+			tag
+		)
 	);
 
 	return {

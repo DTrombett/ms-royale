@@ -5,15 +5,15 @@ import { APIEmbedField } from "discord-api-types/v9";
 import {
 	Constants as DiscordConstants,
 	MessageActionRow,
-	MessageButton,
 	MessageSelectMenu,
 } from "discord.js";
 import Constants from "../Constants";
+import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
-import { buildCustomButtonId, buildCustomMenuId } from "../customId";
+import { buildCustomMenuId } from "../customId";
 import normalizeTag from "../normalizeTag";
-import { translate } from "../translate";
-import { ButtonActions, Emojis, MenuActions } from "../types";
+import translate from "../translate";
+import { ButtonActions, MenuActions } from "../types";
 import validateTag from "../validateTag";
 
 /**
@@ -78,22 +78,24 @@ export const currentRiverRace = async (
 				.join("\n")
 		)
 		.addFields(
-			...race.warDays.map<APIEmbedField>((period) => ({
-				name: translate("commands.clan.currentRiverRace.field.name", {
-					lng,
-					period,
-					p: period,
-				}),
-				value: period.leaderboard
-					.map((standing) =>
-						translate("commands.clan.currentRiverRace.field.value", {
-							lng,
-							standing,
-							clanName: race.leaderboard.get(standing.clanTag)!.name,
-						})
-					)
-					.join("\n"),
-			}))
+			...race.warDays
+				.filter((period) => period.week === race.week)
+				.map<APIEmbedField>((period) => ({
+					name: translate("commands.clan.currentRiverRace.field.name", {
+						lng,
+						period,
+						p: period,
+					}),
+					value: period.leaderboard
+						.map((standing) =>
+							translate("commands.clan.currentRiverRace.field.value", {
+								lng,
+								standing,
+								clanName: race.leaderboard.get(standing.clanTag)!.name,
+							})
+						)
+						.join("\n"),
+				}))
 		);
 
 	const row1 = new MessageActionRow().addComponents(
@@ -119,24 +121,24 @@ export const currentRiverRace = async (
 			.setCustomId(buildCustomMenuId(MenuActions.PlayerInfo))
 	);
 	const row2 = new MessageActionRow().addComponents(
-		new MessageButton()
-			.setCustomId(buildCustomButtonId(ButtonActions.ClanInfo, tag))
-			.setEmoji(Emojis.CrossedSwords)
-			.setLabel(
-				translate("commands.clan.currentRiverRace.buttons.clanInfo.label", {
+		createActionButton(
+			ButtonActions.ClanInfo,
+			{
+				label: translate("commands.clan.buttons.clanInfo.label", {
 					lng,
-				})
-			)
-			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY),
-		new MessageButton()
-			.setCustomId(buildCustomButtonId(ButtonActions.RiverRaceLog, tag))
-			.setEmoji(Emojis.Log)
-			.setLabel(
-				translate("commands.clan.currentRiverRace.buttons.riverRaceLog.label", {
+				}),
+			},
+			tag
+		),
+		createActionButton(
+			ButtonActions.RiverRaceLog,
+			{
+				label: translate("commands.clan.buttons.riverRaceLog.label", {
 					lng,
-				})
-			)
-			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY)
+				}),
+			},
+			tag
+		)
 	);
 
 	return {

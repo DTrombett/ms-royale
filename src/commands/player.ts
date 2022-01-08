@@ -15,13 +15,13 @@ import Constants, {
 	translate,
 } from "../util";
 
-const enum SubCommands {
+enum SubCommands {
 	Info = "info",
 }
-const enum InfoOptions {
+enum InfoOptions {
 	Tag = "tag",
 }
-const enum AutoCompletableInfoOptions {
+enum AutoCompletableInfoOptions {
 	Tag = "tag",
 }
 
