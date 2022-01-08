@@ -1,6 +1,6 @@
 import { Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
-import { CurrentRiverRace, RiverRacePeriodType } from "apiroyale";
+import { CurrentRiverRace } from "apiroyale";
 import { APIEmbedField } from "discord-api-types/v9";
 import {
 	Constants as DiscordConstants,
@@ -41,7 +41,7 @@ export const currentRiverRace = async (
 	});
 
 	if (!(race instanceof CurrentRiverRace)) return race;
-	const training = race.type === RiverRacePeriodType.training;
+	const training = race.type.toLowerCase() === "training";
 	const participants = race.clan.participants.filter((p) =>
 		Boolean(p.decksUsed)
 	);

@@ -1,6 +1,6 @@
 import { Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
-import { ClanMemberRole, Player } from "apiroyale";
+import { Player } from "apiroyale";
 import { Constants as DiscordConstants, MessageActionRow } from "discord.js";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
@@ -71,7 +71,7 @@ export const playerInfo = async (
 				returnObjects: true,
 				clan: player.clan,
 				clanLink: player.clan && Constants.clanLink(player.clan),
-				role: ClanMemberRole[player.role],
+				role: player.role,
 				context: typeof player.clan,
 			}),
 		})
@@ -246,7 +246,7 @@ export const playerInfo = async (
 	const row1 = new MessageActionRow().addComponents(
 		createActionButton(
 			ButtonActions.ClanInfo,
-			{label:translate("commands.clan.buttons.clanInfo.label", { lng })},
+			{ label: translate("commands.clan.buttons.clanInfo.label", { lng }) },
 			player.clan?.tag ?? "#"
 		)
 	);

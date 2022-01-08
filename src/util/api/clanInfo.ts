@@ -1,6 +1,6 @@
 import { Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
-import { Clan, ClanMemberRole, ClanType } from "apiroyale";
+import { Clan } from "apiroyale";
 import {
 	Constants as DiscordConstants,
 	MessageActionRow,
@@ -95,7 +95,7 @@ export const clanInfo = async (
 			...translate("commands.clan.info.fields.type", {
 				lng,
 				returnObjects: true,
-				type: capitalize(ClanType[clan.type]),
+				type: capitalize(clan.type),
 			}),
 			inline: true,
 		})
@@ -115,7 +115,7 @@ export const clanInfo = async (
 						lng,
 						returnObjects: true,
 						member,
-						role: capitalize(ClanMemberRole[member.role]),
+						role: capitalize(member.role),
 						lastSeen: toLocaleString(member.lastSeen, lng),
 					}),
 					emoji: CustomEmojis.user,
