@@ -39,6 +39,7 @@
     "discord-api-types": "^0.26.1",
     "discord.js": "^14.0.0-dev.1641729793.ab3ff5a",
     "dotenv": "^10.0.0",
+    "erlpack": "^0.1.4",
     "i18next": "^21.6.3",
     "i18next-fs-backend": "^1.1.4",
     "utf-8-validate": "^5.0.8",
