@@ -5,14 +5,14 @@
   "homepage": "https://github.com/DTrombett/ms-royale#readme",
   "exports": "./dist/index.js",
   "scripts": {
-    "test": "eslint src && tsc --noEmit",
-    "prepare": "npm test && husky install",
     "build": "tsup",
-    "lint": "eslint src --fix",
-    "prettier": "prettier --write src/**/*.ts",
     "commands": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings dist/registerCommands.js",
+    "lint": "eslint src --fix",
+    "prepare": "npm test && husky install",
+    "prettier": "prettier --write src/**/*.ts",
+    "start:no-build": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings ./dist/index.js",
     "start": "npm run build && npm run start:no-build",
-    "start:no-build": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings ./dist/index.js"
+    "test": "eslint src && tsc --noEmit"
   },
   "author": "DTrombett",
   "license": "MIT",
