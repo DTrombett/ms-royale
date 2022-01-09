@@ -170,7 +170,7 @@ export const command: CommandOptions = {
 	async run(interaction) {
 		const lng = getInteractionLocale(interaction);
 
-		switch (interaction.options.getSubcommand() as SubCommands) {
+		switch (interaction.options.getSubcommand() as SubCommands) { 
 			case SubCommands.Info:
 				// Display the clan info
 				await interaction.reply(

@@ -8,8 +8,8 @@ import type {
 	AutocompleteInteraction,
 	Awaitable,
 	ButtonInteraction,
+	ChatInputCommandInteraction,
 	CommandInteraction,
-	ContextMenuInteraction,
 	SelectMenuInteraction,
 } from "discord.js";
 import { ClientEvents as DiscordEvents } from "discord.js";
@@ -92,7 +92,7 @@ export type CommandOptions = {
 	 * @param this - The command object that called this
 	 * @param interaction - The interaction received
 	 */
-	run(this: Command, interaction: CommandInteraction): Awaitable<void>;
+	run(this: Command, interaction: ChatInputCommandInteraction): Awaitable<void>;
 };
 
 /**
@@ -510,7 +510,6 @@ export type MenuActionsTypes = {
 export type ReplyableInteraction =
 	| ButtonInteraction
 	| CommandInteraction
-	| ContextMenuInteraction
 	| SelectMenuInteraction;
 
 /**
