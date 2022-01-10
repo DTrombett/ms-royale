@@ -37,7 +37,7 @@
     "apiroyale": "github:DTrombett/apiroyale",
     "bufferutil": "^4.0.6",
     "discord-api-types": "^0.26.1",
-    "discord.js": "^14.0.0-dev.1641731090.e38d799",
+    "discord.js": "^14.0.0-dev.1641773217.b2dfb2e",
     "dotenv": "^10.0.0",
     "erlpack": "^0.1.4",
     "i18next": "^21.6.3",
