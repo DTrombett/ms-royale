@@ -1,4 +1,3 @@
-import { Json } from "apiroyale";
 import { createReadStream, createWriteStream } from "node:fs";
 import { Variables } from "./types";
 import Constants from "./Constants";
@@ -34,7 +33,10 @@ export const importJson = <T extends keyof Variables>(
  * @param name - The name of the file to write, without the extension
  * @param data - The data to write
  */
-export const writeJson = (name: keyof Variables, data: Json): Promise<void> =>
+export const writeJson = <T extends keyof Variables>(
+	name: T,
+	data: Variables[T]
+): Promise<void> =>
 	new Promise((resolve, reject) => {
 		createWriteStream(`./${folder}/${name}.json`)
 			.on("error", reject)
