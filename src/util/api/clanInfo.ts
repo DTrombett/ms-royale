@@ -55,14 +55,14 @@ export const clanInfo = async (
 		.addField({
 			...translate("commands.clan.info.fields.warTrophies", {
 				lng,
-				returnObjects: true,
+
 				warTrophies: clan.warTrophies,
 			}),
 		})
 		.addField({
 			...translate("commands.clan.info.fields.location", {
 				lng,
-				returnObjects: true,
+
 				location: clan.locationName,
 			}),
 			inline: true,
@@ -70,7 +70,7 @@ export const clanInfo = async (
 		.addField({
 			...translate("commands.clan.info.fields.requiredTrophies", {
 				lng,
-				returnObjects: true,
+
 				requiredTrophies: clan.requiredTrophies,
 			}),
 			inline: true,
@@ -78,7 +78,7 @@ export const clanInfo = async (
 		.addField({
 			...translate("commands.clan.info.fields.weeklyDonations", {
 				lng,
-				returnObjects: true,
+
 				weeklyDonations: clan.donationsPerWeek,
 			}),
 			inline: true,
@@ -86,7 +86,7 @@ export const clanInfo = async (
 		.addField({
 			...translate("commands.clan.info.fields.score", {
 				lng,
-				returnObjects: true,
+
 				score: clan.score,
 			}),
 			inline: true,
@@ -94,7 +94,7 @@ export const clanInfo = async (
 		.addField({
 			...translate("commands.clan.info.fields.type", {
 				lng,
-				returnObjects: true,
+
 				type: capitalize(clan.type),
 			}),
 			inline: true,
@@ -102,7 +102,7 @@ export const clanInfo = async (
 		.addField({
 			...translate("commands.clan.info.fields.memberCount", {
 				lng,
-				returnObjects: true,
+
 				memberCount: clan.members.size,
 			}),
 		});
@@ -113,7 +113,7 @@ export const clanInfo = async (
 				clan.members.first(25).map((member) => ({
 					...translate("commands.clan.info.menu.options", {
 						lng,
-						returnObjects: true,
+
 						member,
 						role: capitalize(member.role),
 						lastSeen: toLocaleString(member.lastSeen, lng),

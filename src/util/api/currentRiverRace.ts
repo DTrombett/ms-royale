@@ -107,7 +107,7 @@ export const currentRiverRace = async (
 						(participant, i) => ({
 							...translate("commands.clan.currentRiverRace.menu.options", {
 								lng,
-								returnObjects: true,
+
 								participant,
 								rank: i + 1,
 							}),

@@ -236,7 +236,7 @@ export const command: CommandOptions = {
 				break;
 			case SubCommands.evalCmd:
 				const code = interaction.options.getString(SubCommandOptions.cmd, true);
-				const parsed = await parseEval(code, this);
+				const parsed = await parseEval(code);
 				const evalEmbed = new Embed()
 					.setAuthor({
 						name: interaction.user.tag,

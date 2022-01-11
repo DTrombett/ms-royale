@@ -43,7 +43,7 @@ export const searchClan = async (
 				results.map((clan) => ({
 					...translate("commands.clan.search.menu.options", {
 						lng,
-						returnObjects: true,
+
 						clan,
 					}),
 					value: clan.tag,

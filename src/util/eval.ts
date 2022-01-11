@@ -7,7 +7,8 @@ import CustomClient from "./CustomClient";
  */
 export async function runEval(code: string): Promise<unknown> {
 	try {
-		return (await eval(code)) as unknown;
+		// eslint-disable-next-line no-useless-call
+		return (await eval.call(null, code)) as unknown;
 	} catch (e) {
 		return e;
 	}
@@ -19,7 +20,5 @@ export async function runEval(code: string): Promise<unknown> {
  * @param thisArg - The value of `this` in the code
  * @returns The result of the code
  */
-export const parseEval = async (
-	code: string,
-	thisArg?: unknown
-): Promise<string> => CustomClient.inspect(await runEval.bind(thisArg)(code));
+export const parseEval = async (code: string): Promise<string> =>
+	CustomClient.inspect(await runEval(code));

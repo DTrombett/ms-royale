@@ -11,8 +11,11 @@ import Constants, {
 	translate,
 } from "../../util";
 
-const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
-	const lng = locationToLocale(newClan.location);
+const constructClanUpdateEmbed = (
+	newClan: Clan,
+	oldClan: Clan,
+	lng?: string
+) => {
 	const embed = new Embed()
 		.setTitle(translate("events.clanUpdate.title", { lng }))
 		.setURL(Constants.clanLink(newClan))
@@ -24,7 +27,7 @@ const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
 		embed.addField(
 			translate("events.clanUpdate.fields.name", {
 				lng,
-				returnObjects: true,
+
 				old: oldClan.name,
 				new: newClan.name,
 			})
@@ -33,7 +36,7 @@ const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
 		embed.addField(
 			translate("events.clanUpdate.fields.description", {
 				lng,
-				returnObjects: true,
+
 				new: newClan.description,
 				old: oldClan.description,
 			})
@@ -42,7 +45,7 @@ const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
 		embed.addField(
 			translate("events.clanUpdate.fields.badgeId", {
 				lng,
-				returnObjects: true,
+
 				old: oldClan.badgeId,
 				new: newClan.badgeId,
 			})
@@ -51,7 +54,7 @@ const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
 		embed.addField(
 			translate("events.clanUpdate.fields.location", {
 				lng,
-				returnObjects: true,
+
 				old: oldClan.locationName,
 				new: newClan.locationName,
 			})
@@ -60,7 +63,7 @@ const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
 		embed.addField(
 			translate("events.clanUpdate.fields.requiredTrophies", {
 				lng,
-				returnObjects: true,
+
 				old: oldClan.requiredTrophies,
 				new: newClan.requiredTrophies,
 			})
@@ -69,7 +72,7 @@ const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
 		embed.addField(
 			translate("events.clanUpdate.fields.type", {
 				lng,
-				returnObjects: true,
+
 				old: oldClan.type,
 				new: newClan.type,
 			})
@@ -79,7 +82,7 @@ const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
 			embed.addField(
 				translate("events.clanUpdate.fields.memberLeft", {
 					lng,
-					returnObjects: true,
+
 					member,
 				})
 			);
@@ -88,7 +91,7 @@ const constructClanUpdateEmbed = (newClan: Clan, oldClan: Clan) => {
 			embed.addField(
 				translate("events.clanUpdate.fields.memberJoined", {
 					lng,
-					returnObjects: true,
+
 					member,
 				})
 			);
@@ -108,13 +111,17 @@ export const event: EventOptions<EventType.APIRoyale, "clanUpdate"> = {
 			env.CLAN_CHANNEL_ID!
 		);
 
-		if (!channel) return;
+		if (channel?.isText() === true) return;
+		cast<TextChannel>(channel);
 		/**
 		 * The embed to send
 		 */
-		const embed = constructClanUpdateEmbed(newClan, oldClan);
+		const embed = constructClanUpdateEmbed(
+			newClan,
+			oldClan,
+			locationToLocale(newClan.location) ?? channel.guild.preferredLocale
+		);
 
-		cast<TextChannel>(channel);
 		// Send the embed only if we have at least one field
 		if (embed.fields.length)
 			channel.send({ embeds: [embed] }).catch(CustomClient.printToStderr);

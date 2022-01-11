@@ -25,7 +25,7 @@ export const buildCustomButtonId = <T extends ButtonActions>(
 export const buildCustomMenuId = <T extends MenuActions>(
 	action: T,
 	...args: MenuActionsTypes[T]
-) => `${action}${args.length > 0 ? `-${args.join("-")}` : ""}`;
+) => `${action}${(args.length as number) > 0 ? `-${args.join("-")}` : ""}`;
 
 /**
  * Destructure a custom button id.

@@ -4,11 +4,7 @@ import type {
 	APIApplicationCommandPermission,
 	APIGuildApplicationCommandPermissions,
 } from "discord-api-types/v9";
-import {
-	APIVersion,
-	ApplicationCommandPermissionType,
-	Routes,
-} from "discord-api-types/v9";
+import { APIVersion, Routes } from "discord-api-types/v9";
 import { config } from "dotenv";
 import { promises } from "node:fs";
 import { join } from "node:path";
@@ -69,7 +65,7 @@ if (!registerGlobal)
 					permissions: Constants.owners().map<APIApplicationCommandPermission>(
 						(id) => ({
 							id,
-							type: ApplicationCommandPermissionType.User,
+							type: 2,
 							permission: true,
 						})
 					),

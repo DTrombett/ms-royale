@@ -1,9 +1,5 @@
 import { t, TOptionsBase } from "i18next";
-import type {
-	IsTranslationObject,
-	TranslationKeys,
-	TranslationResult,
-} from ".";
+import type { TranslationKeys, TranslationResult } from ".";
 
 /**
  * Get a translated string for a key using i18next.
@@ -13,10 +9,9 @@ import type {
 export const translate = <K extends TranslationKeys>(
 	key: K,
 	options: Omit<TOptionsBase, "returnObjects"> &
-		Record<string, unknown> &
-		(IsTranslationObject<K> extends true
-			? { returnObjects: true }
-			: { returnObjects?: false }) & { lng: string | undefined }
+		Record<string, unknown> & {
+			lng: string | undefined;
+		}
 ): TranslationResult<K> => t(key, options);
 
 export default translate;

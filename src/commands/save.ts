@@ -50,11 +50,13 @@ export const command: CommandOptions = {
 				this.client.players.fetch(normalizeTag(tag)),
 			]);
 		} catch (error: unknown) {
-			return interaction.reply(
-				error instanceof Error
-					? error.message
-					: translate("common.unknownError", { lng })
-			);
+			return interaction.reply({
+				content:
+					error instanceof Error
+						? error.message
+						: translate("common.unknownError", { lng }),
+				ephemeral: true,
+			});
 		}
 
 		return interaction.reply({

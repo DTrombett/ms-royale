@@ -1,12 +1,12 @@
 {
 	"common": {
-		"back": "Precedente",
-		"next": "Successivo",
+		"back": "Previous",
+		"next": "Next",
 		"tagPreview": "{{structure.name}} ({{structure.tag}})",
-		"invalidCommand": "Comando non riconosciuto!",
-		"invalidTag": "Hai inserito un tag non valido!\nI caratteri validi nei tag sono: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V",
-		"lastUpdated": "Ultimo aggiornamento",
-		"unknownError": "Si è verificato un errore sconosciuto, riprova più tardi!",
+		"invalidCommand": "Command not recognized!",
+		"invalidTag": "An invalid tag was provided!\nThese are the valid characters for a tag: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V",
+		"lastUpdated": "Last updated",
+		"unknownError": "An unknown error occurred, please retry later!",
 		"zeroWidthSpace": "\u200b"
 	},
 	"emojis": {
@@ -35,35 +35,35 @@
 					"value": "**{{old}}** => **{{new}}**"
 				},
 				"location": {
-					"name": "Posizione",
+					"name": "Location",
 					"value": "**{{old}}** => **{{new}}**"
 				},
 				"requiredTrophies": {
-					"name": "Trofei richiesti",
+					"name": "Required trophies",
 					"value": "🏆 {{old}} => 🏆 {{new}}"
 				},
 				"type": {
-					"name": "Tipo",
+					"name": "Type",
 					"value": "{{old}} => {{new}}"
 				},
 				"memberLeft": {
-					"name": "Un membro è uscito",
+					"name": "A member left",
 					"value": "#{{member.rank}} **{{member.name}}** ({{member.tag}}) - 🏆 {{member.trophies}}"
 				},
 				"memberJoined": {
-					"name": "Un membro è entrato",
+					"name": "A member joined",
 					"value": "#{{member.rank}} **{{member.name}}** ({{member.tag}}) - 🏆 {{member.trophies}}"
 				},
 				"description": {
-					"name": "Descrizione",
+					"name": "Description",
 					"value": "**Prima**: {{old}}\n**Dopo**: {{new}}"
 				},
 				"name": {
-					"name": "Nome",
+					"name": "Name",
 					"value": "**{{old}}** => **{{new}}**"
 				}
 			},
-			"title": "Clan aggiornato!"
+			"title": "Clan updated!"
 		}
 	},
 	"commands": {
@@ -71,7 +71,7 @@
 			"content": "🏓 Pong! (**{{ws}}ms**)"
 		},
 		"save": {
-			"content": "Tag salvato con successo!"
+			"content": "Tag succesfully saved!"
 		},
 		"clan": {
 			"buttons": {
@@ -79,48 +79,48 @@
 					"label": "Clan"
 				},
 				"currentRiverRace": {
-					"label": "Guerra"
+					"label": "War"
 				},
 				"riverRaceLog": {
-					"label": "Guerre passate"
+					"label": "Past wars"
 				}
 			},
 			"search": {
 				"menu": {
-					"placeholder": "Scegli un clan...",
+					"placeholder": "Choose a clan...",
 					"options": {
 						"description": "👥{{clan.memberCount}}/50 - 💯{{clan.score}} - 💸{{clan.donationsPerWeek}} - 🏆{{clan.requiredTrophies}} - 📍{{clan.locationName}}",
 						"label": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{clan.name}}\", \"tag\": \"{{clan.tag}}\" } })"
 					}
 				},
-				"notFound": "Nessun clan trovato!"
+				"notFound": "No clan was found!"
 			},
 			"riverRaceLog": {
-				"footer": "Guerra terminata il",
-				"notFound": "Nessuna guerra trovata!",
-				"title": "Stagione {{race.seasonId}} - Settimana {{race.weekNumber}}",
+				"footer": "War ended on",
+				"notFound": "No war was found!",
+				"title": "Season {{race.seasonId}} - Week {{race.weekNumber}}",
 				"field": {
 					"name": "{{standing.rank}}. $t(common.tagPreview, { \"structure\": { \"name\": \"{{standing.clan.name}}\", \"tag\": \"{{standing.clan.tag}}\" } })",
-					"value": "**Punti**: $t(emojis.warPoint) {{standing.clan.points}}\n**Trofei guadagnati/persi**: $t(emojis.warTrophy) {{standing.trophyChange}}$t(commands.clan.riverRaceLog.pointsToOvertake, { \"pointsToOvertake\": \"{{standing.pointsToOvertake}}\", \"count\": {{standing.rank}} })$t(commands.clan.riverRaceLog.finishedAt, { \"finishedAt\": \"{{finishedAt}}\", \"context\": \"{{finished}}\" })\n**Punteggio del clan**: 💯 {{standing.clan.score}}\n**Partecipanti**: $t(emojis.members) {{participants}}"
+					"value": "**Points**: $t(emojis.warPoint) {{standing.clan.points}}\n**Trophies won/lost**: $t(emojis.warTrophy) {{standing.trophyChange}}$t(commands.clan.riverRaceLog.pointsToOvertake, { \"pointsToOvertake\": \"{{standing.pointsToOvertake}}\", \"count\": {{standing.rank}} })$t(commands.clan.riverRaceLog.finishedAt, { \"finishedAt\": \"{{finishedAt}}\", \"context\": \"{{finished}}\" })\n**Clan score**: 💯 {{standing.clan.score}}\n**Participants**: $t(emojis.members) {{participants}}"
 				},
 				"pointsToOvertake_one": "$t(common.zeroWidthSpace)",
-				"pointsToOvertake_other": "\n**Differenza punti con clan successivo**: $t(emojis.warPoint) {{pointsToOvertake}}",
-				"finishedAt_true": "\n**Corsa terminata**: <t:{{finishedAt}}:F> (<t:{{finishedAt}}:R>)",
+				"pointsToOvertake_other": "\n**Points difference with next clan**: $t(emojis.warPoint) {{pointsToOvertake}}",
+				"finishedAt_true": "\n**War ended on**: <t:{{finishedAt}}:F> (<t:{{finishedAt}}:R>)",
 				"finishedAt_false": "$t(common.zeroWidthSpace)",
 				"menu": {
 					"options": {
 						"description": "🏅 {{participant.medals}} - ⛵🗡 {{participant.boatAttacks}} - 🎴 {{participant.decksUsed}}",
 						"label": "#{{rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{participant.name}}\", \"tag\": \"{{participant.tag}}\" } })"
 					},
-					"placeholder": "Lista partecipanti"
+					"placeholder": "Participants list"
 				}
 			},
 			"currentRiverRace": {
-				"title": "Settimana {{race.week}} - {{race.day}}° giorno $t(commands.clan.currentRiverRace.daySuffix, { \"context\": \"{{training}}\" })",
-				"daySuffix_true": "allenamento",
-				"daySuffix_false": "battaglia",
+				"title": "Week {{race.week}} - $t(commands.clan.currentRiverRace.day, { \"context\": \"{{training}}\" }) {{race.day}}",
+				"day_true": "Training day",
+				"day_false": "War day",
 				"field": {
-					"name": "{{period.day}}° giorno battaglia",
+					"name": "War day {{period.day}}",
 					"value": "{{standing.rank}}) **$t(common.tagPreview, { \"structure\": { \"name\": \"{{clanName}}\", \"tag\": \"{{standing.clanTag}}\" } })**\n$t(emojis.medal) {{standing.medals}} - $t(emojis.warPoint) +{{standing.pointsEarned}} - $t(emojis.boatAttack) {{standing.defensesRemaining}}/15 ($t(emojis.warPoint) {{standing.pointsEarnedFromDefenses}})"
 				},
 				"menu": {
@@ -128,7 +128,7 @@
 						"description": "🏅 {{participant.medals}} - ⛵🗡 {{participant.boatAttacks}} - 🎴 {{participant.decksUsed}} - 🎴📅 {{participant.decksUsedToday}}",
 						"label": "#{{rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{participant.name}}\", \"tag\": \"{{participant.tag}}\" } })"
 					},
-					"placeholder": "Lista partecipanti"
+					"placeholder": "Participants list"
 				},
 				"description_true": "$t(emojis.training) **$t(common.tagPreview, { \"structure\": { \"name\": \"{{standing.name}}\", \"tag\": \"{{standing.tag}}\" } })**",
 				"description_false": "{{standing.rank}}) **$t(common.tagPreview, { \"structure\": { \"name\": \"{{standing.name}}\", \"tag\": \"{{standing.tag}}\" } })**\n$t(emojis.warPoint) {{standing.points}} - $t(emojis.medal) {{standing.medals}} - $t(emojis.members) {{participants}}"
@@ -137,38 +137,38 @@
 				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{clan.name}}\", \"tag\": \"{{clan.tag}}\" } })",
 				"menu": {
 					"options": {
-						"description": "{{role}} - 💸{{member.donationsPerWeek}} - 🏆{{member.trophies}} - Ultimo accesso: {{- lastSeen}}",
+						"description": "{{role}} - 💸{{member.donationsPerWeek}} - 🏆{{member.trophies}} - Last seen: {{- lastSeen}}",
 						"label": "#{{member.rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{member.name}}\", \"tag\": \"{{member.tag}}\" } })"
 					},
-					"placeholder": "Membri del clan"
+					"placeholder": "Clan members"
 				},
 				"fields": {
 					"warTrophies": {
-						"name": "Trofei guerra tra clan",
+						"name": "War trophies",
 						"value": "$t(emojis.warTrophy) {{warTrophies}}"
 					},
 					"location": {
-						"name": "Posizione",
+						"name": "Location",
 						"value": "📍{{location}}"
 					},
 					"requiredTrophies": {
-						"name": "Trofei richiesti",
+						"name": "Required trophies",
 						"value": "🏆 {{requiredTrophies}}"
 					},
 					"weeklyDonations": {
-						"name": "Donazioni a settimana",
+						"name": "Weekly donations",
 						"value": "$t(emojis.donations) {{weeklyDonations}}"
 					},
 					"score": {
-						"name": "Punteggio",
+						"name": "Score",
 						"value": "💯 {{score}}"
 					},
 					"type": {
-						"name": "Tipo",
+						"name": "Type",
 						"value": "{{type}}"
 					},
 					"memberCount": {
-						"name": "Membri",
+						"name": "Members",
 						"value": "$t(emojis.members) {{memberCount}}/50"
 					}
 				}
@@ -177,107 +177,104 @@
 		"player": {
 			"buttons": {
 				"playerInfo": {
-					"label": "Info giocatore"
+					"label": "Player info"
 				}
 			},
 			"info": {
-				"noTag": "Non hai nessun tag salvato. Usa il comando `/save` per salvare il tuo tag o utilizza l'opzione `tag` per vedere le info di un giocatore specifico.",
+				"noTag": "You haven't saved any tags. Try the `/save` command to save it or use the `tag` option to see the info of a specific player.",
 				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })",
 				"fields": {
-					"achievements": {
-						"name": "Obiettivi",
-						"value": "TODO"
-					},
 					"badges": {
-						"name": "Emblemi",
+						"name": "Badges",
 						"value": "TODO"
 					},
 					"bestTrophies": {
-						"name": "Record di trofei",
+						"name": "Highest trophies",
 						"value": "🏆 {{bestTrophies}}"
 					},
 					"cardCount": {
-						"name": "Carte trovate",
+						"name": "Cards found",
 						"value": "$t(emojis.cards) {{cardCount}}"
 					},
 					"challengeStatistics": {
-						"name": "Statistiche sfida",
-						"value": "**Tornei giocati**: {{player.tournamentBattleCount}}\n**Vittorie nel torneo**: {{player.tournamentCardsWon}}"
+						"name": "Challenge stats",
+						"value": "**Max wins**: {{player.maxWinsInChallenge}}\n**Cards won**: {{player.cardsWonInChallenges}}"
 					},
 					"deck": {
-						"name": "Mazzo battaglia",
-						"value": "TODO"
+						"name": "Battle deck",
+						"cardDescription": "**{{card.name}}** (Lvl. **{{card.level}}**)",
+						"copy": "Copy"
 					},
 					"currentFavouriteCard": {
-						"name": "Carta preferita attuale",
-						"value": "{{favouriteCard.name}} (Liv. {{favouriteCard.displayLevel}})"
+						"name": "Current favorite card",
+						"value": "{{favouriteCard.name}} (Lvl. {{favouriteCard.displayLevel}})"
 					},
 					"leagueStatistics": {
 						"bestSeason": {
-							"name": "Stagione migliore",
+							"name": "Best season",
 							"value": "🏆 {{trophies}}"
 						},
 						"currentSeason": {
-							"name": "Trofei massimi in questa stagione",
+							"name": "Current season highest",
 							"value": "🏆 {{bestTrophies}}"
 						},
 						"previousSeason": {
-							"name": "Stagione precedente",
+							"name": "Previous season",
 							"value": "🏆 {{bestTrophies}}"
 						}
 					},
 					"level": {
-						"name": "Livello",
+						"name": "Level",
 						"value": "$t(emojis.kingLevel) **{{player.kingLevel}}** (**{{player.expPoints}}** XP)"
 					},
 					"losses": {
-						"name": "Sconfitte",
+						"name": "Losses",
 						"value": "$t(emojis.lose) {{losses}} ({{lossesPercent}}%)"
 					},
 					"clanWarsVeteran": {
-						"name": "Veterano delle guerre tra clan",
-						"value": "**Vittorie giorno della guerra**: {{player.oldWarDayWins}} - **Carte del clan ottenute**: {{player.oldClanCardsCollected}}"
+						"name": "Clan wars veteran",
+						"value": "**War day wins**: {{player.oldWarDayWins}} - **Clan cards collected**: {{player.oldClanCardsCollected}}"
 					},
 					"starPoints": {
-						"name": "Punti stella",
+						"name": "Star points",
 						"value": "⭐ {{starPoints}}"
 					},
 					"threeCrownWins": {
-						"name": "Vittorie con tre corone",
+						"name": "Three crown wins",
 						"value": "$t(emojis.win)$t(emojis.win)$t(emojis.win) {{threeCrownWins}} ({{threeCrownWinRatio}}%)"
 					},
 					"totalDonations": {
-						"name": "Totale donazioni",
+						"name": "Total donations",
 						"value": "$t(emojis.donations) {{totalDonations}}"
 					},
 					"battleCount": {
-						"name": "Totale partite",
+						"name": "Total battles",
 						"value": "{{battleCount}}"
 					},
 					"tournamentStatistics": {
-						"name": "Statistiche del torneo",
-						"value": "**Record vittorie**: {{player.maxWinsInChallenge}}\n**Carte vinte**: {{player.cardsWonInChallenges}}"
+						"name": "Tournament stats",
+						"value": "**Tournament matches played**: {{player.tournamentBattleCount}}\n**Cards won**: {{player.tournamentCardsWon}}"
 					},
 					"trophies": {
-						"name": "Trofei",
+						"name": "Trophies",
 						"value": "🏆 {{trophies}}"
 					},
 					"weeklyDonations": {
-						"name": "Donazioni a settimana",
+						"name": "Weekly donations",
 						"value": "$t(emojis.donations) {{weeklyDonations}}"
 					},
 					"weeklyDonationsReceived": {
-						"name": "Donazioni ricevute a settimana",
+						"name": "Weekly donations received",
 						"value": "$t(emojis.donations) {{weeklyDonationsReceived}}"
 					},
 					"wins": {
-						"name": "Vittorie",
+						"name": "Wins",
 						"value": "$t(emojis.win) {{wins}} ({{winRatio}}%)"
 					},
 					"clan": {
 						"name": "Clan",
 						"value": "$t(commands.player.info.fields.clan.value, { \"context\": \"{{context}}\" })",
-						"value_undefined": "Nessun clan",
+						"value_undefined": "No clan",
 						"value_object": "$t(emojis.clanInvite) [{{clan.name}}]({{clanLink}}) ({{clan.tag}}) - {{role}}"
 					}
 				}
