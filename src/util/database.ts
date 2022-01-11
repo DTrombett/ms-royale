@@ -42,5 +42,5 @@ export const writeJson = <T extends keyof Variables>(
 			.on("error", reject)
 			.on("finish", resolve)
 			.setDefaultEncoding("utf8")
-			.end(JSON.stringify(data, null, 2));
+			.end(JSON.stringify(data));
 	});

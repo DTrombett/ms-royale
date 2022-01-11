@@ -1,4 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import type { APITag } from "apiroyale";
+import type { Snowflake } from "discord-api-types/v9";
 import Constants, {
 	autocompletePlayerTag,
 	CommandOptions,
@@ -45,7 +47,11 @@ export const command: CommandOptions = {
 			case SubCommands.Info:
 				const tag =
 					interaction.options.getString(InfoOptions.Tag) ??
-					(await importJson("players"))[interaction.user.id];
+					(
+						await importJson("players").catch(
+							() => ({} as Record<Snowflake, APITag>)
+						)
+					)[interaction.user.id];
 
 				if (tag == null)
 					return interaction.reply({

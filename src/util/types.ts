@@ -3,7 +3,7 @@ import type {
 	SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
 import type { APITag, ClientEvents } from "apiroyale";
-import type { Snowflake } from "discord-api-types";
+import type { Snowflake } from "discord-api-types/v9";
 import type {
 	AutocompleteInteraction,
 	Awaitable,

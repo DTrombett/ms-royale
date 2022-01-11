@@ -43,11 +43,11 @@ export const command: CommandOptions = {
 			return interaction.reply(translate("common.invalidTag", { lng }));
 		try {
 			await Promise.all([
+				this.client.players.fetch(normalizeTag(tag)),
 				writeJson("players", {
-					...(await importJson("players")),
+					...(await importJson("players").catch(() => ({}))),
 					[interaction.user.id]: tag,
 				}),
-				this.client.players.fetch(normalizeTag(tag)),
 			]);
 		} catch (error: unknown) {
 			return interaction.reply({
