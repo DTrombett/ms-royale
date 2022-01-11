@@ -1,6 +1,6 @@
 {
 	"common": {
-		"back": "Back",
+		"back": "Previous",
 		"next": "Next",
 		"tagPreview": "{{structure.name}} ({{structure.tag}})",
 		"invalidCommand": "Command not recognized!",
