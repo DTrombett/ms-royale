@@ -16,7 +16,7 @@ export const translate = <K extends TranslationKeys>(
 		Record<string, unknown> &
 		(IsTranslationObject<K> extends true
 			? { returnObjects: true }
-			: { returnObjects?: false })
+			: { returnObjects?: false }) & { lng: string | undefined }
 ): TranslationResult<K> => t(key, options);
 
 export default translate;

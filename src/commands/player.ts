@@ -1,16 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { Player } from "apiroyale";
-import type {
-	ApplicationCommandOptionChoice,
-	AutocompleteInteraction,
-} from "discord.js";
 import Constants, {
+	autocompletePlayerTag,
 	CommandOptions,
 	CustomClient,
 	getInteractionLocale,
-	MatchLevel,
-	matchStrings,
-	normalizeTag,
+	importJson,
 	playerInfo,
 	translate,
 } from "../util";
@@ -24,45 +18,6 @@ enum InfoOptions {
 enum AutoCompletableInfoOptions {
 	Tag = "tag",
 }
-
-const autocompletePlayerTag = (
-	client: CustomClient,
-	option: ApplicationCommandOptionChoice,
-	interaction: AutocompleteInteraction
-) => {
-	const lng = getInteractionLocale(interaction);
-	const value = option.value as string;
-	/**
-	 * A record of player tags with their respective match level with the value provided
-	 */
-	const matches: Record<Player["tag"], MatchLevel> = {};
-	/**
-	 * A collection of all cached players
-	 */
-	const players = client.players.clone();
-
-	// If a value was provided, search for players with a tag or a name that contains the value
-	if (value.length) {
-		// Remove any player that doesn't match the value
-		players.sweep(
-			(c) =>
-				(matches[c.tag] =
-					matchStrings(normalizeTag(c.tag), value, true) ||
-					matchStrings(c.name, value)) === MatchLevel.None
-		);
-		// Sort the players by their match level
-		players.sort((a, b) => matches[b.tag] - matches[a.tag] || 0);
-	}
-	interaction
-		.respond(
-			// Take the first 25 players as only 25 options are allowed
-			players.first(25).map((structure) => ({
-				name: translate("common.tagPreview", { lng, structure }),
-				value: structure.tag,
-			}))
-		)
-		.catch(CustomClient.printToStderr);
-};
 
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder()
@@ -80,7 +35,6 @@ export const command: CommandOptions = {
 						.setDescription(
 							"Il tag del giocatore. Non fa differenza tra maiuscole e minuscole ed è possibile omettere l'hashtag"
 						)
-						.setRequired(true)
 						.setAutocomplete(true)
 				)
 		),
@@ -89,13 +43,18 @@ export const command: CommandOptions = {
 
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Info:
+				const tag =
+					interaction.options.getString(InfoOptions.Tag) ??
+					(await importJson("players"))[interaction.user.id];
+
+				if (tag == null)
+					return interaction.reply(
+						translate("commands.player.info.noTag", { lng })
+					);
+
 				// Display the player info
 				await interaction.reply({
-					...(await playerInfo(
-						this.client,
-						interaction.options.getString(InfoOptions.Tag, true),
-						{ lng }
-					)),
+					...(await playerInfo(this.client, tag, { lng })),
 				});
 				break;
 			default:
@@ -111,6 +70,7 @@ export const command: CommandOptions = {
 				});
 				break;
 		}
+		return undefined;
 	},
 	autocomplete(interaction) {
 		const option = interaction.options.getFocused(true);

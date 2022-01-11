@@ -21,6 +21,7 @@ export const ButtonEmojis = {
 	[ButtonActions.RiverRaceLog]: Emojis.Log,
 	[ButtonActions.CurrentRiverRace]: CustomEmojis.clanWar,
 	[ButtonActions.ClanInfo]: Emojis.CrossedSwords,
+	[ButtonActions.PlayerInfo]: CustomEmojis.user,
 } as const;
 
 /**

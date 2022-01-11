@@ -4,22 +4,22 @@ import type { CommandOptions, CustomClient } from ".";
 import Command from "./Command";
 import Constants from "./Constants";
 
+const folder = Constants.commandsFolderName();
+
 /**
  * Loads all commands from the commands directory.
  * @param client - The client to load commands into
  */
 export const loadCommands = (client: CustomClient) =>
 	promises
-		.readdir(new URL(Constants.commandsFolderName(), import.meta.url))
+		.readdir(new URL(folder, import.meta.url))
 		.then((fileNames) =>
 			Promise.all(
 				fileNames
 					.filter((fileName) => fileName.endsWith(".js"))
 					.map(
 						(fileName) =>
-							import(
-								`./${Constants.commandsFolderName()}/${fileName}`
-							) as Promise<{
+							import(`./${folder}/${fileName}`) as Promise<{
 								command: CommandOptions;
 							}>
 					)

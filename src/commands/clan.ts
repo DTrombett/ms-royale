@@ -1,21 +1,15 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { Clan, SearchClanOptions } from "apiroyale";
-import type {
-	ApplicationCommandOptionChoice,
-	AutocompleteInteraction,
-} from "discord.js";
+import type { SearchClanOptions } from "apiroyale";
 import Constants, {
 	clanInfo,
 	CommandOptions,
 	currentRiverRace,
 	CustomClient,
 	getInteractionLocale,
-	MatchLevel,
-	matchStrings,
-	normalizeTag,
 	riverRaceLog,
 	searchClan,
 	translate,
+	autocompleteClanTag,
 } from "../util";
 
 enum SubCommands {
@@ -49,45 +43,6 @@ enum AutoCompletableRiverRaceLogOptions {
 enum AutoCompletableRiverRaceOptions {
 	Tag = "tag",
 }
-
-const autocompleteClanTag = (
-	client: CustomClient,
-	option: ApplicationCommandOptionChoice,
-	interaction: AutocompleteInteraction
-) => {
-	const lng = getInteractionLocale(interaction);
-	const value = option.value as string;
-	/**
-	 * A record of clan tags with their respective match level with the value provided
-	 */
-	const matches: Record<Clan["tag"], MatchLevel> = {};
-	/**
-	 * A collection of all cached clans
-	 */
-	const clans = client.allClans;
-
-	// If a value was provided, search for clans with a tag or a name that contains the value
-	if (value.length) {
-		// Remove any clan that doesn't match the value
-		clans.sweep(
-			(c) =>
-				(matches[c.tag] =
-					matchStrings(normalizeTag(c.tag), value, true) ||
-					matchStrings(c.name, value)) === MatchLevel.None
-		);
-		// Sort the clans by their match level
-		clans.sort((a, b) => matches[b.tag] - matches[a.tag] || 0);
-	}
-	interaction
-		.respond(
-			// Take the first 25 clans as only 25 options are allowed
-			clans.first(25).map((structure) => ({
-				name: translate("common.tagPreview", { lng, structure }),
-				value: structure.tag,
-			}))
-		)
-		.catch(CustomClient.printToStderr);
-};
 
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder()

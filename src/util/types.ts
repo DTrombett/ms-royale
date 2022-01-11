@@ -3,7 +3,7 @@ import type {
 	SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
 import type { APITag, ClientEvents } from "apiroyale";
-import type { Snowflake as APISnowflake } from "discord-api-types";
+import type { Snowflake } from "discord-api-types";
 import type {
 	AutocompleteInteraction,
 	Awaitable,
@@ -43,6 +43,11 @@ export enum ButtonActions {
 	 * Show the current river race of a clan
 	 */
 	CurrentRiverRace = "crr",
+
+	/**
+	 * Show player's info
+	 */
+	PlayerInfo = "pi",
 }
 
 /**
@@ -54,10 +59,11 @@ export type ButtonActionsTypes = {
 	[ButtonActions.RiverRaceLog]: [
 		clan: APITag,
 		index?: `${number}`,
-		userId?: APISnowflake
+		userId?: Snowflake
 	];
 	[ButtonActions.ClanInfo]: [clan: APITag];
 	[ButtonActions.CurrentRiverRace]: [clan: APITag];
+	[ButtonActions.PlayerInfo]: [player: APITag];
 };
 
 /**
@@ -550,3 +556,10 @@ export type TranslationResult<
  */
 export type TranslationSample =
 	typeof import("../../locales/it/translation.json");
+
+/**
+ * A list of all the variables
+ */
+export type Variables = {
+	players: Record<Snowflake, APITag | undefined>;
+};

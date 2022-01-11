@@ -7,6 +7,8 @@ import {
 import type { CommandOptions } from "../util";
 import { Constants, Emojis } from "../util";
 
+const inviteUrl = Constants.inviteUrl();
+
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder()
 		.setName("invite")
@@ -21,7 +23,7 @@ export const command: CommandOptions = {
 						.setEmoji(Emojis.Robot)
 						.setLabel("Aggiungi al server")
 						.setStyle(DiscordConstants.MessageButtonStyles.LINK)
-						.setURL(Constants.inviteUrl())
+						.setURL(inviteUrl)
 				),
 			],
 		});

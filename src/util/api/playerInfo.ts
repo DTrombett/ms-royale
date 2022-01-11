@@ -10,6 +10,7 @@ import translate from "../translate";
 import { ButtonActions } from "../types";
 import validateTag from "../validateTag";
 
+const digits = Constants.percentageDigits();
 /**
  * Displays information about a player.
  * @param client - The client
@@ -130,7 +131,7 @@ export const playerInfo = async (
 				lng,
 				returnObjects: true,
 				wins: player.wins,
-				winRatio: player.winPercentage.toFixed(Constants.percentageDigits()),
+				winRatio: player.winPercentage.toFixed(digits),
 			}),
 			inline: true,
 		})
@@ -139,9 +140,7 @@ export const playerInfo = async (
 				lng,
 				returnObjects: true,
 				threeCrownWins: player.threeCrownWins,
-				threeCrownWinRatio: player.threeCrownWinPercentage.toFixed(
-					Constants.percentageDigits()
-				),
+				threeCrownWinRatio: player.threeCrownWinPercentage.toFixed(digits),
 			}),
 			inline: true,
 		})
@@ -150,9 +149,7 @@ export const playerInfo = async (
 				lng,
 				returnObjects: true,
 				losses: player.losses,
-				lossesPercent: player.lossPercentage.toFixed(
-					Constants.percentageDigits()
-				),
+				lossesPercent: player.lossPercentage.toFixed(digits),
 			}),
 			inline: true,
 		})

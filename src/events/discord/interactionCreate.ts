@@ -173,6 +173,16 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
+				case ButtonActions.PlayerInfo:
+					interaction
+						.reply(
+							await playerInfo(this.client, args[0]!, {
+								lng: getInteractionLocale(interaction),
+								ephemeral: true,
+							})
+						)
+						.catch(CustomClient.printToStderr);
+					break;
 				default:
 					CustomClient.printToStderr(
 						`Received unknown action: ${action as string}`

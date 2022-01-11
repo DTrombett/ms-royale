@@ -232,6 +232,11 @@ export const Constants = {
 	 * The bot's locale.
 	 */
 	locale: () => "it-IT" as const,
+
+	/**
+	 * The folder with saved variables.
+	 */
+	variablesFolderName: () => "database" as const,
 } as const;
 
 export default Constants;

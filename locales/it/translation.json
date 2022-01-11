@@ -6,6 +6,7 @@
 		"invalidCommand": "Comando non riconosciuto!",
 		"invalidTag": "Hai inserito un tag non valido!\nI caratteri validi nei tag sono: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V",
 		"lastUpdated": "Ultimo aggiornamento",
+		"unknownError": "Si è verificato un errore sconosciuto, riprova più tardi!",
 		"zeroWidthSpace": "\u200b"
 	},
 	"emojis": {
@@ -68,6 +69,9 @@
 	"commands": {
 		"ping": {
 			"content": "🏓 Pong! (**{{ws}}ms**)"
+		},
+		"save": {
+			"content": "Tag salvato con successo!"
 		},
 		"clan": {
 			"buttons": {
@@ -171,7 +175,13 @@
 			}
 		},
 		"player": {
+			"buttons": {
+				"playerInfo": {
+					"label": "Info giocatore"
+				}
+			},
 			"info": {
+				"noTag": "Non hai nessun tag salvato. Usa il comando `/save` per salvare il tuo tag o utilizza l'opzione `tag` per vedere le info di un giocatore specifico.",
 				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })",
 				"fields": {
 					"achievements": {

@@ -1,6 +1,7 @@
 import Constants from "./Constants";
 
 export * from "./api";
+export * from "./autocomplete";
 export * from "./capitalize";
 export * from "./cast";
 export * from "./Command";
@@ -8,6 +9,7 @@ export * from "./Constants";
 export * from "./createActionButton";
 export * from "./CustomClient";
 export * from "./customId";
+export * from "./database";
 export * from "./eval";
 export * from "./Event";
 export * from "./getRandomInt";
