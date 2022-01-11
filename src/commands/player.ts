@@ -48,9 +48,10 @@ export const command: CommandOptions = {
 					(await importJson("players"))[interaction.user.id];
 
 				if (tag == null)
-					return interaction.reply(
-						translate("commands.player.info.noTag", { lng })
-					);
+					return interaction.reply({
+						content: translate("commands.player.info.noTag", { lng }),
+						ephemeral: true,
+					});
 
 				// Display the player info
 				await interaction.reply({

@@ -1,4 +1,4 @@
-import { Embed } from "@discordjs/builders";
+import { Embed, hyperlink } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { Player } from "apiroyale";
 import { Constants as DiscordConstants, MessageActionRow } from "discord.js";
@@ -7,7 +7,7 @@ import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
-import { ButtonActions } from "../types";
+import { ButtonActions, CustomEmojis } from "../types";
 import validateTag from "../validateTag";
 
 const digits = Constants.percentageDigits();
@@ -36,6 +36,12 @@ export const playerInfo = async (
 	});
 
 	if (!(player instanceof Player)) return player;
+	const deck = player.deck.map((card) =>
+		translate("commands.player.info.fields.deck.cardDescription", {
+			lng,
+			card,
+		})
+	);
 	const embed = new Embed()
 		.setTitle(translate("commands.player.info.title", { lng, player }))
 		.setColor(DiscordConstants.Colors.BLUE)
@@ -45,7 +51,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.level", {
 				lng,
-				returnObjects: true,
+
 				player,
 			}),
 			inline: true,
@@ -53,7 +59,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.trophies", {
 				lng,
-				returnObjects: true,
+
 				trophies: player.trophies,
 			}),
 			inline: true,
@@ -61,7 +67,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.starPoints", {
 				lng,
-				returnObjects: true,
+
 				starPoints: player.starPoints,
 			}),
 			inline: true,
@@ -69,7 +75,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.clan", {
 				lng,
-				returnObjects: true,
+
 				clan: player.clan,
 				clanLink: player.clan && Constants.clanLink(player.clan),
 				role: player.role,
@@ -79,9 +85,15 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.deck", {
 				lng,
-				returnObjects: true,
 			}),
-			value: Constants.playerInfoCurrentDeckFieldValue(player),
+			value: `${deck.slice(0, 4).join(", ")}\n${deck
+				.slice(4)
+				.join(", ")} - ${hyperlink(
+				translate("commands.player.info.fields.deck.copy", { lng }),
+				`https://link.clashroyale.com/deck/it?deck=${player.deck
+					.map((card) => card.id)
+					.join(";")}&id=${player.id.slice(1)}`
+			)} ${CustomEmojis.copyDeck}`,
 		});
 	if (player.leagueStatistics)
 		embed
@@ -90,7 +102,7 @@ export const playerInfo = async (
 					"commands.player.info.fields.leagueStatistics.currentSeason",
 					{
 						lng,
-						returnObjects: true,
+
 						bestTrophies: player.leagueStatistics.currentSeason.bestTrophies,
 					}
 				),
@@ -101,7 +113,7 @@ export const playerInfo = async (
 					"commands.player.info.fields.leagueStatistics.previousSeason",
 					{
 						lng,
-						returnObjects: true,
+
 						bestTrophies: player.leagueStatistics.previousSeason.bestTrophies,
 					}
 				),
@@ -112,7 +124,7 @@ export const playerInfo = async (
 					"commands.player.info.fields.leagueStatistics.bestSeason",
 					{
 						lng,
-						returnObjects: true,
+
 						trophies: player.leagueStatistics.bestSeason.trophies,
 					}
 				),
@@ -122,14 +134,13 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.badges", {
 				lng,
-				returnObjects: true,
 			}),
 			value: Constants.playerInfoBadgesFieldValue(player.badges),
 		})
 		.addField({
 			...translate("commands.player.info.fields.wins", {
 				lng,
-				returnObjects: true,
+
 				wins: player.wins,
 				winRatio: player.winPercentage.toFixed(digits),
 			}),
@@ -138,7 +149,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.threeCrownWins", {
 				lng,
-				returnObjects: true,
+
 				threeCrownWins: player.threeCrownWins,
 				threeCrownWinRatio: player.threeCrownWinPercentage.toFixed(digits),
 			}),
@@ -147,7 +158,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.losses", {
 				lng,
-				returnObjects: true,
+
 				losses: player.losses,
 				lossesPercent: player.lossPercentage.toFixed(digits),
 			}),
@@ -156,7 +167,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.battleCount", {
 				lng,
-				returnObjects: true,
+
 				battleCount: player.battleCount,
 			}),
 			inline: true,
@@ -164,7 +175,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.bestTrophies", {
 				lng,
-				returnObjects: true,
+
 				bestTrophies: player.bestTrophies,
 			}),
 			inline: true,
@@ -172,7 +183,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.cardCount", {
 				lng,
-				returnObjects: true,
+
 				cardCount: player.cards.size,
 			}),
 			inline: true,
@@ -180,7 +191,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.weeklyDonations", {
 				lng,
-				returnObjects: true,
+
 				weeklyDonations: player.donationsPerWeek,
 			}),
 			inline: true,
@@ -188,7 +199,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.weeklyDonationsReceived", {
 				lng,
-				returnObjects: true,
+
 				weeklyDonationsReceived: player.donationsReceivedPerWeek,
 			}),
 			inline: true,
@@ -196,7 +207,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.totalDonations", {
 				lng,
-				returnObjects: true,
+
 				totalDonations: player.totalDonations,
 			}),
 			inline: true,
@@ -204,7 +215,7 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.currentFavouriteCard", {
 				lng,
-				returnObjects: true,
+
 				favouriteCard: player.favouriteCard,
 			}),
 			inline: true,
@@ -212,14 +223,14 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.clanWarsVeteran", {
 				lng,
-				returnObjects: true,
+
 				player,
 			}),
 		})
 		.addField({
 			...translate("commands.player.info.fields.challengeStatistics", {
 				lng,
-				returnObjects: true,
+
 				player,
 			}),
 			inline: true,
@@ -227,17 +238,10 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.tournamentStatistics", {
 				lng,
-				returnObjects: true,
+
 				player,
 			}),
 			inline: true,
-		})
-		.addField({
-			...translate("commands.player.info.fields.achievements", {
-				lng,
-				returnObjects: true,
-			}),
-			value: Constants.playerInfoAchievementsFieldValue(player),
 		});
 
 	const row1 = new MessageActionRow().addComponents(

@@ -428,17 +428,6 @@ export enum FaceEmojis {
 }
 
 /**
- * If a translation key refers to an object
- */
-export type IsTranslationObject<
-	K extends string,
-	R extends TranslationResult<K, TranslationSample> = TranslationResult<
-		K,
-		TranslationSample
-	>
-> = R extends string ? false : R extends never ? never : true;
-
-/**
  * A list of locale codes
  */
 export enum LocaleCodes {
@@ -554,8 +543,7 @@ export type TranslationResult<
 /**
  * A sample of a translation
  */
-export type TranslationSample =
-	typeof import("../../locales/it/translation.json");
+export type TranslationSample = typeof import("../../locales/it.json");
 
 /**
  * A list of all the variables

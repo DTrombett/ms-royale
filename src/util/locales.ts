@@ -18,10 +18,8 @@ export const isSupportedLocation = (
  * @returns The Clash Royale locale for the interaction
  */
 export const getInteractionLocale = (
-	_interaction: AutocompleteInteraction | ReplyableInteraction
-): string | undefined =>
-	// TODO: change this to `interaction.locale`
-	undefined;
+	interaction: AutocompleteInteraction | ReplyableInteraction
+): string => interaction.locale;
 
 /**
  * Get the locale for a Location structure, or the default locale if it's not supported.

@@ -8,6 +8,8 @@
 		"allowSyntheticDefaultImports": true,
 		"allowUnreachableCode": false,
 		"alwaysStrict": true,
+		"esModuleInterop": true,
+		"isolatedModules": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitAny": true,
 		"noImplicitReturns": true,

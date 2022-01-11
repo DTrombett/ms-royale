@@ -75,7 +75,7 @@ export const riverRaceLog = async (
 			...race.leaderboard.map<APIEmbedField>((standing) =>
 				translate("commands.clan.riverRaceLog.field", {
 					lng,
-					returnObjects: true,
+
 					standing,
 					finishedAt: standing.clan.finishedAt
 						? Math.round(standing.clan.finishedAt.getTime() / 1000)
@@ -101,7 +101,7 @@ export const riverRaceLog = async (
 					.map((participant, i) => ({
 						...translate("commands.clan.riverRaceLog.menu.options", {
 							lng,
-							returnObjects: true,
+
 							participant,
 							rank: i + 1,
 						}),

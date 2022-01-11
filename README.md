@@ -1,4 +1,4 @@
-# Clash Royale Stats
+# MS Royale
 
 A Discord Bot that interacts with the Clash Royale API to provide statistics.
 [Invite the bot here](https://discord.com/api/oauth2/authorize?client_id=903267050775007283&scope=applications.commands)

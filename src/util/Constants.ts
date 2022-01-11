@@ -1,17 +1,15 @@
-import { bold, hyperlink } from "@discordjs/builders";
+import { bold } from "@discordjs/builders";
 import type {
 	ClanPreview,
 	Player,
 	PlayerBadge,
 	PlayerBadgeManager,
-	PlayerCard,
 	SearchClanOptions,
 } from "apiroyale";
-import { OAuth2Scopes } from "discord-api-types/v9";
 import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
 import { env } from "node:process";
-import { CustomEmojis, Emojis } from "./types";
+import { Emojis } from "./types";
 
 /**
  * Constants about time
@@ -115,21 +113,6 @@ export const Constants = {
 			options.maxMembers ?? "-"
 		}\n${bold("Punteggio minimo")}: ${options.minScore ?? "-"}`,
 
-	playerCardDescription: (card: PlayerCard) =>
-		`${bold(card.name)} (Liv. ${bold(card.displayLevel.toString())})` as const,
-	playerInfoCurrentDeckFieldValue: (player: Player) => {
-		const deck = player.deck.map(Constants.playerCardDescription);
-
-		return `${deck.slice(0, 4).join(", ")}\n${deck
-			.slice(4)
-			.join(", ")} - ${hyperlink(
-			"Copia",
-			`https://link.clashroyale.com/deck/it?deck=${player.deck
-				.map((card) => card.id)
-				.join(";")}&id=${player.id.slice(1)}`
-		)} ${CustomEmojis.copyDeck}` as const;
-	},
-
 	playerInfoAchievementsFieldValue: (player: Player) =>
 		player.achievements
 			.map(
@@ -225,7 +208,7 @@ export const Constants = {
 	 */
 	inviteUrl: () =>
 		`https://discord.com/api/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID!}&scope=${[
-			OAuth2Scopes.ApplicationsCommands,
+			"applications.commands",
 		].join("%20")}` as const,
 
 	/**
