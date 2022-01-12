@@ -1,11 +1,6 @@
 import Collection from "@discordjs/collection";
 import { ClientRoyale } from "apiroyale";
-import {
-	Client,
-	Constants as DiscordConstants,
-	Intents,
-	Options,
-} from "discord.js";
+import { Client, Intents, Options } from "discord.js";
 import { env, stderr, stdout } from "node:process";
 import { inspect } from "node:util";
 import Command from "./Command";
@@ -53,9 +48,7 @@ export class CustomClient extends ClientRoyale {
 			VoiceStateManager: 0,
 		}),
 		presence: {
-			activities: [
-				{ name: "Clash Royale", type: DiscordConstants.ActivityTypes.PLAYING },
-			],
+			activities: [{ name: "Clash Royale", type: 0 }],
 		},
 		rejectOnRateLimit: () => true,
 		restGlobalRateLimit: 50,

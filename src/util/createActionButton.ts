@@ -1,5 +1,4 @@
 import {
-	Constants as DiscordConstants,
 	EmojiIdentifierResolvable,
 	MessageButton,
 	MessageButtonStyleResolvable,
@@ -48,7 +47,7 @@ export const createActionButton = <T extends ButtonActions>(
 	new MessageButton()
 		.setCustomId(buildCustomButtonId(action, ...args))
 		.setEmoji(emoji ?? ButtonEmojis[action])
-		.setStyle(style ?? DiscordConstants.MessageButtonStyles.PRIMARY)
+		.setStyle(style ?? 1)
 		.setLabel(label)
 		.setDisabled(disabled ?? false);
 

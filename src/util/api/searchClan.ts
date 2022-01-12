@@ -1,6 +1,5 @@
 import { ClanSearchResults, ClientRoyale, SearchClanOptions } from "apiroyale";
 import {
-	Constants as DiscordConstants,
 	MessageActionRow,
 	MessageButton,
 	MessageSelectMenu,
@@ -64,7 +63,7 @@ export const searchClan = async (
 			.setEmoji(Emojis.BackArrow)
 			.setLabel(translate("common.back", { lng }))
 			.setDisabled(results.paging.cursors.before == null)
-			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY),
+			.setStyle(1),
 		new MessageButton()
 			.setCustomId(
 				buildCustomButtonId(
@@ -75,7 +74,7 @@ export const searchClan = async (
 			.setEmoji(Emojis.ForwardArrow)
 			.setLabel(translate("common.next", { lng }))
 			.setDisabled(results.paging.cursors.after == null)
-			.setStyle(DiscordConstants.MessageButtonStyles.PRIMARY),
+			.setStyle(1),
 		createActionButton(
 			ButtonActions.PreviousPage,
 			{
