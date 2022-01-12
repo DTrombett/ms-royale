@@ -203,7 +203,7 @@
 					},
 					"deck": {
 						"name": "Battle deck",
-						"cardDescription": "**{{card.name}}** (Lvl. **{{card.level}}**)",
+						"cardDescription": "**{{card.name}}** (Lvl. **{{card.displayLevel}}**)",
 						"copy": "Copy"
 					},
 					"currentFavouriteCard": {
