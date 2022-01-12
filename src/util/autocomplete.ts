@@ -77,7 +77,7 @@ export const autocompletePlayerTag = (
 	/**
 	 * A collection of all cached players
 	 */
-	const players = client.players.clone();
+	const players = client.allPlayers;
 
 	// If a value was provided, search for players with a tag or a name that contains the value
 	if (value.length) {
