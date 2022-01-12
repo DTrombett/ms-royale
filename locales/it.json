@@ -74,6 +74,7 @@
 			"content": "Tag salvato con successo!"
 		},
 		"clan": {
+			"noTag": "Non hai nessun profilo salvato o non fai parte di alcun clan. Usa il comando `/save` per salvare il tuo tag o utilizza l'opzione `tag` per vedere le info di un clan specifico.",
 			"buttons": {
 				"clanInfo": {
 					"label": "Clan"

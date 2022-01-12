@@ -1,15 +1,17 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { SearchClanOptions } from "apiroyale";
+import type { APITag, SearchClanOptions } from "apiroyale";
+import { Snowflake } from "discord-api-types/v9";
 import Constants, {
+	autocompleteClanTag,
 	clanInfo,
 	CommandOptions,
 	currentRiverRace,
 	CustomClient,
 	getInteractionLocale,
+	importJson,
 	riverRaceLog,
 	searchClan,
 	translate,
-	autocompleteClanTag,
 } from "../util";
 
 enum SubCommands {
@@ -58,7 +60,6 @@ export const command: CommandOptions = {
 						.setDescription(
 							"Il tag del clan. Non fa differenza tra maiuscole e minuscole ed è possibile omettere l'hashtag"
 						)
-						.setRequired(true)
 						.setAutocomplete(true)
 				)
 		)
@@ -104,7 +105,6 @@ export const command: CommandOptions = {
 						.setDescription(
 							"Il tag del clan. Non fa differenza tra maiuscole e minuscole ed è possibile omettere l'hashtag"
 						)
-						.setRequired(true)
 						.setAutocomplete(true)
 				)
 		)
@@ -118,24 +118,43 @@ export const command: CommandOptions = {
 						.setDescription(
 							"Il tag del clan. Non fa differenza tra maiuscole e minuscole ed è possibile omettere l'hashtag"
 						)
-						.setRequired(true)
 						.setAutocomplete(true)
 				)
 		),
 	async run(interaction) {
 		const lng = getInteractionLocale(interaction);
+		let tag: string | null;
 
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Info:
+				tag = interaction.options.getString(InfoOptions.Tag);
+
+				if (tag == null) {
+					const playerTag = (
+						await importJson("players").catch(
+							() => ({} as Record<Snowflake, APITag>)
+						)
+					)[interaction.user.id];
+
+					if (playerTag !== undefined)
+						tag = await this.client.players
+							.fetch(playerTag)
+							.then((p) => p.clan?.tag ?? null)
+							.catch(() => null);
+					if (tag == null) {
+						await interaction.reply({
+							ephemeral: true,
+							content: translate("commands.clan.noTag", { lng }),
+						});
+						break;
+					}
+				}
+
 				// Display the clan info
 				await interaction.reply(
-					await clanInfo(
-						this.client,
-						interaction.options.getString(InfoOptions.Tag, true),
-						{
-							lng: getInteractionLocale(interaction),
-						}
-					)
+					await clanInfo(this.client, tag, {
+						lng: getInteractionLocale(interaction),
+					})
 				);
 				break;
 			case SubCommands.Search:
@@ -201,23 +220,64 @@ export const command: CommandOptions = {
 				});
 				break;
 			case SubCommands.RiverRaceLog:
+				tag = interaction.options.getString(RiverRaceLogOptions.Tag);
+
+				if (tag == null) {
+					const playerTag = (
+						await importJson("players").catch(
+							() => ({} as Record<Snowflake, APITag>)
+						)
+					)[interaction.user.id];
+
+					if (playerTag !== undefined)
+						tag = await this.client.players
+							.fetch(playerTag)
+							.then((p) => p.clan?.tag ?? null)
+							.catch(() => null);
+					if (tag == null) {
+						await interaction.reply({
+							ephemeral: true,
+							content: translate("commands.clan.noTag", { lng }),
+						});
+						break;
+					}
+				}
+
 				// Fetch the river race log for the clan and display it
 				await interaction.reply({
-					...(await riverRaceLog(
-						this.client,
-						interaction.options.getString(RiverRaceLogOptions.Tag, true),
-						{ id: interaction.user.id, lng }
-					)),
+					...(await riverRaceLog(this.client, tag, {
+						id: interaction.user.id,
+						lng,
+					})),
 				});
 				break;
 			case SubCommands.CurrentRiverRace:
+				tag = interaction.options.getString(CurrentRiverRaceOptions.Tag);
+
+				if (tag == null) {
+					const playerTag = (
+						await importJson("players").catch(
+							() => ({} as Record<Snowflake, APITag>)
+						)
+					)[interaction.user.id];
+
+					if (playerTag !== undefined)
+						tag = await this.client.players
+							.fetch(playerTag)
+							.then((p) => p.clan?.tag ?? null)
+							.catch(() => null);
+					if (tag == null) {
+						await interaction.reply({
+							ephemeral: true,
+							content: translate("commands.clan.noTag", { lng }),
+						});
+						break;
+					}
+				}
+
 				// Fetch the current river race for the clan and display it
 				await interaction.reply({
-					...(await currentRiverRace(
-						this.client,
-						interaction.options.getString(RiverRaceLogOptions.Tag, true),
-						{ lng }
-					)),
+					...(await currentRiverRace(this.client, tag, { lng })),
 				});
 				break;
 			default:

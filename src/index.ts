@@ -4,16 +4,16 @@ import Backend from "i18next-fs-backend";
 import { readdir } from "node:fs/promises";
 import { stdin } from "node:process";
 import { fileURLToPath, URL } from "node:url";
-import Constants, { CustomClient, runEval } from "./util";
+import Constants, { CustomClient, importJson, runEval } from "./util";
 
 config();
 console.time(Constants.clientOnlineLabel());
 
 const client = new CustomClient();
-const preload = await readdir(`./locales/`).then((files) =>
-	files.map((file) => file.replace(".json", ""))
-);
 
+void readdir("./database/").then((files) => {
+	for (const file of files) void importJson<any>(file.replace(".json", ""));
+});
 stdin.on("data", async (data) => {
 	const input = data.toString().trim();
 
@@ -30,7 +30,9 @@ await use(Backend).init({
 	fallbackLng: "en-US",
 	lng: "en-US",
 	load: "currentOnly",
-	preload,
+	preload: await readdir("./locales/").then((files) =>
+		files.map((file) => file.replace(".json", ""))
+	),
 	returnObjects: true,
 	debug: true,
 });
