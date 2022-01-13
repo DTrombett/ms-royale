@@ -48,6 +48,11 @@ export enum ButtonActions {
 	 * Show player's info
 	 */
 	PlayerInfo = "pi",
+
+	/**
+	 * Show a player achievement's info
+	 */
+	PlayerAchievements = "ai",
 }
 
 /**
@@ -64,6 +69,7 @@ export type ButtonActionsTypes = {
 	[ButtonActions.ClanInfo]: [clan: APITag];
 	[ButtonActions.CurrentRiverRace]: [clan: APITag];
 	[ButtonActions.PlayerInfo]: [player: APITag];
+	[ButtonActions.PlayerAchievements]: [player: APITag];
 };
 
 /**
@@ -185,6 +191,11 @@ export enum CustomEmojis {
 	 * The emoji for a clan war
 	 */
 	clanWar = "<:clanwar:929338139540066327>",
+
+	/**
+	 * The emoji for an achievement
+	 */
+	achievement = "<:achievement:931157677130784778>",
 }
 
 /**

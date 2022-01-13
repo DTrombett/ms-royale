@@ -95,7 +95,7 @@ export const searchClan = async (
 
 	return {
 		components: [row1, row2],
-		content: Constants.clanSearchResultsContent(id, options),
+		content: Constants.clanSearchResults(id, options),
 		ephemeral,
 	};
 };

@@ -11,6 +11,7 @@ import {
 	getSearchOptions,
 	interactionCommand,
 	MenuActions,
+	playerAchievements,
 	playerInfo,
 	riverRaceLog,
 	searchClan,
@@ -177,6 +178,16 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 					interaction
 						.reply(
 							await playerInfo(this.client, args[0]!, {
+								lng: getInteractionLocale(interaction),
+								ephemeral: true,
+							})
+						)
+						.catch(CustomClient.printToStderr);
+					break;
+				case ButtonActions.PlayerAchievements:
+					interaction
+						.reply(
+							await playerAchievements(this.client, args[0]!, {
 								lng: getInteractionLocale(interaction),
 								ephemeral: true,
 							})

@@ -246,6 +246,13 @@ export const playerInfo = async (
 
 	const row1 = new MessageActionRow().addComponents(
 		createActionButton(
+			ButtonActions.PlayerAchievements,
+			{
+				label: translate("commands.player.buttons.achievements.label", { lng }),
+			},
+			tag
+		),
+		createActionButton(
 			ButtonActions.ClanInfo,
 			{ label: translate("commands.clan.buttons.clanInfo.label", { lng }) },
 			player.clan?.tag ?? "#"

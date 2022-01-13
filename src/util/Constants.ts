@@ -102,7 +102,7 @@ export const TIME = {
 } as const;
 
 export const Constants = {
-	clanSearchResultsContent: (user: Snowflake, options: SearchClanOptions) =>
+	clanSearchResults: (user: Snowflake, options: SearchClanOptions) =>
 		` Risultati per la seguente ricerca richiesta da <@${user}>:\n\n${bold(
 			"Nome"
 		)}: ${
@@ -113,7 +113,7 @@ export const Constants = {
 			options.maxMembers ?? "-"
 		}\n${bold("Punteggio minimo")}: ${options.minScore ?? "-"}`,
 
-	playerInfoAchievementsFieldValue: (player: Player) =>
+	playerAchievements: (player: Player) =>
 		player.achievements
 			.map(
 				(achievement) =>

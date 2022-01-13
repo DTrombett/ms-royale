@@ -25,7 +25,8 @@
 		"boatAttack": "<:_:918909257745825793>",
 		"warDeck": "<:_:918908890761035817>",
 		"training": "<:_:927624101219160207>",
-		"clanWar": "<:_:929338139540066327>"
+		"clanWar": "<:_:929338139540066327>",
+		"achievement": "<:_:931157677130784778>"
 	},
 	"events": {
 		"clanUpdate": {
@@ -179,7 +180,14 @@
 			"buttons": {
 				"playerInfo": {
 					"label": "Info giocatore"
+				},
+				"achievements": {
+					"label": "Obiettivi"
 				}
+			},
+			"achievements": {
+				"title": "Obiettivi",
+				"author": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })"
 			},
 			"info": {
 				"noTag": "Non hai nessun tag salvato. Usa il comando `/save` per salvare il tuo tag o utilizza l'opzione `tag` per vedere le info di un giocatore specifico.",

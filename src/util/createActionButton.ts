@@ -7,8 +7,8 @@ import { buildCustomButtonId } from "./customId";
 import {
 	ButtonActions,
 	ButtonActionsTypes,
-	Emojis,
 	CustomEmojis,
+	Emojis,
 } from "./types";
 
 /**
@@ -21,6 +21,7 @@ export const ButtonEmojis = {
 	[ButtonActions.CurrentRiverRace]: CustomEmojis.clanWar,
 	[ButtonActions.ClanInfo]: Emojis.CrossedSwords,
 	[ButtonActions.PlayerInfo]: CustomEmojis.user,
+	[ButtonActions.PlayerAchievements]: CustomEmojis.achievement,
 } as const;
 
 /**
