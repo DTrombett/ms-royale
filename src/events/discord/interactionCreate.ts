@@ -27,7 +27,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 			);
 			return;
 		}
-		if (interaction.isChatInputCommand()) {
+		if (interaction.isCommand()) {
 			void this.client.commands.get(interaction.commandName)?.run(interaction);
 			CustomClient.printToStdout(
 				`Received command ${interactionCommand(interaction)}`
