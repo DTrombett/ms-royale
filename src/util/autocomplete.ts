@@ -3,14 +3,12 @@ import {
 	ApplicationCommandOptionChoice,
 	AutocompleteInteraction,
 } from "discord.js";
-import {
-	CustomClient,
-	getInteractionLocale,
-	MatchLevel,
-	matchStrings,
-	normalizeTag,
-	translate,
-} from "../util";
+import CustomClient from "./CustomClient";
+import { getInteractionLocale } from "./locales";
+import matchStrings from "./matchStrings";
+import normalizeTag from "./normalizeTag";
+import translate from "./translate";
+import { MatchLevel } from "./types";
 
 /**
  * Autocomplete a clan tag.
