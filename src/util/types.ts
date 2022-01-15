@@ -31,7 +31,7 @@ export enum ButtonActions {
 	/**
 	 * Show the river race log of a clan
 	 */
-	RiverRaceLog = "rrl",
+	RiverRaceLog = "rl",
 
 	/**
 	 * Show clan's info
@@ -41,7 +41,7 @@ export enum ButtonActions {
 	/**
 	 * Show the current river race of a clan
 	 */
-	CurrentRiverRace = "crr",
+	CurrentRiverRace = "cr",
 
 	/**
 	 * Show player's info
@@ -52,6 +52,11 @@ export enum ButtonActions {
 	 * Show a player achievement's info
 	 */
 	PlayerAchievements = "ai",
+
+	/**
+	 * Show a player's upcoming chests
+	 */
+	PlayerUpcomingChests = "uc",
 }
 
 /**
@@ -69,6 +74,7 @@ export type ButtonActionsTypes = {
 	[ButtonActions.CurrentRiverRace]: [clan: APITag];
 	[ButtonActions.PlayerInfo]: [player: APITag];
 	[ButtonActions.PlayerAchievements]: [player: APITag];
+	[ButtonActions.PlayerUpcomingChests]: [player: APITag];
 };
 
 /**
@@ -195,6 +201,11 @@ export enum CustomEmojis {
 	 * The emoji for an achievement
 	 */
 	achievement = "<:achievement:931157677130784778>",
+
+	/**
+	 * The emoji for a chest
+	 */
+	chest = "<:chest:931886438541303839>",
 }
 
 /**

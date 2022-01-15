@@ -211,15 +211,16 @@ export const playerInfo = async (
 				totalDonations: player.totalDonations,
 			}),
 			inline: true,
-		})
-		.addField({
+		});
+	if (player.favouriteCard !== undefined)
+		embed.addField({
 			...translate("commands.player.info.fields.currentFavouriteCard", {
 				lng,
-
 				favouriteCard: player.favouriteCard,
 			}),
 			inline: true,
-		})
+		});
+	embed
 		.addField({
 			...translate("commands.player.info.fields.clanWarsVeteran", {
 				lng,
@@ -253,8 +254,20 @@ export const playerInfo = async (
 			tag
 		),
 		createActionButton(
+			ButtonActions.PlayerUpcomingChests,
+			{
+				label: translate("commands.player.buttons.upcomingChests.label", {
+					lng,
+				}),
+			},
+			tag
+		),
+		createActionButton(
 			ButtonActions.ClanInfo,
-			{ label: translate("commands.clan.buttons.clanInfo.label", { lng }) },
+			{
+				label: translate("commands.clan.buttons.clanInfo.label", { lng }),
+				disabled: player.clan === undefined,
+			},
 			player.clan?.tag ?? "#"
 		)
 	);

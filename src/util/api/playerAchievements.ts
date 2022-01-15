@@ -54,8 +54,20 @@ export const playerAchievements = async (
 			tag
 		),
 		createActionButton(
+			ButtonActions.PlayerUpcomingChests,
+			{
+				label: translate("commands.player.buttons.upcomingChests.label", {
+					lng,
+				}),
+			},
+			tag
+		),
+		createActionButton(
 			ButtonActions.ClanInfo,
-			{ label: translate("commands.clan.buttons.clanInfo.label", { lng }) },
+			{
+				label: translate("commands.clan.buttons.clanInfo.label", { lng }),
+				disabled: player.clan === undefined,
+			},
 			player.clan?.tag ?? "#"
 		)
 	);

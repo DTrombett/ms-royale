@@ -50,11 +50,6 @@ export const playerUpcomingChests = async (
 			ButtonActions.PlayerInfo,
 			{ label: translate("commands.player.buttons.playerInfo.label", { lng }) },
 			tag
-		),
-		createActionButton(
-			ButtonActions.ClanInfo,
-			{ label: translate("commands.clan.buttons.clanInfo.label", { lng }) },
-			tag
 		)
 	);
 

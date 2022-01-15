@@ -13,6 +13,7 @@ import {
 	MenuActions,
 	playerAchievements,
 	playerInfo,
+	playerUpcomingChests,
 	riverRaceLog,
 	searchClan,
 } from "../../util";
@@ -188,6 +189,16 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 					interaction
 						.reply(
 							await playerAchievements(this.client, args[0]!, {
+								lng: getInteractionLocale(interaction),
+								ephemeral: true,
+							})
+						)
+						.catch(CustomClient.printToStderr);
+					break;
+				case ButtonActions.PlayerUpcomingChests:
+					interaction
+						.reply(
+							await playerUpcomingChests(this.client, args[0]!, {
 								lng: getInteractionLocale(interaction),
 								ephemeral: true,
 							})

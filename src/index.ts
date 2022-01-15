@@ -1,3 +1,4 @@
+import { Client } from "discord.js";
 import { config } from "dotenv";
 import { use } from "i18next";
 import Backend from "i18next-fs-backend";
@@ -11,6 +12,16 @@ config();
 console.time(Constants.clientOnlineLabel());
 
 const client = new CustomClient();
+(
+	global as typeof globalThis & {
+		client: CustomClient;
+	}
+).client = client;
+(
+	global as typeof globalThis & {
+		discord: Client;
+	}
+).discord = client.discord;
 
 void readdir("./database/").then((files) => {
 	for (const file of files) void importJson<any>(file.replace(".json", ""));

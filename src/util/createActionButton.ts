@@ -22,6 +22,7 @@ export const ButtonEmojis = {
 	[ButtonActions.ClanInfo]: Emojis.CrossedSwords,
 	[ButtonActions.PlayerInfo]: CustomEmojis.user,
 	[ButtonActions.PlayerAchievements]: CustomEmojis.achievement,
+	[ButtonActions.PlayerUpcomingChests]: CustomEmojis.chest,
 } as const;
 
 /**
