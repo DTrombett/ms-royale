@@ -186,7 +186,10 @@
 				}
 			},
 			"achievements": {
-				"title": "Achievements",
+				"title": "Achievements"
+			},
+			"upcomingChests": {
+				"title": "Upcoming chests",
 				"author": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })"
 			},
 			"info": {

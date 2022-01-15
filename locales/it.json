@@ -189,6 +189,9 @@
 				"title": "Obiettivi",
 				"author": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })"
 			},
+			"upcomingChests": {
+				"title": "Prossimi bauli"
+			},
 			"info": {
 				"noTag": "Non hai nessun tag salvato. Usa il comando `/save` per salvare il tuo tag o utilizza l'opzione `tag` per vedere le info di un giocatore specifico.",
 				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })",

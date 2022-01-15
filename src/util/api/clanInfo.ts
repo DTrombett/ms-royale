@@ -49,7 +49,7 @@ export const clanInfo = async (
 		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(clan.lastUpdate)
 		.setThumbnail(clan.badgeUrl)
-		.setURL(Constants.clanLink(clan));
+		.setURL(Constants.clanLink(tag));
 
 	embed
 		.addField({

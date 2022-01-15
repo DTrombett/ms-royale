@@ -1,6 +1,6 @@
 import { Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
-import { Player } from "apiroyale";
+import { UpcomingChestManager } from "apiroyale";
 import { Constants as DiscordConstants, MessageActionRow } from "discord.js";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
@@ -11,13 +11,13 @@ import { ButtonActions } from "../types";
 import validateTag from "../validateTag";
 
 /**
- * Displays information about a player's achievements.
+ * Displays information about a player's upcoming chests.
  * @param client - The client
  * @param tag - The tag of the player
  * @param options - Additional options
  * @returns A promise that resolves with the message options
  */
-export const playerAchievements = async (
+export const playerUpcomingChests = async (
 	client: ClientRoyale,
 	tag: string,
 	{ ephemeral, lng }: { lng?: string; ephemeral?: boolean }
@@ -29,23 +29,21 @@ export const playerAchievements = async (
 			ephemeral: true,
 		};
 
-	const player = await client.players.fetch(tag).catch((error: Error) => {
-		CustomClient.printToStderr(error);
-		return { content: error.message, ephemeral: true };
-	});
+	const chests = await client
+		.fetchPlayerUpcomingChests({ tag })
+		.catch((error: Error) => {
+			CustomClient.printToStderr(error);
+			return { content: error.message, ephemeral: true };
+		});
 
-	if (!(player instanceof Player)) return player;
+	if (!(chests instanceof UpcomingChestManager)) return chests;
 	const embed = new Embed()
-		.setAuthor({
-			name: translate("commands.player.achievements.author", { lng, player }),
-			url: Constants.playerLink(tag),
-		})
-		.setTitle(translate("commands.player.achievements.title", { lng }))
-		.setColor(DiscordConstants.Colors.GREEN)
+		.setTitle(translate("commands.player.upcomingChests.title", { lng }))
+		.setColor(DiscordConstants.Colors.BLURPLE)
 		.setFooter({ text: translate("common.lastUpdated", { lng }) })
-		.setTimestamp(player.lastUpdate)
+		.setTimestamp(chests.first()!.lastUpdate)
 		.setURL(Constants.playerLink(tag))
-		.setDescription(Constants.playerAchievements(player));
+		.setDescription(Constants.playerUpcomingChests(chests));
 
 	const row1 = new MessageActionRow().addComponents(
 		createActionButton(
@@ -56,7 +54,7 @@ export const playerAchievements = async (
 		createActionButton(
 			ButtonActions.ClanInfo,
 			{ label: translate("commands.clan.buttons.clanInfo.label", { lng }) },
-			player.clan?.tag ?? "#"
+			tag
 		)
 	);
 

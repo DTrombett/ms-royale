@@ -1,10 +1,11 @@
 import { bold } from "@discordjs/builders";
 import type {
-	ClanPreview,
+	APITag,
 	Player,
 	PlayerBadge,
 	PlayerBadgeManager,
 	SearchClanOptions,
+	UpcomingChestManager,
 } from "apiroyale";
 import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
@@ -129,6 +130,13 @@ export const Constants = {
 			)
 			.join("\n"),
 
+	playerUpcomingChests: (chests: UpcomingChestManager) =>
+		chests
+			.map(
+				(c, i) => `• ${bold(c.name)} (${Number(i) + 1})${i === "8" ? "\n" : ""}`
+			)
+			.join("\n"),
+
 	/**
 	 * The label used for the online event of the client.
 	 */
@@ -178,17 +186,17 @@ export const Constants = {
 
 	/**
 	 * The url of the clan info embed.
-	 * @param clan - The clan
+	 * @param tag - The clan tag
 	 */
-	clanLink: (clan: ClanPreview) =>
-		`https://royaleapi.com/clan/${clan.tag.slice(1)}` as const,
+	clanLink: (tag: APITag) =>
+		`https://royaleapi.com/clan/${tag.slice(1)}` as const,
 
 	/**
 	 * The link for player info.
-	 * @param player - The player
+	 * @param clan - The player tag
 	 */
-	playerLink: (player: Player) =>
-		`https://royaleapi.com/player/${player.tag.slice(1)}` as const,
+	playerLink: (tag: APITag) =>
+		`https://royaleapi.com/player/${tag.slice(1)}` as const,
 
 	/**
 	 * The embed field value for the player's badges.

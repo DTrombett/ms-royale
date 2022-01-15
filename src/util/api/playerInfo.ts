@@ -47,7 +47,7 @@ export const playerInfo = async (
 		.setColor(DiscordConstants.Colors.BLUE)
 		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(player.lastUpdate)
-		.setURL(Constants.playerLink(player))
+		.setURL(Constants.playerLink(tag))
 		.addField({
 			...translate("commands.player.info.fields.level", {
 				lng,
@@ -77,7 +77,7 @@ export const playerInfo = async (
 				lng,
 
 				clan: player.clan,
-				clanLink: player.clan && Constants.clanLink(player.clan),
+				clanLink: player.clan && Constants.clanLink(tag),
 				role: player.role,
 				context: typeof player.clan,
 			}),

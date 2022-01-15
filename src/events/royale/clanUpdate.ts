@@ -18,7 +18,7 @@ const constructClanUpdateEmbed = (
 ) => {
 	const embed = new Embed()
 		.setTitle(translate("events.clanUpdate.title", { lng }))
-		.setURL(Constants.clanLink(newClan))
+		.setURL(Constants.clanLink(newClan.tag))
 		.setAuthor({ name: newClan.name })
 		.setThumbnail(newClan.badgeUrl)
 		.setColor(DiscordConstants.Colors.BLURPLE);
