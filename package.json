@@ -36,7 +36,7 @@
     "bufferutil": "4.x.x",
     "discord-api-types": "0.x.x",
     "discord.js": "13.x.x",
-    "dotenv": "11.x.x",
+    "dotenv": "12.x.x",
     "erlpack": "0.x.x",
     "i18next": "21.x.x",
     "i18next-fs-backend": "1.x.x",
