@@ -86,14 +86,16 @@ export const playerInfo = async (
 			...translate("commands.player.info.fields.deck", {
 				lng,
 			}),
-			value: `${deck.slice(0, 4).join(", ")}\n${deck
-				.slice(4)
-				.join(", ")} - ${hyperlink(
-				translate("commands.player.info.fields.deck.copy", { lng }),
-				`https://link.clashroyale.com/deck/it?deck=${player.deck
-					.map((card) => card.id)
-					.join(";")}&id=${player.id.slice(1)}`
-			)} ${CustomEmojis.copyDeck}`,
+			value: `${deck.slice(0, 4).join(", ")}\n${deck.slice(4).join(", ")}${
+				deck.length === 8
+					? ` - ${hyperlink(
+							translate("commands.player.info.fields.deck.copy", { lng }),
+							`https://link.clashroyale.com/deck/it?deck=${player.deck
+								.map((card) => card.id)
+								.join(";")}&id=${player.id.slice(1)}`
+					  )} ${CustomEmojis.copyDeck}`
+					: ""
+			}`,
 		});
 	if (player.leagueStatistics)
 		embed
