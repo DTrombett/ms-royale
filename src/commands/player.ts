@@ -108,12 +108,13 @@ export const command: CommandOptions = {
 				});
 				break;
 			default:
-				CustomClient.printToStderr(
+				void CustomClient.printToStderr(
 					new Error(
 						Constants.optionNotRecognizedLog(
 							interaction.options.getSubcommand()
 						)
-					)
+					),
+					true
 				);
 				await interaction.reply({
 					content: translate("common.invalidCommand", { lng }),
@@ -122,7 +123,7 @@ export const command: CommandOptions = {
 		}
 		return undefined;
 	},
-	autocomplete(interaction) {
+	async autocomplete(interaction) {
 		const option = interaction.options.getFocused(true);
 
 		switch (
@@ -132,12 +133,14 @@ export const command: CommandOptions = {
 		) {
 			case AutoCompletableInfoOptions.Tag:
 				// Autocomplete the player tag
-				autocompletePlayerTag(this.client, option, interaction);
+				await autocompletePlayerTag(this.client, option, interaction);
 				break;
 			default:
-				CustomClient.printToStderr(
-					new Error(Constants.optionNotRecognizedLog(option.name))
+				void CustomClient.printToStderr(
+					new Error(Constants.optionNotRecognizedLog(option.name)),
+					true
 				);
+				await interaction.respond([]);
 				break;
 		}
 	},

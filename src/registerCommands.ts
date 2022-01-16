@@ -74,5 +74,5 @@ if (!registerGlobal)
 		}
 	);
 
-CustomClient.printToStdout(APICommands);
+await CustomClient.printToStdout(APICommands);
 console.timeEnd("Register slash commands");

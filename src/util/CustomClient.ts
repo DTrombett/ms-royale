@@ -1,6 +1,7 @@
 import Collection from "@discordjs/collection";
 import { ClientRoyale } from "apiroyale";
 import { Client, Intents, Options } from "discord.js";
+import { createWriteStream } from "node:fs";
 import { env, stderr, stdout } from "node:process";
 import { inspect } from "node:util";
 import Command from "./Command";
@@ -92,19 +93,46 @@ export class CustomClient extends ClientRoyale {
 	}
 
 	/**
+	 * Logs a message in the log file.
+	 * @param message - The message to log
+	 * @returns A promise that resolves when the message is logged
+	 */
+	static async logToFile(message: string) {
+		return new Promise<void>((resolve) => {
+			try {
+				createWriteStream(`./debug.log`, { flags: "a" })
+					.once("error", CustomClient.printToStderr)
+					.once("finish", resolve)
+					.setDefaultEncoding("utf8")
+					.end(message);
+			} catch (error) {
+				void CustomClient.printToStderr(error);
+			}
+		});
+	}
+
+	/**
 	 * Prints a message to stdout.
 	 * @param message - The string to print
+	 * @param log - If the message should be logged in the log file too
 	 */
-	static printToStdout(this: void, message: unknown) {
-		stdout.write(CustomClient.format(message));
+	static async printToStdout(this: void, message: unknown, log = false) {
+		const formatted = CustomClient.format(message);
+
+		stdout.write(formatted);
+		if (log) await CustomClient.logToFile(formatted);
 	}
 
 	/**
 	 * Prints a message to stderr.
 	 * @param message - The string to print
+	 * @param log - If the message should be logged in the log file too
 	 */
-	static printToStderr(this: void, message: unknown) {
-		stderr.write(CustomClient.format(message));
+	static async printToStderr(this: void, message: unknown, log = false) {
+		const formatted = CustomClient.format(message);
+
+		stderr.write(formatted);
+		if (log) await CustomClient.logToFile(formatted);
 	}
 
 	/**

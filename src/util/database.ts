@@ -26,7 +26,7 @@ export const importJson = <T extends keyof Variables>(
 		createReadStream(`./${folder}/${name}.json`)
 			.setEncoding("utf8")
 			.on("data", (chunk) => (data += chunk))
-			.on("end", () => {
+			.once("end", () => {
 				try {
 					const parsed = JSON.parse(data) as Variables[T];
 
@@ -36,7 +36,7 @@ export const importJson = <T extends keyof Variables>(
 					reject(error);
 				}
 			})
-			.on("error", reject);
+			.once("error", reject);
 	});
 
 /**
@@ -54,8 +54,8 @@ export const writeJson = <T extends keyof Variables>(
 
 			databaseCache[name] = data;
 			createWriteStream(`./${folder}/${name}.json`)
-				.on("error", reject)
-				.on("finish", resolve)
+				.once("error", reject)
+				.once("finish", resolve)
 				.setDefaultEncoding("utf8")
 				.end(stringified);
 		} catch (error) {

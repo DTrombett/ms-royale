@@ -45,7 +45,7 @@ export const riverRaceLog = async (
 		| undefined = client.allClans.get(tag)?.riverRaceLog;
 	if (!log || log.size === 0)
 		log = await client.fetchRiverRaceLog({ tag }).catch((error: Error) => {
-			CustomClient.printToStderr(error);
+			void CustomClient.printToStderr(error);
 			return { content: error.message, ephemeral: true };
 		});
 

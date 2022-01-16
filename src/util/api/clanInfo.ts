@@ -37,7 +37,7 @@ export const clanInfo = async (
 		};
 
 	const clan = await client.clans.fetch(tag).catch((error: Error) => {
-		CustomClient.printToStderr(error);
+		void CustomClient.printToStderr(error);
 		return { content: error.message, ephemeral: true };
 	});
 

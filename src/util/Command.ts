@@ -73,7 +73,7 @@ export class Command {
 			if (this.reserved && !owners.includes(interaction.user.id)) return;
 			await this._autocomplete?.(interaction);
 		} catch (message) {
-			CustomClient.printToStderr(message);
+			void CustomClient.printToStderr(message, true);
 		}
 	}
 
@@ -105,7 +105,7 @@ export class Command {
 			}
 			await this._execute(interaction);
 		} catch (message) {
-			CustomClient.printToStderr(message);
+			void CustomClient.printToStderr(message, true);
 		}
 	}
 }

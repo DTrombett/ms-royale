@@ -30,7 +30,7 @@ export const playerAchievements = async (
 		};
 
 	const player = await client.players.fetch(tag).catch((error: Error) => {
-		CustomClient.printToStderr(error);
+		void CustomClient.printToStderr(error);
 		return { content: error.message, ephemeral: true };
 	});
 

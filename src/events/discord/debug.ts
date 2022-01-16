@@ -4,6 +4,6 @@ export const event: EventOptions<EventType.Discord, "debug"> = {
 	name: "debug",
 	type: EventType.Discord,
 	on(info) {
-		CustomClient.printToStdout(info);
+		void CustomClient.printToStdout(info, true);
 	},
 };

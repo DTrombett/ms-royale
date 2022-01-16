@@ -9,7 +9,7 @@ export const event: EventOptions<EventType.Discord, "invalidated"> = {
 	once() {
 		const memory = memoryUsage();
 
-		CustomClient.printToStderr(
+		void CustomClient.printToStderr(
 			`Bot client session became invalidated.\nClosing the process gracefully\n${(
 				memory.heapUsed /
 				1024 /
@@ -18,7 +18,8 @@ export const event: EventOptions<EventType.Discord, "invalidated"> = {
 				digits
 			)} MB total\n${(memory.external / 1024 / 1024).toFixed(
 				digits
-			)} MB external\n${(memory.rss / 1024 / 1024).toFixed(digits)} MB rss`
+			)} MB external\n${(memory.rss / 1024 / 1024).toFixed(digits)} MB rss`,
+			true
 		);
 		this.client.discord.destroy();
 		exit(0);

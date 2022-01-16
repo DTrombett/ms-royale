@@ -32,7 +32,7 @@ export const playerUpcomingChests = async (
 	const chests = await client
 		.fetchPlayerUpcomingChests({ tag })
 		.catch((error: Error) => {
-			CustomClient.printToStderr(error);
+			void CustomClient.printToStderr(error);
 			return { content: error.message, ephemeral: true };
 		});
 

@@ -23,15 +23,16 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 	type: EventType.Discord,
 	async on(interaction) {
 		if (this.client.blocked) {
-			CustomClient.printToStderr(
+			void CustomClient.printToStderr(
 				"Received interactionCreate event, but client is blocked."
 			);
 			return;
 		}
 		if (interaction.isCommand()) {
 			void this.client.commands.get(interaction.commandName)?.run(interaction);
-			CustomClient.printToStdout(
-				`Received command ${interactionCommand(interaction)}`
+			void CustomClient.printToStdout(
+				`Received command ${interactionCommand(interaction)}`,
+				true
 			);
 			return;
 		}
@@ -39,10 +40,11 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 			void this.client.commands
 				.get(interaction.commandName)
 				?.autocomplete(interaction);
-			CustomClient.printToStdout(
+			void CustomClient.printToStdout(
 				`Received autocomplete request for command ${interactionCommand(
 					interaction
-				)}`
+				)}`,
+				true
 			);
 			return;
 		}
@@ -50,10 +52,11 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 			const { action, args } = destructureCustomMenuId(interaction.customId);
 			const lng = getInteractionLocale(interaction);
 
-			CustomClient.printToStdout(
+			void CustomClient.printToStdout(
 				`Received select menu interaction ${action} with args [${args.join(
 					", "
-				)}] and values [${interaction.values.join(", ")}]`
+				)}] and values [${interaction.values.join(", ")}]`,
+				true
 			);
 			switch (action) {
 				case MenuActions.ClanInfo:
@@ -77,8 +80,9 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						.catch(CustomClient.printToStderr);
 					break;
 				default:
-					CustomClient.printToStderr(
-						`Received unknown action: ${action as string}`
+					void CustomClient.printToStderr(
+						`Received unknown action: ${action as string}`,
+						true
 					);
 					break;
 			}
@@ -89,8 +93,9 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 			const lng = getInteractionLocale(interaction);
 			let messageOptions;
 
-			CustomClient.printToStdout(
-				`Received button interaction ${action} with args [${args.join(", ")}]`
+			void CustomClient.printToStdout(
+				`Received button interaction ${action} with args [${args.join(", ")}]`,
+				true
 			);
 			switch (action) {
 				case ButtonActions.NextPage:
@@ -206,8 +211,9 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						.catch(CustomClient.printToStderr);
 					break;
 				default:
-					CustomClient.printToStderr(
-						`Received unknown action: ${action as string}`
+					void CustomClient.printToStderr(
+						`Received unknown action: ${action as string}`,
+						true
 					);
 					break;
 			}

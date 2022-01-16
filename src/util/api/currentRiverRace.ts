@@ -36,7 +36,7 @@ export const currentRiverRace = async (
 		};
 
 	const race = await client.races.fetch(tag).catch((error: Error) => {
-		CustomClient.printToStderr(error);
+		void CustomClient.printToStderr(error);
 		return { content: error.message, ephemeral: true };
 	});
 

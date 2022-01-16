@@ -25,7 +25,7 @@ export const searchClan = async (
 	{ ephemeral, lng, id }: { lng?: string; ephemeral?: boolean; id: Snowflake }
 ) => {
 	const results = await client.clans.search(options).catch((error: Error) => {
-		CustomClient.printToStderr(error);
+		void CustomClient.printToStderr(error);
 		return { content: error.message, ephemeral: true };
 	});
 

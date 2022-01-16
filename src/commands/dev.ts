@@ -39,7 +39,7 @@ enum SubCommandOptions {
 const exec = promisify(nativeExec);
 const catchPullError =
 	(interaction: CommandInteraction) => async (err: Error) => {
-		CustomClient.printToStderr(err);
+		void CustomClient.printToStderr(err);
 		await interaction.editReply({
 			content: `Errore durante il pull: ${err.message}`,
 		});
@@ -194,7 +194,7 @@ export const command: CommandOptions = {
 				const embeds: Embed[] = [];
 
 				if (stdout) {
-					CustomClient.printToStdout(stdout);
+					void CustomClient.printToStdout(stdout);
 					embeds.push(
 						new Embed()
 							.setAuthor({
@@ -210,7 +210,7 @@ export const command: CommandOptions = {
 					);
 				}
 				if (stderr) {
-					CustomClient.printToStderr(stderr);
+					void CustomClient.printToStderr(stderr);
 					embeds.push(
 						new Embed()
 							.setAuthor({
@@ -250,6 +250,7 @@ export const command: CommandOptions = {
 				} catch (e) {
 					parsed = CustomClient.inspect(e);
 				}
+				void CustomClient.printToStdout(parsed);
 				const evalEmbed = new Embed()
 					.setAuthor({
 						name: interaction.user.tag,
@@ -263,13 +264,12 @@ export const command: CommandOptions = {
 						name: "Code",
 						value: codeBlock(
 							"js",
-							Util.escapeCodeBlock(code).slice(0, 2048 - 9)
+							Util.escapeCodeBlock(code).slice(0, 1024 - 9)
 						),
 					})
 					.setColor(Constants.Colors.BLURPLE)
 					.setTimestamp();
 
-				CustomClient.printToStdout(parsed);
 				await interaction.editReply({
 					content: `Eval elaborato in ${bold(`${Date.now() - now}ms`)}`,
 					embeds: [evalEmbed],

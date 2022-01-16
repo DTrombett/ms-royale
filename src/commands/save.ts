@@ -76,18 +76,20 @@ export const command: CommandOptions = {
 			],
 		});
 	},
-	autocomplete(interaction) {
+	async autocomplete(interaction) {
 		const option = interaction.options.getFocused(true);
 
 		switch (option.name as AutoCompletableOptions) {
 			case AutoCompletableOptions.Tag:
 				// Autocomplete the player tag
-				autocompletePlayerTag(this.client, option, interaction);
+				await autocompletePlayerTag(this.client, option, interaction);
 				break;
 			default:
-				CustomClient.printToStderr(
-					new Error(Constants.optionNotRecognizedLog(option.name))
+				void CustomClient.printToStderr(
+					new Error(Constants.optionNotRecognizedLog(option.name)),
+					true
 				);
+				await interaction.respond([]);
 				break;
 		}
 	},

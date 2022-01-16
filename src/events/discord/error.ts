@@ -4,6 +4,6 @@ export const event: EventOptions<EventType.Discord, "error"> = {
 	name: "error",
 	type: EventType.Discord,
 	on(error) {
-		CustomClient.printToStderr(error);
+		void CustomClient.printToStderr(error, true);
 	},
 };

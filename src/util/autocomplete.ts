@@ -44,15 +44,13 @@ export const autocompleteClanTag = (
 		// Sort the clans by their match level
 		clans.sort((a, b) => matches[b.tag] - matches[a.tag] || 0);
 	}
-	interaction
-		.respond(
-			// Take the first 25 clans as only 25 options are allowed
-			clans.first(25).map((structure) => ({
-				name: translate("common.tagPreview", { lng, structure }),
-				value: structure.tag,
-			}))
-		)
-		.catch(CustomClient.printToStderr);
+	return interaction.respond(
+		// Take the first 25 clans as only 25 options are allowed
+		clans.first(25).map((structure) => ({
+			name: translate("common.tagPreview", { lng, structure }),
+			value: structure.tag,
+		}))
+	);
 };
 
 /**
@@ -89,13 +87,11 @@ export const autocompletePlayerTag = (
 		// Sort the players by their match level
 		players.sort((a, b) => matches[b.tag] - matches[a.tag] || 0);
 	}
-	interaction
-		.respond(
-			// Take the first 25 players as only 25 options are allowed
-			players.first(25).map((structure) => ({
-				name: translate("common.tagPreview", { lng, structure }),
-				value: structure.tag,
-			}))
-		)
-		.catch(CustomClient.printToStderr);
+	return interaction.respond(
+		// Take the first 25 players as only 25 options are allowed
+		players.first(25).map((structure) => ({
+			name: translate("common.tagPreview", { lng, structure }),
+			value: structure.tag,
+		}))
+	);
 };
