@@ -12,6 +12,7 @@ import { Constants, Util } from "discord.js";
 import { exec as nativeExec } from "node:child_process";
 import { argv, cwd, env, exit, memoryUsage, uptime } from "node:process";
 import { promisify } from "node:util";
+import prettier from "prettier";
 import type { CommandOptions } from "../util";
 import { CustomClient, parseEval, restart } from "../util";
 
@@ -235,8 +236,20 @@ export const command: CommandOptions = {
 				});
 				break;
 			case SubCommands.evalCmd:
-				const code = interaction.options.getString(SubCommandOptions.cmd, true);
-				const parsed = await parseEval(code);
+				let code = interaction.options.getString(SubCommandOptions.cmd, true),
+					parsed: string;
+				try {
+					code = prettier
+						.format(code, {
+							...((await prettier
+								.resolveConfig(".prettierrc.json")
+								.catch(() => null)) ?? {}),
+						})
+						.slice(0, -1);
+					parsed = await parseEval(code);
+				} catch (e) {
+					parsed = CustomClient.inspect(e);
+				}
 				const evalEmbed = new Embed()
 					.setAuthor({
 						name: interaction.user.tag,
@@ -285,7 +298,7 @@ export const command: CommandOptions = {
 					.setTimestamp();
 
 				await interaction.editReply({
-					content: `Memoria calcolata in ${Date.now() - now}`,
+					content: `Memoria calcolata in ${Date.now() - now}ms`,
 					embeds: [ramEmbed],
 				});
 				break;
@@ -349,9 +362,9 @@ export const command: CommandOptions = {
 					false;
 
 				if (interaction.options.getBoolean(SubCommandOptions.packages) ?? false)
-					cmds.push("rm -rf node_modules", "npm i");
+					cmds.push("rm -r node_modules", "rm package-lock.json", "npm i");
 				if (interaction.options.getBoolean(SubCommandOptions.rebuild) ?? false)
-					cmds.push("rm -rf dist", "npm run build");
+					cmds.push("npm run build");
 				if (
 					interaction.options.getBoolean(SubCommandOptions.registerCommands) ??
 					false
@@ -378,12 +391,6 @@ export const command: CommandOptions = {
 					content: `Terminate tutte le operazioni in ${bold(
 						`${Date.now() - now}ms`
 					)}`,
-				});
-				break;
-
-			case SubCommands.test:
-				await interaction.editReply({
-					content: "Nothing to see here.",
 				});
 				break;
 			default:
