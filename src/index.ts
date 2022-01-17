@@ -19,9 +19,9 @@ const client = new CustomClient();
 ).client = client;
 (
 	global as typeof globalThis & {
-		discord: Client;
+		bot: Client;
 	}
-).discord = client.discord;
+).bot = client.discord;
 
 void readdir("./database/").then((files) => {
 	for (const file of files) void importJson<any>(file.replace(".json", ""));

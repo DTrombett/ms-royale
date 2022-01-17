@@ -9,11 +9,13 @@ export const event: EventOptions<EventType.Discord, "ready"> = {
 	type: EventType.Discord,
 	async once(discordClient) {
 		setInterval(() => {
-			this.client.clans.fetch(tag).catch(CustomClient.printToStderr);
+			this.client.clans
+				.fetch(tag, { force: true })
+				.catch(CustomClient.printToStderr);
 		}, interval);
 		await Promise.all([
 			discordClient.application.fetch(),
-			this.client.clans.fetch(tag),
+			this.client.clans.fetch(tag, { force: true }),
 		]);
 		console.timeEnd(label);
 	},

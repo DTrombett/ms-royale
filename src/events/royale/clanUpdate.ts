@@ -3,7 +3,6 @@ import { Clan } from "apiroyale";
 import { Constants as DiscordConstants, TextChannel } from "discord.js";
 import { env } from "node:process";
 import Constants, {
-	cast,
 	CustomClient,
 	EventOptions,
 	EventType,
@@ -109,10 +108,8 @@ export const event: EventOptions<EventType.APIRoyale, "clanUpdate"> = {
 		 */
 		const channel = this.client.discord.channels.cache.get(
 			env.CLAN_CHANNEL_ID!
-		);
+		) as TextChannel;
 
-		if (channel?.isText() === true) return;
-		cast<TextChannel>(channel);
 		/**
 		 * The embed to send
 		 */
