@@ -175,7 +175,6 @@
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/no-extraneous-class": "warn",
 		"@typescript-eslint/no-implied-eval": "off",
-		"@typescript-eslint/no-invalid-this": "warn",
 		"@typescript-eslint/no-loop-func": "warn",
 		"@typescript-eslint/no-loss-of-precision": "warn",
 		"@typescript-eslint/no-misused-promises": "off",
