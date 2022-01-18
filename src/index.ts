@@ -8,6 +8,7 @@ import { cwd, env, stderr, stdin, stdout } from "node:process";
 import { fileURLToPath, URL } from "node:url";
 import Constants, { CustomClient, importJson } from "./util";
 
+await CustomClient.logToFile("\n");
 config();
 console.time(Constants.clientOnlineLabel());
 

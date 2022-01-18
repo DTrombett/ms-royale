@@ -127,6 +127,7 @@ export const command: CommandOptions = {
 
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Info:
+				await interaction.deferReply();
 				tag = interaction.options.getString(InfoOptions.Tag);
 
 				if (tag == null) {
@@ -142,8 +143,7 @@ export const command: CommandOptions = {
 							.then((p) => p.clan?.tag ?? null)
 							.catch(() => null);
 					if (tag == null) {
-						await interaction.reply({
-							ephemeral: true,
+						await interaction.editReply({
 							content: translate("commands.clan.noTag", { lng }),
 						});
 						break;
@@ -151,13 +151,14 @@ export const command: CommandOptions = {
 				}
 
 				// Display the clan info
-				await interaction.reply(
+				await interaction.editReply(
 					await clanInfo(this.client, tag, {
 						lng: getInteractionLocale(interaction),
 					})
 				);
 				break;
 			case SubCommands.Search:
+				await interaction.deferReply();
 				/**
 				 * The location option provided
 				 */
@@ -212,7 +213,7 @@ export const command: CommandOptions = {
 				};
 
 				// Search the clans with the provided options and display them
-				await interaction.reply({
+				await interaction.editReply({
 					...(await searchClan(this.client, options, {
 						lng,
 						id: interaction.user.id,
@@ -220,6 +221,7 @@ export const command: CommandOptions = {
 				});
 				break;
 			case SubCommands.RiverRaceLog:
+				await interaction.deferReply();
 				tag = interaction.options.getString(RiverRaceLogOptions.Tag);
 
 				if (tag == null) {
@@ -235,8 +237,7 @@ export const command: CommandOptions = {
 							.then((p) => p.clan?.tag ?? null)
 							.catch(() => null);
 					if (tag == null) {
-						await interaction.reply({
-							ephemeral: true,
+						await interaction.editReply({
 							content: translate("commands.clan.noTag", { lng }),
 						});
 						break;
@@ -244,7 +245,7 @@ export const command: CommandOptions = {
 				}
 
 				// Fetch the river race log for the clan and display it
-				await interaction.reply({
+				await interaction.editReply({
 					...(await riverRaceLog(this.client, tag, {
 						id: interaction.user.id,
 						lng,
@@ -252,6 +253,7 @@ export const command: CommandOptions = {
 				});
 				break;
 			case SubCommands.CurrentRiverRace:
+				await interaction.deferReply();
 				tag = interaction.options.getString(CurrentRiverRaceOptions.Tag);
 
 				if (tag == null) {
@@ -267,8 +269,7 @@ export const command: CommandOptions = {
 							.then((p) => p.clan?.tag ?? null)
 							.catch(() => null);
 					if (tag == null) {
-						await interaction.reply({
-							ephemeral: true,
+						await interaction.editReply({
 							content: translate("commands.clan.noTag", { lng }),
 						});
 						break;
@@ -276,7 +277,7 @@ export const command: CommandOptions = {
 				}
 
 				// Fetch the current river race for the clan and display it
-				await interaction.reply({
+				await interaction.editReply({
 					...(await currentRiverRace(this.client, tag, { lng })),
 				});
 				break;

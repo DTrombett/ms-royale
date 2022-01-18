@@ -1,16 +1,11 @@
 import { ClanSearchResults, ClientRoyale, SearchClanOptions } from "apiroyale";
-import {
-	MessageActionRow,
-	MessageButton,
-	MessageSelectMenu,
-	Snowflake,
-} from "discord.js";
+import { MessageActionRow, MessageSelectMenu, Snowflake } from "discord.js";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
-import { buildCustomButtonId, buildCustomMenuId } from "../customId";
+import { buildCustomMenuId } from "../customId";
 import translate from "../translate";
-import { ButtonActions, Emojis, MenuActions } from "../types";
+import { ButtonActions, MenuActions } from "../types";
 
 /**
  * Search a clan.
@@ -53,28 +48,6 @@ export const searchClan = async (
 			)
 	);
 	const row2 = new MessageActionRow().addComponents(
-		new MessageButton()
-			.setCustomId(
-				buildCustomButtonId(
-					ButtonActions.PreviousPage,
-					results.paging.cursors.before ?? ""
-				)
-			)
-			.setEmoji(Emojis.BackArrow)
-			.setLabel(translate("common.back", { lng }))
-			.setDisabled(results.paging.cursors.before == null)
-			.setStyle(1),
-		new MessageButton()
-			.setCustomId(
-				buildCustomButtonId(
-					ButtonActions.NextPage,
-					results.paging.cursors.after ?? ""
-				)
-			)
-			.setEmoji(Emojis.ForwardArrow)
-			.setLabel(translate("common.next", { lng }))
-			.setDisabled(results.paging.cursors.after == null)
-			.setStyle(1),
 		createActionButton(
 			ButtonActions.PreviousPage,
 			{

@@ -219,7 +219,8 @@
 					"deck": {
 						"name": "Mazzo battaglia",
 						"cardDescription": "**{{card.name}}** (Liv. **{{card.displayLevel}}**)",
-						"copy": "Copia"
+						"copy": "Copia",
+						"empty": "Nessuno"
 					},
 					"currentFavouriteCard": {
 						"name": "Carta preferita attuale",

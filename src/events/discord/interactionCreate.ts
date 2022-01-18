@@ -1,3 +1,4 @@
+import { GuildChannel } from "discord.js";
 import {
 	ButtonActions,
 	clanInfo,
@@ -31,7 +32,17 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 		if (interaction.isCommand()) {
 			void this.client.commands.get(interaction.commandName)?.run(interaction);
 			void CustomClient.printToStdout(
-				`Received command ${interactionCommand(interaction)}`,
+				`Received command \`${interactionCommand(interaction)}\` from ${
+					interaction.user.tag
+				} (${interaction.user.id}) ${
+					interaction.channel
+						? `in ${
+								interaction.channel instanceof GuildChannel
+									? `#${interaction.channel.name}`
+									: "DM"
+						  } (${interaction.channelId})`
+						: ""
+				}`,
 				true
 			);
 			return;
@@ -43,7 +54,15 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 			void CustomClient.printToStdout(
 				`Received autocomplete request for command ${interactionCommand(
 					interaction
-				)}`,
+				)} from ${interaction.user.tag} (${interaction.user.id}) ${
+					interaction.channel
+						? `in ${
+								interaction.channel instanceof GuildChannel
+									? `#${interaction.channel.name}`
+									: "DM"
+						  } (${interaction.channelId})`
+						: ""
+				}`,
 				true
 			);
 			return;
@@ -55,28 +74,42 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 			void CustomClient.printToStdout(
 				`Received select menu interaction ${action} with args [${args.join(
 					", "
-				)}] and values [${interaction.values.join(", ")}]`,
+				)}] and values [${interaction.values.join(", ")}] from ${
+					interaction.user.tag
+				} (${interaction.user.id}) ${
+					interaction.channel
+						? `in ${
+								interaction.channel instanceof GuildChannel
+									? `#${interaction.channel.name}`
+									: "DM"
+						  } (${interaction.channelId})`
+						: ""
+				}`,
 				true
 			);
 			switch (action) {
 				case MenuActions.ClanInfo:
 					interaction
-						.reply({
-							...(await clanInfo(this.client, interaction.values[0], {
-								lng,
-								ephemeral: true,
-							})),
-						})
+						.deferReply({ ephemeral: true })
+						.then(async () =>
+							interaction.editReply({
+								...(await clanInfo(this.client, interaction.values[0], {
+									lng,
+								})),
+							})
+						)
 						.catch(CustomClient.printToStderr);
 					break;
 				case MenuActions.PlayerInfo:
 					interaction
-						.reply({
-							...(await playerInfo(this.client, interaction.values[0], {
-								ephemeral: true,
-								lng,
-							})),
-						})
+						.deferReply({ ephemeral: true })
+						.then(async () =>
+							interaction.editReply({
+								...(await playerInfo(this.client, interaction.values[0], {
+									lng,
+								})),
+							})
+						)
 						.catch(CustomClient.printToStderr);
 					break;
 				default:
@@ -84,6 +117,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						`Received unknown action: ${action as string}`,
 						true
 					);
+					await interaction.deferReply({ ephemeral: true });
 					break;
 			}
 			return;
@@ -91,122 +125,132 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 		if (interaction.isButton()) {
 			const { action, args } = destructureCustomButtonId(interaction.customId);
 			const lng = getInteractionLocale(interaction);
-			let messageOptions;
 
 			void CustomClient.printToStdout(
-				`Received button interaction ${action} with args [${args.join(", ")}]`,
+				`Received button interaction ${action} with args [${args.join(
+					", "
+				)}] from ${interaction.user.tag} (${interaction.user.id}) ${
+					interaction.channel
+						? `in ${
+								interaction.channel instanceof GuildChannel
+									? `#${interaction.channel.name}`
+									: "DM"
+						  } (${interaction.channelId})`
+						: ""
+				}`,
 				true
 			);
 			switch (action) {
 				case ButtonActions.NextPage:
-					messageOptions = await searchClan(
-						this.client,
-						getSearchOptions(interaction, { after: args[0] }),
-						{ lng, ephemeral: true, id: interaction.user.id }
-					);
-
-					if (
-						interaction.user.id ===
-						interaction.message.content.split("<@")[1].split(">")[0]
+					(interaction.user.id ===
+					interaction.message.content.split("<@")[1].split(">")[0]
+						? interaction.deferUpdate()
+						: interaction.deferReply({ ephemeral: true })
 					)
-						interaction
-							.update({
-								...messageOptions,
-							})
-							.catch(CustomClient.printToStderr);
-					else
-						interaction
-							.reply({
-								...messageOptions,
+						.then(async () =>
+							interaction.editReply({
+								...(await searchClan(
+									this.client,
+									getSearchOptions(interaction, { after: args[0] }),
+									{ lng, id: interaction.user.id }
+								)),
 								content: interaction.message.content,
 							})
-							.catch(CustomClient.printToStderr);
+						)
+						.catch(CustomClient.printToStderr);
 					break;
 				case ButtonActions.PreviousPage:
-					messageOptions = await searchClan(
-						this.client,
-						getSearchOptions(interaction, { before: args[0] }),
-						{ lng, ephemeral: true, id: interaction.user.id }
-					);
-
-					if (
-						interaction.user.id ===
-						interaction.message.content.split("<@")[1].split(">")[0]
+					(interaction.user.id ===
+					interaction.message.content.split("<@")[1].split(">")[0]
+						? interaction.deferUpdate()
+						: interaction.deferReply({ ephemeral: true })
 					)
-						interaction
-							.update({
-								...messageOptions,
-							})
-							.catch(CustomClient.printToStderr);
-					else
-						interaction
-							.reply({
-								...messageOptions,
+						.then(async () =>
+							interaction.editReply({
+								...(await searchClan(
+									this.client,
+									getSearchOptions(interaction, { before: args[0] }),
+									{ lng, id: interaction.user.id }
+								)),
 								content: interaction.message.content,
 							})
-							.catch(CustomClient.printToStderr);
+						)
+						.catch(CustomClient.printToStderr);
 					break;
 				case ButtonActions.RiverRaceLog:
-					messageOptions = await riverRaceLog(this.client, args[0]!, {
-						lng,
-						ephemeral: true,
-						id: interaction.user.id,
-						index: args[1] !== undefined ? Number(args[1]) : undefined,
-					});
-					if (interaction.user.id === args[2])
-						interaction
-							.update(messageOptions)
-							.catch(CustomClient.printToStderr);
-					else
-						interaction.reply(messageOptions).catch(CustomClient.printToStderr);
+					(interaction.user.id === args[2]
+						? interaction.deferUpdate()
+						: interaction.deferReply({ ephemeral: true })
+					)
+						.then(async () =>
+							interaction.editReply({
+								...(await riverRaceLog(this.client, args[0]!, {
+									lng,
+									ephemeral: true,
+									id: interaction.user.id,
+									index: args[1] !== undefined ? Number(args[1]) : undefined,
+								})),
+							})
+						)
+						.catch(CustomClient.printToStderr);
 					break;
 				case ButtonActions.ClanInfo:
 					interaction
-						.reply(
-							await clanInfo(this.client, args[0]!, {
-								lng: getInteractionLocale(interaction),
-								ephemeral: true,
-							})
+						.deferReply({ ephemeral: true })
+						.then(async () =>
+							interaction.editReply(
+								await clanInfo(this.client, args[0], {
+									lng: getInteractionLocale(interaction),
+								})
+							)
 						)
 						.catch(CustomClient.printToStderr);
 					break;
 				case ButtonActions.CurrentRiverRace:
 					interaction
-						.reply(
-							await currentRiverRace(this.client, args[0]!, {
-								lng: getInteractionLocale(interaction),
-								ephemeral: true,
-							})
+						.deferReply({ ephemeral: true })
+						.then(async () =>
+							interaction.editReply(
+								await currentRiverRace(this.client, args[0], {
+									lng: getInteractionLocale(interaction),
+								})
+							)
 						)
 						.catch(CustomClient.printToStderr);
 					break;
 				case ButtonActions.PlayerInfo:
 					interaction
-						.reply(
-							await playerInfo(this.client, args[0]!, {
-								lng: getInteractionLocale(interaction),
-								ephemeral: true,
-							})
+						.deferReply({ ephemeral: true })
+						.then(async () =>
+							interaction.editReply(
+								await playerInfo(this.client, args[0], {
+									lng: getInteractionLocale(interaction),
+								})
+							)
 						)
 						.catch(CustomClient.printToStderr);
 					break;
 				case ButtonActions.PlayerAchievements:
 					interaction
-						.reply(
-							await playerAchievements(this.client, args[0]!, {
-								lng: getInteractionLocale(interaction),
-								ephemeral: true,
-							})
+						.deferReply({ ephemeral: true })
+						.then(async () =>
+							interaction.editReply(
+								await playerAchievements(this.client, args[0], {
+									lng: getInteractionLocale(interaction),
+								})
+							)
 						)
 						.catch(CustomClient.printToStderr);
 					break;
 				case ButtonActions.PlayerUpcomingChests:
 					interaction
-						.reply(
-							await playerUpcomingChests(this.client, args[0]!, {
-								lng: getInteractionLocale(interaction),
-								ephemeral: true,
-							})
+						.deferReply({ ephemeral: true })
+						.then(async () =>
+							interaction.editReply(
+								await playerUpcomingChests(this.client, args[0], {
+									lng: getInteractionLocale(interaction),
+								})
+							)
 						)
 						.catch(CustomClient.printToStderr);
 					break;

@@ -51,7 +51,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.level", {
 				lng,
-
 				player,
 			}),
 			inline: true,
@@ -59,7 +58,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.trophies", {
 				lng,
-
 				trophies: player.trophies,
 			}),
 			inline: true,
@@ -67,7 +65,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.starPoints", {
 				lng,
-
 				starPoints: player.starPoints,
 			}),
 			inline: true,
@@ -75,7 +72,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.clan", {
 				lng,
-
 				clan: player.clan,
 				clanLink: player.clan && Constants.clanLink(tag),
 				role: player.role,
@@ -86,16 +82,18 @@ export const playerInfo = async (
 			...translate("commands.player.info.fields.deck", {
 				lng,
 			}),
-			value: `${deck.slice(0, 4).join(", ")}\n${deck.slice(4).join(", ")}${
-				deck.length === 8
-					? ` - ${hyperlink(
-							translate("commands.player.info.fields.deck.copy", { lng }),
-							`https://link.clashroyale.com/deck/it?deck=${player.deck
-								.map((card) => card.id)
-								.join(";")}&id=${player.id.slice(1)}`
-					  )} ${CustomEmojis.copyDeck}`
-					: ""
-			}`,
+			value: deck.length
+				? `${deck.slice(0, 4).join(", ")}\n${deck.slice(4).join(", ")}${
+						deck.length === 8
+							? ` - ${hyperlink(
+									translate("commands.player.info.fields.deck.copy", { lng }),
+									`https://link.clashroyale.com/deck/it?deck=${player.deck
+										.map((card) => card.id)
+										.join(";")}&id=${player.id.slice(1)}`
+							  )} ${CustomEmojis.copyDeck}`
+							: ""
+				  }`
+				: translate("commands.player.info.fields.deck.empty", { lng }),
 		});
 	if (player.leagueStatistics)
 		embed

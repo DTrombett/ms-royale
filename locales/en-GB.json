@@ -219,7 +219,8 @@
 					"deck": {
 						"name": "Battle deck",
 						"cardDescription": "**{{card.name}}** (Lvl. **{{card.displayLevel}}**)",
-						"copy": "Copy"
+						"copy": "Copy",
+						"empty": "Empty"
 					},
 					"currentFavouriteCard": {
 						"name": "Current favourite card",

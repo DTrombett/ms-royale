@@ -39,8 +39,14 @@ export const command: CommandOptions = {
 		const lng = getInteractionLocale(interaction);
 		const tag = normalizeTag(interaction.options.getString(Options.Tag, true));
 
-		if (!validateTag(tag))
-			return interaction.reply(translate("common.invalidTag", { lng }));
+		if (!validateTag(tag)) {
+			await interaction.reply({
+				content: translate("common.invalidTag", { lng }),
+				ephemeral: true,
+			});
+			return;
+		}
+		await interaction.deferReply();
 		try {
 			await Promise.all([
 				this.client.players.fetch(normalizeTag(tag)),
@@ -50,16 +56,16 @@ export const command: CommandOptions = {
 				}),
 			]);
 		} catch (error: unknown) {
-			return interaction.reply({
+			await interaction.editReply({
 				content:
 					error instanceof Error
 						? error.message
 						: translate("common.unknownError", { lng }),
-				ephemeral: true,
 			});
+			return;
 		}
 
-		return interaction.reply({
+		await interaction.editReply({
 			content: translate("commands.save.content", { lng }),
 			components: [
 				new MessageActionRow().addComponents(

@@ -76,14 +76,17 @@ export const command: CommandOptions = {
 						)
 					)[interaction.user.id];
 
-				if (tag == null)
-					return interaction.reply({
+				if (tag == null) {
+					await interaction.reply({
 						content: translate("commands.player.info.noTag", { lng }),
 						ephemeral: true,
 					});
+					break;
+				}
 
 				// Display the player info
-				await interaction.reply({
+				await interaction.deferReply();
+				await interaction.editReply({
 					...(await playerInfo(this.client, tag, { lng })),
 				});
 				break;
@@ -96,14 +99,17 @@ export const command: CommandOptions = {
 						)
 					)[interaction.user.id];
 
-				if (tag2 == null)
-					return interaction.reply({
+				if (tag2 == null) {
+					await interaction.reply({
 						content: translate("commands.player.info.noTag", { lng }),
 						ephemeral: true,
 					});
+					break;
+				}
 
 				// Display the player's upcoming chests
-				await interaction.reply({
+				await interaction.deferReply();
+				await interaction.editReply({
 					...(await playerUpcomingChests(this.client, tag2, { lng })),
 				});
 				break;
