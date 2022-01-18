@@ -1,8 +1,7 @@
-import { Embed } from "@discordjs/builders";
+import { bold, Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { UpcomingChestManager } from "apiroyale";
 import { Constants as DiscordConstants, MessageActionRow } from "discord.js";
-import Constants from "../Constants";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import normalizeTag from "../normalizeTag";
@@ -37,13 +36,23 @@ export const playerUpcomingChests = async (
 		});
 
 	if (!(chests instanceof UpcomingChestManager)) return chests;
+	const chestNames = translate("chests", { lng });
 	const embed = new Embed()
 		.setTitle(translate("commands.player.upcomingChests.title", { lng }))
 		.setColor(DiscordConstants.Colors.BLURPLE)
 		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(chests.first()!.lastUpdate)
-		.setURL(Constants.playerLink(tag))
-		.setDescription(Constants.playerUpcomingChests(chests));
+		.setURL(`https://royaleapi.com/player/${tag.slice(1)}`)
+		.setDescription(
+			chests
+				.map(
+					(c, i) =>
+						`• ${bold(chestNames[c.name] || c.name)} (${Number(i) + 1})${
+							i === "8" ? "\n" : ""
+						}`
+				)
+				.join("\n")
+		);
 
 	const row1 = new MessageActionRow().addComponents(
 		createActionButton(

@@ -1,4 +1,4 @@
-import { Embed } from "@discordjs/builders";
+import { bold, Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { Player } from "apiroyale";
 import { Constants as DiscordConstants, MessageActionRow } from "discord.js";
@@ -7,7 +7,7 @@ import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
-import { ButtonActions } from "../types";
+import { ButtonActions, Emojis } from "../types";
 import validateTag from "../validateTag";
 
 /**
@@ -45,7 +45,24 @@ export const playerAchievements = async (
 		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(player.lastUpdate)
 		.setURL(Constants.playerLink(tag))
-		.setDescription(Constants.playerAchievements(player));
+		.setDescription(
+			player.achievements
+				.map(
+					(achievement) =>
+						`• ${bold(achievement.name)}: ${achievement.info}${
+							achievement.level
+								? ` ${Emojis.Star.repeat(achievement.level)}`
+								: ""
+						} - ${achievement.progress}/${achievement.target}${
+							achievement.completed
+								? ""
+								: ` (${achievement.percentage.toFixed(
+										Constants.percentageDigits()
+								  )}%)`
+						}`
+				)
+				.join("\n")
+		);
 
 	const row1 = new MessageActionRow().addComponents(
 		createActionButton(

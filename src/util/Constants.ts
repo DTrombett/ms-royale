@@ -1,16 +1,6 @@
 import { bold } from "@discordjs/builders";
-import type {
-	APITag,
-	Player,
-	PlayerBadge,
-	PlayerBadgeManager,
-	SearchClanOptions,
-	UpcomingChestManager,
-} from "apiroyale";
-import type { Snowflake } from "discord.js";
-import { Util } from "discord.js";
+import type { APITag, PlayerBadge, PlayerBadgeManager } from "apiroyale";
 import { env } from "node:process";
-import { Emojis } from "./types";
 
 /**
  * Constants about time
@@ -103,40 +93,6 @@ export const TIME = {
 } as const;
 
 export const Constants = {
-	clanSearchResults: (user: Snowflake, options: SearchClanOptions) =>
-		` Risultati per la seguente ricerca richiesta da <@${user}>:\n\n${bold(
-			"Nome"
-		)}: ${
-			options.name != null ? Util.escapeMarkdown(options.name) : "-"
-		}\n${bold("Id posizione")}: ${options.location?.toString() ?? "-"}\n${bold(
-			"Minimo membri"
-		)}: ${options.minMembers ?? "-"}\n${bold("Massimo membri")}: ${
-			options.maxMembers ?? "-"
-		}\n${bold("Punteggio minimo")}: ${options.minScore ?? "-"}`,
-
-	playerAchievements: (player: Player) =>
-		player.achievements
-			.map(
-				(achievement) =>
-					`• ${bold(achievement.name)}: ${achievement.info}${
-						achievement.level ? ` ${Emojis.Star.repeat(achievement.level)}` : ""
-					} - ${achievement.progress}/${achievement.target}${
-						achievement.completed
-							? ""
-							: ` (${achievement.percentage.toFixed(
-									Constants.percentageDigits()
-							  )}%)`
-					}`
-			)
-			.join("\n"),
-
-	playerUpcomingChests: (chests: UpcomingChestManager) =>
-		chests
-			.map(
-				(c, i) => `• ${bold(c.name)} (${Number(i) + 1})${i === "8" ? "\n" : ""}`
-			)
-			.join("\n"),
-
 	/**
 	 * The label used for the online event of the client.
 	 */

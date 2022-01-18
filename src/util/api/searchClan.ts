@@ -1,6 +1,11 @@
+import { bold } from "@discordjs/builders";
 import { ClanSearchResults, ClientRoyale, SearchClanOptions } from "apiroyale";
-import { MessageActionRow, MessageSelectMenu, Snowflake } from "discord.js";
-import Constants from "../Constants";
+import {
+	MessageActionRow,
+	MessageSelectMenu,
+	Snowflake,
+	Util,
+} from "discord.js";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import { buildCustomMenuId } from "../customId";
@@ -68,7 +73,15 @@ export const searchClan = async (
 
 	return {
 		components: [row1, row2],
-		content: Constants.clanSearchResults(id, options),
+		content: ` Risultati per la seguente ricerca richiesta da <@${id}>:\n\n${bold(
+			"Nome"
+		)}: ${
+			options.name != null ? Util.escapeMarkdown(options.name) : "-"
+		}\n${bold("Id posizione")}: ${options.location?.toString() ?? "-"}\n${bold(
+			"Minimo membri"
+		)}: ${options.minMembers ?? "-"}\n${bold("Massimo membri")}: ${
+			options.maxMembers ?? "-"
+		}\n${bold("Punteggio minimo")}: ${options.minScore ?? "-"}`,
 		ephemeral,
 	};
 };

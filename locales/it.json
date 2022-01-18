@@ -29,6 +29,20 @@
 		"achievement": "<:_:931157677130784778>",
 		"chest": "<:_:931886438541303839>"
 	},
+	"chests": {
+		"Epic Chest": "Baule Epico",
+		"Giant Chest": "Baule Gigante",
+		"Gold Crate": "Cassa d'oro",
+		"Golden Chest": "Baule d'oro",
+		"Legendary Chest": "Baule Leggendario",
+		"Magical Chest": "Baule Magico",
+		"Mega Lightning Chest": "Mega baule cangiante",
+		"Overflowing Gold Crate": "Cassa stracolma d'oro",
+		"Plentiful Gold Crate": "Cassa colma d'oro",
+		"Royal Wild Chest": "Baule dei jolly Royale",
+		"Silver Chest": "Baule d'argento",
+		"Wooden Chest": "Baule di legno"
+	},
 	"events": {
 		"clanUpdate": {
 			"fields": {

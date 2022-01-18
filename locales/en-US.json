@@ -29,6 +29,20 @@
 		"achievement": "<:_:931157677130784778>",
 		"chest": "<:_:931886438541303839>"
 	},
+	"chests": {
+		"Epic Chest": "Epic Chest",
+		"Giant Chest": "Giant Chest",
+		"Gold Crate": "Gold Crate",
+		"Golden Chest": "Golden Chest",
+		"Legendary Chest": "Legendary Chest",
+		"Magical Chest": "Magical Chest",
+		"Mega Lightning Chest": "Mega Lightning Chest",
+		"Overflowing Gold Crate": "Overflowing Gold Crate",
+		"Plentiful Gold Crate": "Plentiful Gold Crate",
+		"Royal Wild Chest": "Royal Wild Chest",
+		"Silver Chest": "Silver Chest",
+		"Wooden Chest": "Wooden Chest"
+	},
 	"events": {
 		"clanUpdate": {
 			"fields": {
