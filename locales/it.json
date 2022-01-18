@@ -100,6 +100,9 @@
 				},
 				"riverRaceLog": {
 					"label": "Guerre passate"
+				},
+				"clanMembers": {
+					"label": "Lista membri"
 				}
 			},
 			"search": {

@@ -127,8 +127,12 @@ export const clanInfo = async (
 	);
 	const row2 = new MessageActionRow().addComponents(
 		createActionButton(
-			ButtonActions.RiverRaceLog,
-			{ label: translate("commands.clan.buttons.riverRaceLog.label", { lng }) },
+			ButtonActions.ClanMembers,
+			{
+				label: translate("commands.clan.buttons.clanMembers.label", {
+					lng,
+				}),
+			},
 			tag
 		),
 		createActionButton(
@@ -138,6 +142,11 @@ export const clanInfo = async (
 					lng,
 				}),
 			},
+			tag
+		),
+		createActionButton(
+			ButtonActions.RiverRaceLog,
+			{ label: translate("commands.clan.buttons.riverRaceLog.label", { lng }) },
 			tag
 		)
 	);

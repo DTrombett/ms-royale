@@ -57,6 +57,11 @@ export enum ButtonActions {
 	 * Show a player's upcoming chests
 	 */
 	PlayerUpcomingChests = "uc",
+
+	/**
+	 * Show a clan's members
+	 */
+	ClanMembers = "cm",
 }
 
 /**
@@ -75,6 +80,7 @@ export type ButtonActionsTypes = {
 	[ButtonActions.PlayerInfo]: [player: APITag];
 	[ButtonActions.PlayerAchievements]: [player: APITag];
 	[ButtonActions.PlayerUpcomingChests]: [player: APITag];
+	[ButtonActions.ClanMembers]: [clan: APITag];
 };
 
 /**
