@@ -2,7 +2,7 @@ import { GuildChannel } from "discord.js";
 import {
 	ButtonActions,
 	clanInfo,
-	clanMembers,
+	// clanMembers,
 	currentRiverRace,
 	CustomClient,
 	destructureCustomButtonId,
@@ -209,15 +209,21 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 					break;
 				case ButtonActions.ClanMembers:
 					interaction
-						.deferReply({ ephemeral: true })
-						.then(async () =>
-							interaction.editReply(
-								await clanMembers(this.client, args[0], {
-									lng: getInteractionLocale(interaction),
-								})
-							)
-						)
+						.reply({
+							content: "Questo comando non è ancora disponibile!",
+							ephemeral: true,
+						})
 						.catch(CustomClient.printToStderr);
+					// interaction
+					// 	.deferReply({ ephemeral: true })
+					// 	.then(async () =>
+					// 		interaction.editReply(
+					// 			await clanMembers(this.client, args[0], {
+					// 				lng: getInteractionLocale(interaction),
+					// 			})
+					// 		)
+					// 	)
+					// 	.catch(CustomClient.printToStderr);
 					break;
 				case ButtonActions.CurrentRiverRace:
 					interaction
