@@ -120,92 +120,92 @@ export enum CustomEmojis {
 	/**
 	 * The emoji of a war trophy
 	 */
-	warTrophy = "<:wartrophy:906920944868671498>",
+	warTrophy = "<:_:906920944868671498>",
 
 	/**
 	 * The profile emoji of a user
 	 */
-	user = "<:user:915686990723285022>",
+	user = "<:_:915686990723285022>",
 
 	/**
 	 * The emoji of donations
 	 */
-	donations = "<:donations:915687097984241685>",
+	donations = "<:_:915687097984241685>",
 
 	/**
 	 * The emoji for clan members
 	 */
-	clanMembers = "<:members:915688913413210123>",
+	clanMembers = "<:_:915688913413210123>",
 
 	/**
 	 * The emoji of the king level
 	 */
-	kingLevel = "<:kinglevel:916016946774958101>",
+	kingLevel = "<:_:916016946774958101>",
 
 	/**
 	 * The emoji for copying a deck
 	 */
-	copyDeck = "<:copydeck:916029046700261417>",
+	copyDeck = "<:_:916029046700261417>",
 
 	/**
 	 * The emoji of a clan invite
 	 */
-	clanInvite = "<:claninvite:916032272631750698>",
+	clanInvite = "<:_:916032272631750698>",
 
 	/**
 	 * The emoji for a win
 	 */
-	win = "<:win:916339474403848223>",
+	win = "<:_:916339474403848223>",
 
 	/**
 	 * The emoji for a loss
 	 */
-	lose = "<:lose:916339513591222322>",
+	lose = "<:_:916339513591222322>",
 
 	/**
 	 * The emoji for cards
 	 */
-	cards = "<:cards:916340767021203478>",
+	cards = "<:_:916340767021203478>",
 
 	/**
 	 * The emoji for a medal
 	 */
-	medal = "<:medal:918514839670886400>",
+	medal = "<:_:918514839670886400>",
 
 	/**
 	 * The emoji for a war point
 	 */
-	warPoint = "<:warpoint:918522796747915304>",
+	warPoint = "<:_:918522796747915304>",
 
 	/**
 	 * The emoji for a boat attack
 	 */
-	boatAttack = "<:boatattack:918909257745825793>",
+	boatAttack = "<:_:918909257745825793>",
 
 	/**
 	 * The emoji for a war deck
 	 */
-	warDeck = "<:wardeck:918908890761035817>",
+	warDeck = "<:_:918908890761035817>",
 
 	/**
 	 * The emoji for a war in a training state
 	 */
-	training = "<:training:927624101219160207>",
+	training = "<:_:927624101219160207>",
 
 	/**
 	 * The emoji for a clan war
 	 */
-	clanWar = "<:clanwar:929338139540066327>",
+	clanWar = "<:_:933014402880393237>",
 
 	/**
 	 * The emoji for an achievement
 	 */
-	achievement = "<:achievement:931157677130784778>",
+	achievement = "<:_:931157677130784778>",
 
 	/**
 	 * The emoji for a chest
 	 */
-	chest = "<:chest:931886438541303839>",
+	chest = "<:_:931886438541303839>",
 }
 
 /**
