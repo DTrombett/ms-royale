@@ -2,6 +2,7 @@ import { GuildChannel } from "discord.js";
 import {
 	ButtonActions,
 	clanInfo,
+	clanMembers,
 	currentRiverRace,
 	CustomClient,
 	destructureCustomButtonId,
@@ -200,6 +201,18 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						.then(async () =>
 							interaction.editReply(
 								await clanInfo(this.client, args[0], {
+									lng: getInteractionLocale(interaction),
+								})
+							)
+						)
+						.catch(CustomClient.printToStderr);
+					break;
+				case ButtonActions.ClanMembers:
+					interaction
+						.deferReply({ ephemeral: true })
+						.then(async () =>
+							interaction.editReply(
+								await clanMembers(this.client, args[0], {
 									lng: getInteractionLocale(interaction),
 								})
 							)
