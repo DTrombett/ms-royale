@@ -3,7 +3,7 @@ import { AutocompleteInteraction } from "discord.js";
 import { LocaleCodes, ReplyableInteraction } from "./types";
 
 /**
- * Checks if a location has a valid Discord locale corrispondence.
+ * Checks if a location has a valid Discord locale correspondence.
  * @param location - A Clash Royale location
  */
 export const isSupportedLocation = (

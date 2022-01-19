@@ -152,7 +152,7 @@ export const command: CommandOptions = {
 				.addBooleanOption((registerCommands) =>
 					registerCommands
 						.setName(SubCommandOptions.registerCommands)
-						.setDescription("Risincronizza i comandi con Discord")
+						.setDescription("Sincronizza i comandi con Discord")
 				)
 				.addBooleanOption((restartProcess) =>
 					restartProcess
@@ -304,12 +304,12 @@ export const command: CommandOptions = {
 				break;
 			case SubCommands.restartCmd:
 				if (interaction.options.getBoolean(SubCommandOptions.process) ?? true) {
-					const argvs = argv
+					const args = argv
 						.map((arg) => inlineCode(Util.escapeInlineCode(arg)))
 						.join("\n");
 
 					await interaction.editReply({
-						content: `Sto facendo ripartire il programma con i seguenti argv:\n${argvs}`,
+						content: `Sto facendo ripartire il programma con i seguenti argv:\n${args}`,
 					});
 					restart(this.client);
 				} else {
@@ -356,27 +356,27 @@ export const command: CommandOptions = {
 				});
 				break;
 			case SubCommands.pull:
-				const cmds = ["git pull"];
+				const commands = ["git pull"];
 				const restartProcess =
 					interaction.options.getBoolean(SubCommandOptions.restartProcess) ??
 					false;
 
 				if (interaction.options.getBoolean(SubCommandOptions.packages) ?? false)
-					cmds.push("rm -r node_modules", "rm package-lock.json", "npm i");
+					commands.push("rm -r node_modules", "rm package-lock.json", "npm i");
 				if (interaction.options.getBoolean(SubCommandOptions.rebuild) ?? false)
-					cmds.push("npm run build");
+					commands.push("npm run build");
 				if (
 					interaction.options.getBoolean(SubCommandOptions.registerCommands) ??
 					false
 				)
-					cmds.push("npm run commands");
-				const result = await exec(cmds.join(" && ")).catch(
+					commands.push("npm run commands");
+				const result = await exec(commands.join(" && ")).catch(
 					catchPullError(interaction)
 				);
 
 				if (!result) break;
 				await interaction.editReply({
-					content: `Ho eseguito ${cmds.join(" && ")} in ${bold(
+					content: `Ho eseguito ${commands.join(" && ")} in ${bold(
 						`${Date.now() - now}ms`
 					)}\n${
 						restartProcess

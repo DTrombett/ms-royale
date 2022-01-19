@@ -27,7 +27,7 @@ export const ButtonEmojis = {
 } as const;
 
 /**
- * Creates a buttom for an action
+ * Creates a button for an action
  * @param action - The action to be performed
  * @param args - The arguments to be passed to the action
  * @returns A MessageButton with the given action and arguments
