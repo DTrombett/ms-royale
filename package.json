@@ -34,6 +34,7 @@
     "@discordjs/rest": "^0.2.0-canary.0",
     "apiroyale": "github:DTrombett/apiroyale",
     "bufferutil": "^4.0.6",
+    "cron-parser": "^4.2.1",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",
     "dotenv": "^14.2.0",

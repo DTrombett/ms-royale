@@ -1,11 +1,16 @@
 import Collection from "@discordjs/collection";
 import { ClientRoyale } from "apiroyale";
 import { Client, Intents, Options } from "discord.js";
+import { use } from "i18next";
+import Backend from "i18next-fs-backend";
 import { createWriteStream } from "node:fs";
-import { env, stderr, stdout } from "node:process";
+import { readdir } from "node:fs/promises";
+import { stderr, stdout } from "node:process";
+import { fileURLToPath, URL } from "node:url";
 import { inspect } from "node:util";
 import Command from "./Command";
 import Constants from "./Constants";
+import { importJson } from "./database";
 import Event from "./Event";
 import loadCommands from "./loadCommands";
 import loadEvents from "./loadEvents";
@@ -155,11 +160,31 @@ export class CustomClient extends ClientRoyale {
 	 */
 	async login() {
 		await Promise.all([
+			use(Backend).init({
+				backend: {
+					loadPath: fileURLToPath(
+						new URL("../locales/{{lng}}.json", import.meta.url)
+					),
+				},
+				cleanCode: true,
+				fallbackLng: "en-US",
+				lng: "en-US",
+				load: "currentOnly",
+				preload: await readdir("./locales/").then((files) =>
+					files.map((file) => file.replace(".json", ""))
+				),
+				returnObjects: true,
+				debug: true,
+			}),
+			readdir("./database/").then((files) => {
+				for (const file of files)
+					void importJson<any>(file.replace(".json", ""));
+			}),
 			loadCommands(this),
 			loadEvents(this, EventType.Discord),
 			loadEvents(this, EventType.APIRoyale),
+			this.bot.login(),
 		]);
-		return this.bot.login(env.DISCORD_TOKEN);
 	}
 }
 

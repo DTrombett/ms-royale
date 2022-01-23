@@ -11,6 +11,7 @@ import Constants from "../Constants";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import { buildCustomMenuId } from "../customId";
+import { locationToLocale } from "../locales";
 import normalizeTag from "../normalizeTag";
 import toLocaleString from "../toLocaleString";
 import translate from "../translate";
@@ -27,7 +28,7 @@ import validateTag from "../validateTag";
 export const clanInfo = async (
 	client: ClientRoyale,
 	tag: string,
-	{ ephemeral, lng }: { lng?: string; ephemeral?: boolean }
+	{ ephemeral, lng }: { lng?: string; ephemeral?: boolean } = {}
 ) => {
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
@@ -42,11 +43,12 @@ export const clanInfo = async (
 	});
 
 	if (!(clan instanceof Clan)) return clan;
+	const fallbackLng = locationToLocale(clan.location);
 	const embed = new Embed()
-		.setTitle(translate("commands.clan.info.title", { lng, clan }))
+		.setTitle(translate("commands.clan.info.title", { lng, clan, fallbackLng }))
 		.setDescription(clan.description)
 		.setColor(DiscordConstants.Colors.BLUE)
-		.setFooter({ text: translate("common.lastUpdated", { lng }) })
+		.setFooter({ text: translate("common.lastUpdated", { lng, fallbackLng }) })
 		.setTimestamp(clan.lastUpdate)
 		.setThumbnail(clan.badgeUrl)
 		.setURL(Constants.clanLink(tag));
@@ -55,55 +57,55 @@ export const clanInfo = async (
 		.addField({
 			...translate("commands.clan.info.fields.warTrophies", {
 				lng,
-
 				warTrophies: clan.warTrophies,
+				fallbackLng,
 			}),
 		})
 		.addField({
 			...translate("commands.clan.info.fields.location", {
 				lng,
-
 				location: clan.locationName,
+				fallbackLng,
 			}),
 			inline: true,
 		})
 		.addField({
 			...translate("commands.clan.info.fields.requiredTrophies", {
 				lng,
-
 				requiredTrophies: clan.requiredTrophies,
+				fallbackLng,
 			}),
 			inline: true,
 		})
 		.addField({
 			...translate("commands.clan.info.fields.weeklyDonations", {
 				lng,
-
 				weeklyDonations: clan.donationsPerWeek,
+				fallbackLng,
 			}),
 			inline: true,
 		})
 		.addField({
 			...translate("commands.clan.info.fields.score", {
 				lng,
-
 				score: clan.score,
+				fallbackLng,
 			}),
 			inline: true,
 		})
 		.addField({
 			...translate("commands.clan.info.fields.type", {
 				lng,
-
 				type: capitalize(clan.type),
+				fallbackLng,
 			}),
 			inline: true,
 		})
 		.addField({
 			...translate("commands.clan.info.fields.memberCount", {
 				lng,
-
 				memberCount: clan.members.size,
+				fallbackLng,
 			}),
 		});
 
@@ -113,16 +115,18 @@ export const clanInfo = async (
 				clan.members.first(25).map((member) => ({
 					...translate("commands.clan.info.menu.options", {
 						lng,
-
 						member,
 						role: capitalize(member.role),
 						lastSeen: toLocaleString(member.lastSeen, lng),
+						fallbackLng,
 					}),
 					emoji: CustomEmojis.user,
 					value: member.tag,
 				}))
 			)
-			.setPlaceholder(translate("commands.clan.info.menu.placeholder", { lng }))
+			.setPlaceholder(
+				translate("commands.clan.info.menu.placeholder", { lng, fallbackLng })
+			)
 			.setCustomId(buildCustomMenuId(MenuActions.PlayerInfo))
 	);
 	const row2 = new MessageActionRow().addComponents(
@@ -131,6 +135,7 @@ export const clanInfo = async (
 			{
 				label: translate("commands.clan.buttons.clanMembers.label", {
 					lng,
+					fallbackLng,
 				}),
 			},
 			tag
@@ -140,13 +145,19 @@ export const clanInfo = async (
 			{
 				label: translate("commands.clan.buttons.currentRiverRace.label", {
 					lng,
+					fallbackLng,
 				}),
 			},
 			tag
 		),
 		createActionButton(
 			ButtonActions.RiverRaceLog,
-			{ label: translate("commands.clan.buttons.riverRaceLog.label", { lng }) },
+			{
+				label: translate("commands.clan.buttons.riverRaceLog.label", {
+					lng,
+					fallbackLng,
+				}),
+			},
 			tag
 		)
 	);

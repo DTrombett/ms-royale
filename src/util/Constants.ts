@@ -104,6 +104,11 @@ export const Constants = {
 	mainClanTag: () => "#L2Y2L2PC" as const,
 
 	/**
+	 * The tag of the main clan.
+	 */
+	secondClanTag: () => "#QGY89R8U" as const,
+
+	/**
 	 * Number of milliseconds before fetching the main clan again.
 	 */
 	mainClanFetchInterval: () => TIME.millisecondsPerMinute * 5,

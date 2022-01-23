@@ -1,6 +1,6 @@
 import { Embed } from "@discordjs/builders";
 import { Clan } from "apiroyale";
-import { Constants as DiscordConstants, TextChannel } from "discord.js";
+import { Constants as DiscordConstants } from "discord.js";
 import { env } from "node:process";
 import Constants, {
 	CustomClient,
@@ -26,7 +26,6 @@ const constructClanUpdateEmbed = (
 		embed.addField(
 			translate("events.clanUpdate.fields.name", {
 				lng,
-
 				old: oldClan.name,
 				new: newClan.name,
 			})
@@ -35,7 +34,6 @@ const constructClanUpdateEmbed = (
 		embed.addField(
 			translate("events.clanUpdate.fields.description", {
 				lng,
-
 				new: newClan.description,
 				old: oldClan.description,
 			})
@@ -44,7 +42,6 @@ const constructClanUpdateEmbed = (
 		embed.addField(
 			translate("events.clanUpdate.fields.badgeId", {
 				lng,
-
 				old: oldClan.badgeId,
 				new: newClan.badgeId,
 			})
@@ -53,7 +50,6 @@ const constructClanUpdateEmbed = (
 		embed.addField(
 			translate("events.clanUpdate.fields.location", {
 				lng,
-
 				old: oldClan.locationName,
 				new: newClan.locationName,
 			})
@@ -62,7 +58,6 @@ const constructClanUpdateEmbed = (
 		embed.addField(
 			translate("events.clanUpdate.fields.requiredTrophies", {
 				lng,
-
 				old: oldClan.requiredTrophies,
 				new: newClan.requiredTrophies,
 			})
@@ -71,7 +66,6 @@ const constructClanUpdateEmbed = (
 		embed.addField(
 			translate("events.clanUpdate.fields.type", {
 				lng,
-
 				old: oldClan.type,
 				new: newClan.type,
 			})
@@ -81,7 +75,6 @@ const constructClanUpdateEmbed = (
 			embed.addField(
 				translate("events.clanUpdate.fields.memberLeft", {
 					lng,
-
 					member,
 				})
 			);
@@ -90,7 +83,6 @@ const constructClanUpdateEmbed = (
 			embed.addField(
 				translate("events.clanUpdate.fields.memberJoined", {
 					lng,
-
 					member,
 				})
 			);
@@ -106,9 +98,14 @@ export const event: EventOptions<EventType.APIRoyale, "clanUpdate"> = {
 		/**
 		 * The channel to send the embed to
 		 */
-		const channel = this.client.bot.channels.cache.get(
-			env.CLAN_CHANNEL_ID!
-		) as TextChannel;
+		const channel = this.client.bot.channels.cache.get(env.CLAN_LOG_CHANNEL!);
+
+		if (channel === undefined || !channel.isText() || !("guild" in channel)) {
+			void CustomClient.printToStderr(
+				`Clan log channel with id ${env.CLAN_LOG_CHANNEL!} not found`
+			);
+			return;
+		}
 
 		/**
 		 * The embed to send

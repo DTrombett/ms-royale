@@ -102,7 +102,6 @@ export const playerInfo = async (
 					"commands.player.info.fields.leagueStatistics.currentSeason",
 					{
 						lng,
-
 						bestTrophies: player.leagueStatistics.currentSeason.bestTrophies,
 					}
 				),
@@ -113,7 +112,6 @@ export const playerInfo = async (
 					"commands.player.info.fields.leagueStatistics.previousSeason",
 					{
 						lng,
-
 						bestTrophies: player.leagueStatistics.previousSeason.bestTrophies,
 					}
 				),
@@ -124,7 +122,6 @@ export const playerInfo = async (
 					"commands.player.info.fields.leagueStatistics.bestSeason",
 					{
 						lng,
-
 						trophies: player.leagueStatistics.bestSeason.trophies,
 					}
 				),
@@ -140,7 +137,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.wins", {
 				lng,
-
 				wins: player.wins,
 				winRatio: player.winPercentage.toFixed(digits),
 			}),
@@ -149,7 +145,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.threeCrownWins", {
 				lng,
-
 				threeCrownWins: player.threeCrownWins,
 				threeCrownWinRatio: player.threeCrownWinPercentage.toFixed(digits),
 			}),
@@ -158,7 +153,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.losses", {
 				lng,
-
 				losses: player.losses,
 				lossesPercent: player.lossPercentage.toFixed(digits),
 			}),
@@ -167,7 +161,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.battleCount", {
 				lng,
-
 				battleCount: player.battleCount,
 			}),
 			inline: true,
@@ -175,7 +168,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.bestTrophies", {
 				lng,
-
 				bestTrophies: player.bestTrophies,
 			}),
 			inline: true,
@@ -183,7 +175,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.cardCount", {
 				lng,
-
 				cardCount: player.cards.size,
 			}),
 			inline: true,
@@ -191,7 +182,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.weeklyDonations", {
 				lng,
-
 				weeklyDonations: player.donationsPerWeek,
 			}),
 			inline: true,
@@ -199,7 +189,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.weeklyDonationsReceived", {
 				lng,
-
 				weeklyDonationsReceived: player.donationsReceivedPerWeek,
 			}),
 			inline: true,
@@ -207,7 +196,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.totalDonations", {
 				lng,
-
 				totalDonations: player.totalDonations,
 			}),
 			inline: true,
@@ -224,14 +212,12 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.clanWarsVeteran", {
 				lng,
-
 				player,
 			}),
 		})
 		.addField({
 			...translate("commands.player.info.fields.challengeStatistics", {
 				lng,
-
 				player,
 			}),
 			inline: true,
@@ -239,7 +225,6 @@ export const playerInfo = async (
 		.addField({
 			...translate("commands.player.info.fields.tournamentStatistics", {
 				lng,
-
 				player,
 			}),
 			inline: true,
