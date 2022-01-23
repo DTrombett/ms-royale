@@ -22,7 +22,7 @@ const client = new CustomClient();
 	global as typeof globalThis & {
 		bot: Client;
 	}
-).bot = client.discord;
+).bot = client.bot;
 
 void readdir("./database/").then((files) => {
 	for (const file of files) void importJson<any>(file.replace(".json", ""));

@@ -21,7 +21,7 @@ export const event: EventOptions<EventType.Discord, "invalidated"> = {
 			)} MB external\n${(memory.rss / 1024 / 1024).toFixed(digits)} MB rss`,
 			true
 		);
-		this.client.discord.destroy();
+		this.client.bot.destroy();
 		exit(0);
 	},
 };

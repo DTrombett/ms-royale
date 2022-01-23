@@ -84,7 +84,7 @@ export class Event<
 					);
 					break;
 				case EventType.Discord:
-					this.client.discord.on(
+					this.client.bot.on(
 						this.name as keyof DiscordEvents,
 						this.on as Parameters<Client["on"]>[1]
 					);
@@ -100,7 +100,7 @@ export class Event<
 					);
 					break;
 				case EventType.Discord:
-					this.client.discord.once(
+					this.client.bot.once(
 						this.name as keyof DiscordEvents,
 						this.once as Parameters<Client["once"]>[1]
 					);
@@ -121,7 +121,7 @@ export class Event<
 					...(args as Parameters<ClientRoyale["emit"]>[1])
 				);
 			case EventType.Discord:
-				return this.client.discord.emit(
+				return this.client.bot.emit(
 					this.name as keyof DiscordEvents,
 					...(args as Parameters<Client["emit"]>[1] as [])
 				);
@@ -143,7 +143,7 @@ export class Event<
 					);
 					break;
 				case EventType.Discord:
-					this.client.discord.off(
+					this.client.bot.off(
 						this.name as keyof DiscordEvents,
 						this.on as Parameters<Client["on"]>[1]
 					);
@@ -159,7 +159,7 @@ export class Event<
 					);
 					break;
 				case EventType.Discord:
-					this.client.discord.off(
+					this.client.bot.off(
 						this.name as keyof DiscordEvents,
 						this.once as Parameters<Client["once"]>[1]
 					);

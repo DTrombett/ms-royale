@@ -313,9 +313,9 @@ export const command: CommandOptions = {
 					});
 					restart(this.client);
 				} else {
-					this.client.discord.destroy();
+					this.client.bot.destroy();
 					this.client.token = env.DISCORD_TOKEN!;
-					await this.client.discord.login();
+					await this.client.bot.login();
 					await interaction.editReply({
 						content: `Ricollegato in ${bold(`${Date.now() - now}ms`)}.`,
 					});
@@ -325,11 +325,11 @@ export const command: CommandOptions = {
 				await interaction.editReply({
 					content: `Sto spegnendo il bot...`,
 				});
-				this.client.discord.destroy();
+				this.client.bot.destroy();
 				return exit(0);
 			case SubCommands.uptimeCmd:
 				const processUptime = new Date(Date.now() - uptime() * 1000);
-				const botUptime = new Date(Date.now() - this.client.discord.uptime!);
+				const botUptime = new Date(Date.now() - this.client.bot.uptime!);
 				const uptimeEmbed = new Embed()
 					.setAuthor({
 						name: interaction.user.tag,

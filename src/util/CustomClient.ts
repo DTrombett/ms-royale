@@ -25,7 +25,7 @@ export class CustomClient extends ClientRoyale {
 	/**
 	 * The Discord client
 	 */
-	discord = new Client({
+	bot = new Client({
 		intents: [Intents.FLAGS.GUILDS],
 		allowedMentions: { parse: [], repliedUser: false, roles: [], users: [] },
 		failIfNotExists: false,
@@ -159,7 +159,7 @@ export class CustomClient extends ClientRoyale {
 			loadEvents(this, EventType.Discord),
 			loadEvents(this, EventType.APIRoyale),
 		]);
-		return this.discord.login(env.DISCORD_TOKEN);
+		return this.bot.login(env.DISCORD_TOKEN);
 	}
 }
 

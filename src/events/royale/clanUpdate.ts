@@ -106,7 +106,7 @@ export const event: EventOptions<EventType.APIRoyale, "clanUpdate"> = {
 		/**
 		 * The channel to send the embed to
 		 */
-		const channel = this.client.discord.channels.cache.get(
+		const channel = this.client.bot.channels.cache.get(
 			env.CLAN_CHANNEL_ID!
 		) as TextChannel;
 

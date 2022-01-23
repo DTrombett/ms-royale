@@ -14,7 +14,7 @@ export const restart = (client: CustomClient) => {
 			stdio: "inherit",
 		}).unref();
 	});
-	client.discord.destroy();
+	client.bot.destroy();
 	exit(0);
 };
 
