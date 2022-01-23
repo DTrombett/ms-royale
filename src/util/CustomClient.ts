@@ -1,4 +1,3 @@
-import Collection from "@discordjs/collection";
 import { ClientRoyale } from "apiroyale";
 import { Client, Intents, Options } from "discord.js";
 import { use } from "i18next";
@@ -65,12 +64,12 @@ export class CustomClient extends ClientRoyale {
 	/**
 	 * Commands of this client
 	 */
-	commands = new Collection<string, Command>();
+	commands = new Map<string, Command>();
 
 	/**
 	 * Events of this client
 	 */
-	events = new Collection<string, Event>();
+	events = new Map<string, Event>();
 
 	constructor() {
 		super({ baseURL: "https://proxy.royaleapi.dev/v1" });
