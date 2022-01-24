@@ -30,7 +30,7 @@ export class CustomClient extends ClientRoyale {
 	 * The Discord client
 	 */
 	bot = new Client({
-		intents: [Intents.FLAGS.GUILDS],
+		intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 		allowedMentions: { parse: [], repliedUser: false, roles: [], users: [] },
 		failIfNotExists: false,
 		http: { api: "https://canary.discord.com/api" },
@@ -43,7 +43,7 @@ export class CustomClient extends ClientRoyale {
 			GuildInviteManager: 0,
 			GuildMemberManager: 0,
 			GuildStickerManager: 0,
-			MessageManager: 0,
+			MessageManager: 100,
 			PresenceManager: 0,
 			ReactionManager: 0,
 			ReactionUserManager: 0,

@@ -7,11 +7,21 @@ import {
 	time,
 	TimestampStyles,
 } from "@discordjs/builders";
-import type { CommandInteraction } from "discord.js";
 import { Constants, Util } from "discord.js";
-import { exec as nativeExec } from "node:child_process";
-import { argv, cwd, env, exit, memoryUsage, uptime } from "node:process";
-import { promisify } from "node:util";
+import { Buffer } from "node:buffer";
+import { exec, execFile } from "node:child_process";
+import { createWriteStream } from "node:fs";
+import {
+	argv,
+	cwd,
+	env,
+	exit,
+	memoryUsage,
+	stderr,
+	stdin,
+	stdout,
+	uptime,
+} from "node:process";
 import prettier from "prettier";
 import type { CommandOptions } from "../util";
 import { CustomClient, parseEval, restart } from "../util";
@@ -25,6 +35,7 @@ enum SubCommands {
 	shutdown = "shutdown",
 	uptimeCmd = "uptime",
 	pull = "pull",
+	cpp = "cpp",
 }
 enum SubCommandOptions {
 	cmd = "cmd",
@@ -34,16 +45,10 @@ enum SubCommandOptions {
 	registerCommands = "synccommands",
 	restartProcess = "restart",
 	packages = "packages",
+	code = "code",
+	include = "include",
+	namespaces = "namespaces",
 }
-
-const exec = promisify(nativeExec);
-const catchPullError =
-	(interaction: CommandInteraction) => async (err: Error) => {
-		void CustomClient.printToStderr(err);
-		await interaction.editReply({
-			content: `Errore durante il pull: ${err.message}`,
-		});
-	};
 
 export const command: CommandOptions = {
 	reserved: true,
@@ -172,6 +177,36 @@ export const command: CommandOptions = {
 						)
 				)
 		)
+		.addSubcommand((cpp) =>
+			cpp
+				.setName(SubCommands.cpp)
+				.setDescription("Compila il codice")
+				.addStringOption((code) =>
+					code
+						.setName(SubCommandOptions.code)
+						.setDescription("Codice da compilare")
+						.setRequired(true)
+				)
+				.addStringOption((include) =>
+					include
+						.setName(SubCommandOptions.include)
+						.setDescription(
+							"Librerie da includere, separate da virgola (default: iostream)"
+						)
+				)
+				.addStringOption((namespaces) =>
+					namespaces
+						.setName(SubCommandOptions.namespaces)
+						.setDescription("Namespaces da usare (default: std)")
+				)
+				.addBooleanOption((ephemeral) =>
+					ephemeral
+						.setName(SubCommandOptions.ephemeral)
+						.setDescription(
+							"Scegli se mostrare il risultato privatamente (default: true)"
+						)
+				)
+		)
 		.addSubcommand((test) =>
 			test.setName(SubCommands.test).setDescription("Un comando di test")
 		),
@@ -185,55 +220,38 @@ export const command: CommandOptions = {
 		switch (interaction.options.getSubcommand()) {
 			case SubCommands.shell:
 				const cmd = interaction.options.getString(SubCommandOptions.cmd, true);
-				const [stdout, stderr] = await exec(cmd)
-					.catch((e: Awaited<ReturnType<typeof exec>>) => e)
-					.then((e) => [
-						e.stdout.toString().trim(),
-						e.stderr.toString().trim(),
-					]);
-				const embeds: Embed[] = [];
-
-				if (stdout) {
-					void CustomClient.printToStdout(stdout);
-					embeds.push(
-						new Embed()
-							.setAuthor({
-								name: interaction.user.tag,
-								iconURL: interaction.user.displayAvatarURL(),
-							})
-							.setTitle("Stdout")
-							.setDescription(
-								codeBlock(Util.escapeCodeBlock(stdout.slice(0, 4096 - 7)))
-							)
-							.setColor(Constants.Colors.GREEN)
-							.setTimestamp()
-					);
-				}
-				if (stderr) {
-					void CustomClient.printToStderr(stderr);
-					embeds.push(
-						new Embed()
-							.setAuthor({
-								name: interaction.user.tag,
-								iconURL: interaction.user.displayAvatarURL(),
-							})
-							.setTitle("Stderr")
-							.setDescription(
-								codeBlock(Util.escapeCodeBlock(stderr.slice(0, 4096 - 7)))
-							)
-							.setColor(Constants.Colors.RED)
-							.setTimestamp()
-					);
-				}
-
-				await interaction.editReply({
-					content: `Comando eseguito in ${bold(
-						`${Date.now() - now}ms`
-					)}\n${inlineCode(
-						`${cwd()}> ${Util.escapeInlineCode(cmd.slice(0, 2000 - 100))}`
-					)}`,
-					embeds: embeds.map((e) => e),
-				});
+				const child = exec(cmd);
+				let output = "";
+				child.stdout?.on("data", (data: Buffer) => (output += data.toString()));
+				child.stderr?.on("data", (data: Buffer) => (output += data.toString()));
+				child.stderr?.pipe(stderr);
+				child.stdout?.pipe(stdout);
+				child.once("close", (code) =>
+					interaction
+						.editReply({
+							content: `Comando eseguito in ${bold(
+								`${Date.now() - now}ms`
+							)}\n${inlineCode(
+								`${cwd()}> ${Util.escapeInlineCode(cmd.slice(0, 2000 - 100))}`
+							)}`,
+							embeds: [
+								new Embed()
+									.setAuthor({
+										name: interaction.user.tag,
+										iconURL: interaction.user.displayAvatarURL(),
+									})
+									.setTitle("Output")
+									.setDescription(
+										codeBlock(Util.escapeCodeBlock(output.slice(0, 4096 - 7)))
+									)
+									.setColor(
+										code === 0 ? Constants.Colors.GREEN : Constants.Colors.RED
+									)
+									.setTimestamp(),
+							],
+						})
+						.catch(CustomClient.printToStderr)
+				);
 				break;
 			case SubCommands.evalCmd:
 				let code = interaction.options.getString(SubCommandOptions.cmd, true),
@@ -356,6 +374,7 @@ export const command: CommandOptions = {
 				});
 				break;
 			case SubCommands.pull:
+				let out = "";
 				const commands = ["git pull"];
 				const restartProcess =
 					interaction.options.getBoolean(SubCommandOptions.restartProcess) ??
@@ -370,27 +389,174 @@ export const command: CommandOptions = {
 					false
 				)
 					commands.push("npm run commands");
-				const result = await exec(commands.join(" && ")).catch(
-					catchPullError(interaction)
-				);
+				const childProcess = exec(commands.join(" && "));
 
-				if (!result) break;
-				await interaction.editReply({
-					content: `Ho eseguito ${commands.join(" && ")} in ${bold(
-						`${Date.now() - now}ms`
-					)}\n${
-						restartProcess
-							? "Sto riavviando il processo per rendere effettivi i cambiamenti..."
-							: "Il bot è nuovamente pronto all'uso!"
-					}`,
+				childProcess.stdout?.on("data", (data) => (out += data));
+				childProcess.stderr?.on("data", (data) => (out += data));
+				childProcess.stdout?.pipe(stdout);
+				childProcess.stderr?.pipe(stderr);
+				childProcess.once("close", (closeCode) => {
+					interaction
+						.editReply({
+							content:
+								closeCode === 0
+									? `Ho eseguito ${commands.join(" && ")} in ${bold(
+											`${Date.now() - now}ms`
+									  )}\n${
+											restartProcess
+												? "Sto riavviando il processo per rendere effettivi i cambiamenti..."
+												: "Il bot è nuovamente pronto all'uso!"
+									  }`
+									: `Errore durante l'esecuzione di ${bold(
+											commands.join(" && ")
+									  )}\nCodice di errore: ${closeCode ?? "N/A"}`,
+							embeds: [
+								new Embed()
+									.setAuthor({
+										name: interaction.user.tag,
+										iconURL: interaction.user.displayAvatarURL(),
+									})
+									.setTitle("Output")
+									.setDescription(
+										codeBlock(Util.escapeCodeBlock(out.slice(0, 4096 - 7)))
+									)
+									.setColor(
+										closeCode === 0
+											? Constants.Colors.GREEN
+											: Constants.Colors.RED
+									)
+									.setTimestamp(),
+							],
+						})
+						.catch(CustomClient.printToStderr);
+					if (restartProcess) restart(this.client);
+				});
+				break;
+			case SubCommands.cpp:
+				const commaRegex = /,\s{0,}/g;
+				const cppCode = `${(
+					interaction.options.getString(SubCommandOptions.include) ?? "iostream"
+				)
+					.split(commaRegex)
+					.map((include) => `#include <${include}>`)
+					.join("\n")}\n${(
+					interaction.options.getString(SubCommandOptions.namespaces) ?? "std"
+				)
+					.split(commaRegex)
+					.map((namespace) => `using namespace ${namespace};`)
+					.join("\n")}\n\nint main() {\n\t${interaction.options.getString(
+					SubCommandOptions.code,
+					true
+				)}\n}`;
+				const successful = await new Promise<boolean>((resolve) => {
+					createWriteStream("./tmp/cpp.cpp")
+						.once("error", (err) => {
+							resolve(false);
+							void CustomClient.printToStderr(err);
+							interaction
+								.editReply({
+									content: `Errore durante la creazione del file temporaneo: ${CustomClient.inspect(
+										err
+									)}`,
+								})
+								.catch(CustomClient.printToStderr);
+						})
+						.once("finish", () => {
+							resolve(true);
+						})
+						.setDefaultEncoding("utf8")
+						.end(cppCode);
 				});
 
-				if (restartProcess) restart(this.client);
+				if (!successful) break;
+				const subProcess = exec("g++ ./tmp/cpp.cpp -o ./tmp/cpp.exe");
+				let out2 = "";
 
-				await interaction.editReply({
-					content: `Terminate tutte le operazioni in ${bold(
-						`${Date.now() - now}ms`
-					)}`,
+				subProcess.stdout?.on("data", (data) => (out2 += data));
+				subProcess.stderr?.on("data", (data) => (out2 += data));
+				subProcess.stdout?.pipe(stdout);
+				subProcess.stderr?.pipe(stderr);
+				subProcess.once("close", (closeCode) => {
+					if (closeCode === 0) {
+						const collector = interaction.channel?.createMessageCollector({
+								filter: (m) => m.author.id === interaction.user.id,
+							}),
+							subProcess2 = execFile("./tmp/cpp.exe");
+						let content = "",
+							errOut = "";
+
+						collector?.on("collect", (message) => {
+							const input = `${message.content}\n`;
+
+							if (message.deletable)
+								message.delete().catch(CustomClient.printToStderr);
+							content += input;
+							subProcess2.stdin?.write(input);
+						});
+						subProcess2.stderr?.on("data", (data: Buffer) => (errOut += data));
+						subProcess2.stdout?.on("data", (data: Buffer) => {
+							content += data;
+							interaction
+								.editReply({
+									content,
+								})
+								.catch(CustomClient.printToStderr);
+						});
+						subProcess2.stdout?.pipe(stdout);
+						subProcess2.stderr?.pipe(stderr);
+						stdin.pipe(subProcess2.stdin!);
+						subProcess2.once("close", (closeCode2) => {
+							collector?.stop();
+							if (closeCode2 === 0)
+								interaction
+									.followUp({
+										content: `Processo eseguito con successo in ${bold(
+											`${Date.now() - now}ms`
+										)}`,
+									})
+									.catch(CustomClient.printToStderr);
+							else
+								interaction
+									.followUp({
+										content: `Errore durante l'esecuzione del processo: ${errOut}`,
+									})
+									.catch(CustomClient.printToStderr);
+						});
+					} else
+						interaction
+							.editReply({
+								content: `Errore durante la compilazione del codice C++\nCodice di errore: ${
+									closeCode ?? "N/A"
+								}`,
+								embeds: [
+									new Embed()
+										.setAuthor({
+											name: interaction.user.tag,
+											iconURL: interaction.user.displayAvatarURL(),
+										})
+										.setTitle("Output")
+										.setDescription(
+											codeBlock(Util.escapeCodeBlock(out2.slice(0, 4096 - 7)))
+										)
+										.setColor(Constants.Colors.RED)
+										.setTimestamp(),
+									new Embed()
+										.setAuthor({
+											name: interaction.user.tag,
+											iconURL: interaction.user.displayAvatarURL(),
+										})
+										.setTitle("Codice C++")
+										.setDescription(
+											codeBlock(
+												"cpp",
+												Util.escapeCodeBlock(cppCode.slice(0, 4096 - 7))
+											)
+										)
+										.setColor(Constants.Colors.BLURPLE)
+										.setTimestamp(),
+								],
+							})
+							.catch(CustomClient.printToStderr);
 				});
 				break;
 			default:
