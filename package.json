@@ -29,7 +29,7 @@
     "url": "https://github.com/DTrombett/ms-royale/issues"
   },
   "dependencies": {
-    "@discordjs/builders": "^0.11.0",
+    "@discordjs/builders": "^0.12.0",
     "@discordjs/rest": "^0.3.0",
     "apiroyale": "github:DTrombett/apiroyale",
     "bufferutil": "^4.0.6",
