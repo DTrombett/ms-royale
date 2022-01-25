@@ -541,6 +541,7 @@ export const command: CommandOptions = {
 					child.once("close", resolve);
 				});
 				collector?.stop();
+				unlink("./tmp/cpp.exe").catch(CustomClient.printToStderr);
 				await interaction.editReply({
 					content: `${output}\n\nProcesso terminato in ${
 						Date.now() - now
