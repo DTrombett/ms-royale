@@ -1,14 +1,16 @@
-import { Embed } from "@discordjs/builders";
+import { Embed, SelectMenuOption } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { Clan } from "apiroyale";
 import {
+	ActionRow,
 	Constants as DiscordConstants,
-	MessageActionRow,
-	MessageSelectMenu,
+	SelectMenuComponent,
 } from "discord.js";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
-import createActionButton from "../createActionButton";
+import createActionButton, {
+	resolveEmojiIdentifier,
+} from "../createActionButton";
 import CustomClient from "../CustomClient";
 import { buildCustomMenuId } from "../customId";
 import { locationToLocale } from "../locales";
@@ -109,27 +111,28 @@ export const clanInfo = async (
 			}),
 		});
 
-	const row1 = new MessageActionRow().addComponents(
-		new MessageSelectMenu()
+	const row1 = new ActionRow().addComponents(
+		new SelectMenuComponent()
 			.addOptions(
-				clan.members.first(25).map((member) => ({
-					...translate("commands.clan.info.menu.options", {
-						lng,
-						member,
-						role: capitalize(member.role),
-						lastSeen: toLocaleString(member.lastSeen, lng),
-						fallbackLng,
-					}),
-					emoji: CustomEmojis.user,
-					value: member.tag,
-				}))
+				...clan.members.first(25).map((member) =>
+					new SelectMenuOption({
+						...translate("commands.clan.info.menu.options", {
+							lng,
+							member,
+							role: capitalize(member.role),
+							lastSeen: toLocaleString(member.lastSeen, lng),
+							fallbackLng,
+						}),
+						value: member.tag,
+					}).setEmoji(resolveEmojiIdentifier(CustomEmojis.user))
+				)
 			)
 			.setPlaceholder(
 				translate("commands.clan.info.menu.placeholder", { lng, fallbackLng })
 			)
 			.setCustomId(buildCustomMenuId(MenuActions.PlayerInfo))
 	);
-	const row2 = new MessageActionRow().addComponents(
+	const row2 = new ActionRow().addComponents(
 		createActionButton(
 			ButtonActions.ClanMembers,
 			{

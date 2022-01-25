@@ -1,11 +1,11 @@
-import { Embed } from "@discordjs/builders";
+import { Embed, SelectMenuOption } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { FinishedRiverRaceManager, RiverRaceLogResults } from "apiroyale";
 import type { APIEmbedField, Snowflake } from "discord-api-types/v9";
 import {
+	ActionRow,
 	Constants as DiscordConstants,
-	MessageActionRow,
-	MessageSelectMenu,
+	SelectMenuComponent,
 } from "discord.js";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
@@ -86,28 +86,31 @@ export const riverRaceLog = async (
 				})
 			)
 		);
-	const row1 = new MessageActionRow().addComponents(
-		new MessageSelectMenu()
+	const row1 = new ActionRow().addComponents(
+		new SelectMenuComponent()
 			.setCustomId(MenuActions.PlayerInfo)
 			.setPlaceholder(
 				translate("commands.clan.riverRaceLog.menu.placeholder", { lng })
 			)
 			.addOptions(
-				[...clan.participants.values()]
-					.filter((p) => p.medals)
+				...clan.participants
+					.filter((p) => Boolean(p.medals))
 					.sort((a, b) => b.medals - a.medals)
-					.slice(0, 25)
-					.map((participant, i) => ({
-						...translate("commands.clan.riverRaceLog.menu.options", {
-							lng,
-							participant,
-							rank: i + 1,
-						}),
-						value: participant.tag,
-					}))
+					.first(25)
+					.map(
+						(participant, i) =>
+							new SelectMenuOption({
+								...translate("commands.clan.riverRaceLog.menu.options", {
+									lng,
+									participant,
+									rank: i + 1,
+								}),
+								value: participant.tag,
+							})
+					)
 			)
 	);
-	const row2 = new MessageActionRow().addComponents(
+	const row2 = new ActionRow().addComponents(
 		createActionButton(
 			ButtonActions.ClanInfo,
 			{ label: translate("commands.clan.buttons.clanInfo.label", { lng }) },
@@ -123,7 +126,7 @@ export const riverRaceLog = async (
 			tag
 		)
 	);
-	const row3 = new MessageActionRow().addComponents(
+	const row3 = new ActionRow().addComponents(
 		createActionButton(
 			ButtonActions.RiverRaceLog,
 			{

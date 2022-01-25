@@ -1,7 +1,7 @@
 import { Embed, hyperlink } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { Player } from "apiroyale";
-import { Constants as DiscordConstants, MessageActionRow } from "discord.js";
+import { ActionRow, Constants as DiscordConstants } from "discord.js";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
@@ -230,7 +230,7 @@ export const playerInfo = async (
 			inline: true,
 		});
 
-	const row1 = new MessageActionRow().addComponents(
+	const row1 = new ActionRow().addComponents(
 		createActionButton(
 			ButtonActions.PlayerAchievements,
 			{

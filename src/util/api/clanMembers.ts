@@ -1,7 +1,7 @@
 import { bold, Embed, time } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { ClanMemberList } from "apiroyale";
-import { Constants as DiscordConstants, MessageActionRow } from "discord.js";
+import { ActionRow, Constants as DiscordConstants } from "discord.js";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
@@ -66,7 +66,7 @@ export const clanMembers = async (
 				.join("\n")
 		);
 
-	const row1 = new MessageActionRow().addComponents(
+	const row1 = new ActionRow().addComponents(
 		createActionButton(
 			ButtonActions.ClanInfo,
 			{

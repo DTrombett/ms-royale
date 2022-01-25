@@ -1,7 +1,7 @@
 import { bold, Embed } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { UpcomingChestManager } from "apiroyale";
-import { Constants as DiscordConstants, MessageActionRow } from "discord.js";
+import { ActionRow, Constants as DiscordConstants } from "discord.js";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import normalizeTag from "../normalizeTag";
@@ -54,7 +54,7 @@ export const playerUpcomingChests = async (
 				.join("\n")
 		);
 
-	const row1 = new MessageActionRow().addComponents(
+	const row1 = new ActionRow().addComponents(
 		createActionButton(
 			ButtonActions.PlayerInfo,
 			{ label: translate("commands.player.buttons.playerInfo.label", { lng }) },

@@ -1,11 +1,11 @@
-import { Embed } from "@discordjs/builders";
+import { Embed, SelectMenuOption } from "@discordjs/builders";
 import type ClientRoyale from "apiroyale";
 import { CurrentRiverRace } from "apiroyale";
 import { APIEmbedField } from "discord-api-types/v9";
 import {
+	ActionRow,
 	Constants as DiscordConstants,
-	MessageActionRow,
-	MessageSelectMenu,
+	SelectMenuComponent,
 } from "discord.js";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
@@ -98,13 +98,13 @@ export const currentRiverRace = async (
 				}))
 		);
 
-	const row1 = new MessageActionRow().addComponents(
-		new MessageSelectMenu()
+	const row1 = new ActionRow().addComponents(
+		new SelectMenuComponent()
 			.addOptions(
 				...participants
 					.first(25)
-					.map<{ description: string; label: string; value: string }>(
-						(participant, i) => ({
+					.map(
+						(participant, i) => new SelectMenuOption({
 							...translate("commands.clan.currentRiverRace.menu.options", {
 								lng,
 								participant,
@@ -119,7 +119,7 @@ export const currentRiverRace = async (
 			)
 			.setCustomId(buildCustomMenuId(MenuActions.PlayerInfo))
 	);
-	const row2 = new MessageActionRow().addComponents(
+	const row2 = new ActionRow().addComponents(
 		createActionButton(
 			ButtonActions.ClanInfo,
 			{

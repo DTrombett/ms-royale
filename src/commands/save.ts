@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { MessageActionRow } from "discord.js";
+import { ActionRow } from "discord.js";
 import {
 	autocompletePlayerTag,
 	ButtonActions,
@@ -68,7 +68,7 @@ export const command: CommandOptions = {
 		await interaction.editReply({
 			content: translate("commands.save.content", { lng }),
 			components: [
-				new MessageActionRow().addComponents(
+				new ActionRow().addComponents(
 					createActionButton(
 						ButtonActions.PlayerInfo,
 						{

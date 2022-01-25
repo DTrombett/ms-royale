@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { MessageActionRow, MessageButton } from "discord.js";
+import { ActionRow, ButtonComponent } from "discord.js";
 import type { CommandOptions } from "../util";
-import { Constants, Emojis } from "../util";
+import { Constants, Emojis, resolveEmojiIdentifier } from "../util";
 
 const inviteUrl = Constants.inviteUrl();
 
@@ -14,9 +14,9 @@ export const command: CommandOptions = {
 			content:
 				"Clicca il pulsante qui sotto per aggiungere i comandi del bot nel tuo server!",
 			components: [
-				new MessageActionRow().addComponents(
-					new MessageButton()
-						.setEmoji(Emojis.Robot)
+				new ActionRow().addComponents(
+					new ButtonComponent()
+						.setEmoji(resolveEmojiIdentifier(Emojis.Robot))
 						.setLabel("Aggiungi al server")
 						.setStyle(5)
 						.setURL(inviteUrl)

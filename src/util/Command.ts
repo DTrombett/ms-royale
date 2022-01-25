@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import type { AutocompleteInteraction, CommandInteraction } from "discord.js";
+import type {
+	AutocompleteInteraction,
+	ChatInputCommandInteraction,
+} from "discord.js";
 import type { CommandOptions } from ".";
 import Constants from "./Constants";
 import CustomClient from "./CustomClient";
@@ -95,7 +98,7 @@ export class Command {
 	 * Run this command.
 	 * @param interaction - The interaction received
 	 */
-	async run(interaction: CommandInteraction) {
+	async run(interaction: ChatInputCommandInteraction) {
 		try {
 			if (this.reserved && !owners.includes(interaction.user.id)) {
 				await interaction.reply({

@@ -1,11 +1,6 @@
-import { bold } from "@discordjs/builders";
+import { bold, SelectMenuOption } from "@discordjs/builders";
 import { ClanSearchResults, ClientRoyale, SearchClanOptions } from "apiroyale";
-import {
-	MessageActionRow,
-	MessageSelectMenu,
-	Snowflake,
-	Util,
-} from "discord.js";
+import { ActionRow, SelectMenuComponent, Snowflake, Util } from "discord.js";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import { buildCustomMenuId } from "../customId";
@@ -35,23 +30,26 @@ export const searchClan = async (
 			content: translate("commands.clan.search.notFound", { lng }),
 			ephemeral: true,
 		};
-	const row1 = new MessageActionRow().addComponents(
-		new MessageSelectMenu()
+	const row1 = new ActionRow().addComponents(
+		new SelectMenuComponent()
 			.setCustomId(buildCustomMenuId(MenuActions.ClanInfo))
 			.addOptions(
-				results.map((clan) => ({
-					...translate("commands.clan.search.menu.options", {
-						lng,
-						clan,
-					}),
-					value: clan.tag,
-				}))
+				...results.map(
+					(clan) =>
+						new SelectMenuOption({
+							...translate("commands.clan.search.menu.options", {
+								lng,
+								clan,
+							}),
+							value: clan.tag,
+						})
+				)
 			)
 			.setPlaceholder(
 				translate("commands.clan.search.menu.placeholder", { lng })
 			)
 	);
-	const row2 = new MessageActionRow().addComponents(
+	const row2 = new ActionRow().addComponents(
 		createActionButton(
 			ButtonActions.PreviousPage,
 			{
