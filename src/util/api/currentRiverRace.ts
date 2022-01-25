@@ -101,10 +101,9 @@ export const currentRiverRace = async (
 	const row1 = new ActionRow().addComponents(
 		new SelectMenuComponent()
 			.addOptions(
-				...participants
-					.first(25)
-					.map(
-						(participant, i) => new SelectMenuOption({
+				...participants.first(25).map(
+					(participant, i) =>
+						new SelectMenuOption({
 							...translate("commands.clan.currentRiverRace.menu.options", {
 								lng,
 								participant,
@@ -112,7 +111,7 @@ export const currentRiverRace = async (
 							}),
 							value: participant.tag,
 						})
-					)
+				)
 			)
 			.setPlaceholder(
 				translate("commands.clan.currentRiverRace.menu.placeholder", { lng })

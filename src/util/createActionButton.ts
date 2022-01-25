@@ -31,7 +31,7 @@ export const ButtonEmojis: Record<ButtonActions, CustomEmojis | Emojis> = {
 export const resolveEmojiIdentifier = (
 	emoji: CustomEmojis | Emojis
 ): APIMessageComponentEmoji => {
-	const [start, name, id] = emoji.split(":") as (string|undefined)[];
+	const [start, name, id] = emoji.split(":") as (string | undefined)[];
 
 	return {
 		animated: start === "<a",
