@@ -156,7 +156,6 @@
 		"prefer-rest-params": "warn",
 		"prefer-spread": "warn",
 		"prefer-template": "warn",
-		"require-atomic-updates": "warn",
 		"semi-spacing": "warn",
 		"semi-style": "warn",
 		"sort-vars": "warn",

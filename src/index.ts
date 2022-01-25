@@ -1,10 +1,10 @@
 import { Client } from "discord.js";
-import { config } from "dotenv";
+import dotenv from "dotenv";
 import { start } from "node:repl";
 import Constants, { CustomClient, startJob } from "./util";
 
 await CustomClient.logToFile("\n");
-config();
+dotenv.config({ debug: true, multiline: true });
 console.time(Constants.clientOnlineLabel());
 
 const client = new CustomClient();
