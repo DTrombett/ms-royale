@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import type { APITag, SearchClanOptions } from "apiroyale";
-import { Snowflake } from "discord-api-types/v9";
+import type { Snowflake } from "discord-api-types/v9";
+import type { CommandOptions } from "../util";
 import Constants, {
 	autocompleteClanTag,
 	clanInfo,
-	CommandOptions,
 	currentRiverRace,
 	CustomClient,
 	getInteractionLocale,

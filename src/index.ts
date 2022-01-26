@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import type { Client } from "discord.js";
 import dotenv from "dotenv";
 import { start } from "node:repl";
 import Constants, { CustomClient, startJob } from "./util";

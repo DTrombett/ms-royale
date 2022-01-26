@@ -1,13 +1,13 @@
 import { bold, Embed, time } from "@discordjs/builders";
-import type ClientRoyale from "apiroyale";
 import { ClanMemberList } from "apiroyale";
-import { ActionRow, Constants as DiscordConstants } from "discord.js";
+import { Constants as DiscordConstants } from "discord.js";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
+import type { APIMethod } from "../types";
 import { ButtonActions, CustomEmojis, Emojis } from "../types";
 import validateTag from "../validateTag";
 
@@ -18,10 +18,10 @@ import validateTag from "../validateTag";
  * @param options - Additional options
  * @returns A promise that resolves with the message options
  */
-export const clanMembers = async (
-	client: ClientRoyale,
-	tag: string,
-	{ ephemeral, lng }: { lng?: string; ephemeral?: boolean }
+export const clanMembers: APIMethod<string> = async (
+	client,
+	tag,
+	{ ephemeral, lng }
 ) => {
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
@@ -66,35 +66,40 @@ export const clanMembers = async (
 				.join("\n")
 		);
 
-	const row1 = new ActionRow().addComponents(
-		createActionButton(
-			ButtonActions.ClanInfo,
-			{
-				label: translate("commands.clan.buttons.clanInfo.label", { lng }),
-			},
-			tag
-		),
-		createActionButton(
-			ButtonActions.CurrentRiverRace,
-			{
-				label: translate("commands.clan.buttons.currentRiverRace.label", {
-					lng,
-				}),
-			},
-			tag
-		),
-		createActionButton(
-			ButtonActions.RiverRaceLog,
-			{
-				label: translate("commands.clan.buttons.riverRaceLog.label", { lng }),
-			},
-			tag
-		)
-	);
-
 	return {
 		embeds: [embed],
-		components: [row1],
+		components: [
+			{
+				type: 1 /** ActionRow */,
+				components: [
+					createActionButton(
+						ButtonActions.ClanInfo,
+						{
+							label: translate("commands.clan.buttons.clanInfo.label", { lng }),
+						},
+						tag
+					),
+					createActionButton(
+						ButtonActions.CurrentRiverRace,
+						{
+							label: translate("commands.clan.buttons.currentRiverRace.label", {
+								lng,
+							}),
+						},
+						tag
+					),
+					createActionButton(
+						ButtonActions.RiverRaceLog,
+						{
+							label: translate("commands.clan.buttons.riverRaceLog.label", {
+								lng,
+							}),
+						},
+						tag
+					),
+				],
+			},
+		],
 		ephemeral,
 	};
 };

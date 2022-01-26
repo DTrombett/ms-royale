@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandOptions, getInteractionLocale, translate } from "../util";
+import type { CommandOptions} from "../util";
+import { getInteractionLocale, translate } from "../util";
 
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder().setName("ping").setDescription("Pong!"),

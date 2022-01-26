@@ -1,11 +1,8 @@
-import { Embed, SelectMenuOption } from "@discordjs/builders";
-import type ClientRoyale from "apiroyale";
+import { Embed } from "@discordjs/builders";
 import { Clan } from "apiroyale";
-import {
-	ActionRow,
-	Constants as DiscordConstants,
-	SelectMenuComponent,
-} from "discord.js";
+import type { APISelectMenuOption } from "discord-api-types/v9";
+import { Constants as DiscordConstants, SelectMenuComponent } from "discord.js";
+import type { APIMethod } from "..";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
 import createActionButton, {
@@ -27,10 +24,10 @@ import validateTag from "../validateTag";
  * @param options - Additional options
  * @returns A promise that resolves with the message options
  */
-export const clanInfo = async (
-	client: ClientRoyale,
-	tag: string,
-	{ ephemeral, lng }: { lng?: string; ephemeral?: boolean } = {}
+export const clanInfo: APIMethod<string> = async (
+	client,
+	tag,
+	{ ephemeral, lng } = {}
 ) => {
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
@@ -111,63 +108,71 @@ export const clanInfo = async (
 			}),
 		});
 
-	const row1 = new ActionRow().addComponents(
-		new SelectMenuComponent()
-			.addOptions(
-				...clan.members.first(25).map((member) =>
-					new SelectMenuOption({
-						...translate("commands.clan.info.menu.options", {
-							lng,
-							member,
-							role: capitalize(member.role),
-							lastSeen: toLocaleString(member.lastSeen, lng),
-							fallbackLng,
-						}),
-						value: member.tag,
-					}).setEmoji(resolveEmojiIdentifier(CustomEmojis.user))
-				)
-			)
-			.setPlaceholder(
-				translate("commands.clan.info.menu.placeholder", { lng, fallbackLng })
-			)
-			.setCustomId(buildCustomMenuId(MenuActions.PlayerInfo))
-	);
-	const row2 = new ActionRow().addComponents(
-		createActionButton(
-			ButtonActions.ClanMembers,
-			{
-				label: translate("commands.clan.buttons.clanMembers.label", {
-					lng,
-					fallbackLng,
-				}),
-			},
-			tag
-		),
-		createActionButton(
-			ButtonActions.CurrentRiverRace,
-			{
-				label: translate("commands.clan.buttons.currentRiverRace.label", {
-					lng,
-					fallbackLng,
-				}),
-			},
-			tag
-		),
-		createActionButton(
-			ButtonActions.RiverRaceLog,
-			{
-				label: translate("commands.clan.buttons.riverRaceLog.label", {
-					lng,
-					fallbackLng,
-				}),
-			},
-			tag
-		)
-	);
-
 	return {
 		embeds: [embed],
-		components: [row1, row2],
+		components: [
+			{
+				type: 1 /** ActionRow */,
+				components: [
+					new SelectMenuComponent({
+						type: 3 /** SelectMenu */,
+						options: clan.members
+							.first(25)
+							.map<APISelectMenuOption>((member) => ({
+								...translate("commands.clan.info.menu.options", {
+									lng,
+									member,
+									role: capitalize(member.role),
+									lastSeen: toLocaleString(member.lastSeen, lng),
+									fallbackLng,
+								}),
+								value: member.tag,
+								emoji: resolveEmojiIdentifier(CustomEmojis.user),
+							})),
+						placeholder: translate("commands.clan.info.menu.placeholder", {
+							lng,
+							fallbackLng,
+						}),
+						custom_id: buildCustomMenuId(MenuActions.PlayerInfo),
+					}),
+				],
+			},
+			{
+				type: 1 /** ActionRow */,
+				components: [
+					createActionButton(
+						ButtonActions.ClanMembers,
+						{
+							label: translate("commands.clan.buttons.clanMembers.label", {
+								lng,
+								fallbackLng,
+							}),
+						},
+						tag
+					),
+					createActionButton(
+						ButtonActions.CurrentRiverRace,
+						{
+							label: translate("commands.clan.buttons.currentRiverRace.label", {
+								lng,
+								fallbackLng,
+							}),
+						},
+						tag
+					),
+					createActionButton(
+						ButtonActions.RiverRaceLog,
+						{
+							label: translate("commands.clan.buttons.riverRaceLog.label", {
+								lng,
+								fallbackLng,
+							}),
+						},
+						tag
+					),
+				],
+			},
+		],
 		ephemeral,
 	};
 };

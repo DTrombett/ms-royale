@@ -1,6 +1,7 @@
-import { Location } from "apiroyale";
-import { AutocompleteInteraction } from "discord.js";
-import { LocaleCodes, ReplyableInteraction } from "./types";
+import type { Location } from "apiroyale";
+import type { AutocompleteInteraction } from "discord.js";
+import type { ReplyableInteraction } from "./types";
+import { LocaleCodes } from "./types";
 
 /**
  * Checks if a location has a valid Discord locale correspondence.

@@ -1,10 +1,11 @@
 import { Embed } from "@discordjs/builders";
-import { Clan } from "apiroyale";
+import type { Clan } from "apiroyale";
 import { Constants as DiscordConstants } from "discord.js";
 import { env } from "node:process";
+import type {
+	EventOptions} from "../../util";
 import Constants, {
 	CustomClient,
-	EventOptions,
 	EventType,
 	locationToLocale,
 	translate,

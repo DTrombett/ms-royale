@@ -1,9 +1,9 @@
-import { Clan, Player } from "apiroyale";
-import {
+import type { Clan, Player } from "apiroyale";
+import type {
 	ApplicationCommandOptionChoice,
 	AutocompleteInteraction,
 } from "discord.js";
-import CustomClient from "./CustomClient";
+import type CustomClient from "./CustomClient";
 import { getInteractionLocale } from "./locales";
 import matchStrings from "./matchStrings";
 import normalizeTag from "./normalizeTag";

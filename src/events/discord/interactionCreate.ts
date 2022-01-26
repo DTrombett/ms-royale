@@ -1,4 +1,6 @@
 import { GuildChannel } from "discord.js";
+import type {
+	EventOptions} from "../../util";
 import {
 	ButtonActions,
 	clanInfo,
@@ -7,7 +9,6 @@ import {
 	CustomClient,
 	destructureCustomButtonId,
 	destructureCustomMenuId,
-	EventOptions,
 	EventType,
 	getInteractionLocale,
 	getSearchOptions,
