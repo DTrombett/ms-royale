@@ -2,8 +2,7 @@ import { Embed } from "@discordjs/builders";
 import type { Clan } from "apiroyale";
 import { Constants as DiscordConstants } from "discord.js";
 import { env } from "node:process";
-import type {
-	EventOptions} from "../../util";
+import type { EventOptions } from "../../util";
 import Constants, {
 	CustomClient,
 	EventType,

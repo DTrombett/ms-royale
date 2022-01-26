@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ActionRow } from "discord.js";
-import type {
-	CommandOptions} from "../util";
+import type { CommandOptions } from "../util";
 import {
 	autocompletePlayerTag,
 	ButtonActions,

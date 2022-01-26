@@ -1,6 +1,6 @@
 import type { ClientEvents, ClientRoyale } from "apiroyale";
 import type { Client, ClientEvents as DiscordEvents } from "discord.js";
-import type { CustomClient , EventOptions} from ".";
+import type { CustomClient, EventOptions } from ".";
 import { EventType } from ".";
 
 /**

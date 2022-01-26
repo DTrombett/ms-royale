@@ -9,7 +9,7 @@ import {
 } from "@discordjs/builders";
 import { Constants, Util } from "discord.js";
 import type { Buffer } from "node:buffer";
-import type { ChildProcess} from "node:child_process";
+import type { ChildProcess } from "node:child_process";
 import { exec, execFile } from "node:child_process";
 import { createWriteStream } from "node:fs";
 import { unlink } from "node:fs/promises";

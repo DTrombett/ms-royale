@@ -1,8 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import type { APITag } from "apiroyale";
 import type { Snowflake } from "discord-api-types/v9";
-import type {
-	CommandOptions} from "../util";
+import type { CommandOptions } from "../util";
 import Constants, {
 	autocompletePlayerTag,
 	CustomClient,
