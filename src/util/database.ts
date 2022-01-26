@@ -1,6 +1,6 @@
 import { createReadStream, createWriteStream } from "node:fs";
 import Constants from "./Constants";
-import { Variables } from "./types";
+import type { Variables } from "./types";
 
 export const databaseCache: Partial<Variables> = {};
 const folder = Constants.variablesFolderName();

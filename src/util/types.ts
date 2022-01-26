@@ -2,18 +2,48 @@ import type {
 	SlashCommandBuilder,
 	SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
-import type { APITag, ClientEvents } from "apiroyale";
+import type { APITag, ClientEvents, ClientRoyale } from "apiroyale";
 import type { Snowflake } from "discord-api-types/v9";
 import type {
 	AutocompleteInteraction,
 	Awaitable,
 	ButtonInteraction,
 	ChatInputCommandInteraction,
+	ClientEvents as DiscordEvents,
 	CommandInteraction,
+	InteractionReplyOptions,
+	MessageOptions,
 	SelectMenuInteraction,
 } from "discord.js";
-import { ClientEvents as DiscordEvents } from "discord.js";
 import type { Command, Event } from ".";
+import type LocalesIt from "../../locales/it.json";
+
+/**
+ * An action row to be sent to Discord
+ */
+export type ActionRowType = NonNullable<
+	MessageOptions["components"]
+> extends (infer T)[]
+	? T
+	: never;
+
+/**
+ * A function to interact with the API.
+ * @param client - The client
+ * @param id - The id to fetch
+ * @param options - Additional options
+ */
+export type APIMethod<
+	T,
+	O extends Record<string, unknown> = Record<never, never>
+> = (
+	client: ClientRoyale,
+	id: T,
+	options: O & {
+		lng?: string;
+		ephemeral?: boolean;
+	}
+) => Promise<InteractionReplyOptions & MessageOptions>;
 
 /**
  * Values used as custom identifiers for buttons
@@ -571,7 +601,7 @@ export type TranslationResult<
 /**
  * A sample of a translation
  */
-export type TranslationSample = typeof import("../../locales/it.json");
+export type TranslationSample = typeof LocalesIt;
 
 /**
  * A list of all the variables

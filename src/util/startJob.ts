@@ -28,10 +28,10 @@ export const startJob = (client: CustomClient) =>
 		}
 		channel
 			.bulkDelete(2)
-			.then(() => clanInfo(client, clanTag))
+			.then(() => clanInfo(client, clanTag, {}))
 			.then((data) =>
 				Promise.all([
-					clanInfo(client, secondClanTag),
+					clanInfo(client, secondClanTag, {}),
 					channel.send({
 						...data,
 					}),

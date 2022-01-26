@@ -1,7 +1,7 @@
 import { bold, Embed } from "@discordjs/builders";
-import type ClientRoyale from "apiroyale";
 import { Player } from "apiroyale";
-import { ActionRow, Constants as DiscordConstants } from "discord.js";
+import { Constants as DiscordConstants } from "discord.js";
+import type { APIMethod } from "..";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
@@ -17,10 +17,10 @@ import validateTag from "../validateTag";
  * @param options - Additional options
  * @returns A promise that resolves with the message options
  */
-export const playerAchievements = async (
-	client: ClientRoyale,
-	tag: string,
-	{ ephemeral, lng }: { lng?: string; ephemeral?: boolean }
+export const playerAchievements: APIMethod<string> = async (
+	client,
+	tag,
+	{ ephemeral, lng }
 ) => {
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
@@ -64,34 +64,41 @@ export const playerAchievements = async (
 				.join("\n")
 		);
 
-	const row1 = new ActionRow().addComponents(
-		createActionButton(
-			ButtonActions.PlayerInfo,
-			{ label: translate("commands.player.buttons.playerInfo.label", { lng }) },
-			tag
-		),
-		createActionButton(
-			ButtonActions.PlayerUpcomingChests,
-			{
-				label: translate("commands.player.buttons.upcomingChests.label", {
-					lng,
-				}),
-			},
-			tag
-		),
-		createActionButton(
-			ButtonActions.ClanInfo,
-			{
-				label: translate("commands.clan.buttons.clanInfo.label", { lng }),
-				disabled: player.clan === undefined,
-			},
-			player.clan?.tag ?? "#"
-		)
-	);
-
 	return {
 		embeds: [embed],
-		components: [row1],
+		components: [
+			{
+				type: 1 /** ActionRow */,
+				components: [
+					createActionButton(
+						ButtonActions.PlayerInfo,
+						{
+							label: translate("commands.player.buttons.playerInfo.label", {
+								lng,
+							}),
+						},
+						tag
+					),
+					createActionButton(
+						ButtonActions.PlayerUpcomingChests,
+						{
+							label: translate("commands.player.buttons.upcomingChests.label", {
+								lng,
+							}),
+						},
+						tag
+					),
+					createActionButton(
+						ButtonActions.ClanInfo,
+						{
+							label: translate("commands.clan.buttons.clanInfo.label", { lng }),
+							disabled: player.clan === undefined,
+						},
+						player.clan?.tag ?? "#"
+					),
+				],
+			},
+		],
 		ephemeral,
 	};
 };

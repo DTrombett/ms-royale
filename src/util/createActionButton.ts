@@ -1,12 +1,9 @@
-import { APIMessageComponentEmoji } from "discord-api-types/v9";
-import { ButtonComponent, ButtonStyle } from "discord.js";
+import type { APIMessageComponentEmoji } from "discord-api-types/v9";
+import type { ButtonStyle } from "discord.js";
+import { ButtonComponent } from "discord.js";
 import { buildCustomButtonId } from "./customId";
-import {
-	ButtonActions,
-	ButtonActionsTypes,
-	CustomEmojis,
-	Emojis,
-} from "./types";
+import type { ButtonActionsTypes } from "./types";
+import { ButtonActions, CustomEmojis, Emojis } from "./types";
 
 /**
  * Emojis used for the buttons

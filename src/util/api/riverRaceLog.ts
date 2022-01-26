@@ -1,14 +1,11 @@
 import { Embed, SelectMenuOption } from "@discordjs/builders";
-import type ClientRoyale from "apiroyale";
 import { FinishedRiverRaceManager, RiverRaceLogResults } from "apiroyale";
 import type { APIEmbedField, Snowflake } from "discord-api-types/v9";
-import {
-	ActionRow,
-	Constants as DiscordConstants,
-	SelectMenuComponent,
-} from "discord.js";
+import { Constants as DiscordConstants, SelectMenuComponent } from "discord.js";
+import type { APIMethod } from "..";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
+import { buildCustomMenuId } from "../customId";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
 import { ButtonActions, Emojis, MenuActions } from "../types";
@@ -21,16 +18,13 @@ import validateTag from "../validateTag";
  * @param options - Additional options
  * @returns A promise that resolves with the message options
  */
-export const riverRaceLog = async (
-	client: ClientRoyale,
-	tag: string,
+export const riverRaceLog: APIMethod<
+	string,
 	{
-		ephemeral,
-		lng,
-		index,
-		id,
-	}: { lng?: string; ephemeral?: boolean; index?: number; id: Snowflake }
-) => {
+		index?: number;
+		id: Snowflake;
+	}
+> = async (client, tag, { ephemeral, lng, index, id }) => {
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
 		return {
@@ -86,74 +80,89 @@ export const riverRaceLog = async (
 				})
 			)
 		);
-	const row1 = new ActionRow().addComponents(
-		new SelectMenuComponent()
-			.setCustomId(MenuActions.PlayerInfo)
-			.setPlaceholder(
-				translate("commands.clan.riverRaceLog.menu.placeholder", { lng })
-			)
-			.addOptions(
-				...clan.participants
-					.filter((p) => Boolean(p.medals))
-					.sort((a, b) => b.medals - a.medals)
-					.first(25)
-					.map(
-						(participant, i) =>
-							new SelectMenuOption({
-								...translate("commands.clan.riverRaceLog.menu.options", {
-									lng,
-									participant,
-									rank: i + 1,
-								}),
-								value: participant.tag,
-							})
-					)
-			)
-	);
-	const row2 = new ActionRow().addComponents(
-		createActionButton(
-			ButtonActions.ClanInfo,
-			{ label: translate("commands.clan.buttons.clanInfo.label", { lng }) },
-			tag
-		),
-		createActionButton(
-			ButtonActions.CurrentRiverRace,
-			{
-				label: translate("commands.clan.buttons.currentRiverRace.label", {
-					lng,
-				}),
-			},
-			tag
-		)
-	);
-	const row3 = new ActionRow().addComponents(
-		createActionButton(
-			ButtonActions.RiverRaceLog,
-			{
-				emoji: Emojis.BackArrow,
-				label: translate("common.back", { lng }),
-				disabled,
-			},
-			tag,
-			`${index !== undefined ? index + 1 : 1}`,
-			id
-		),
-		createActionButton(
-			ButtonActions.RiverRaceLog,
-			{
-				emoji: Emojis.ForwardArrow,
-				label: translate("common.next", { lng }),
-				disabled: index === undefined || index === 0,
-			},
-			tag,
-			`${index !== undefined ? index - 1 : 0}`,
-			id
-		)
-	);
 
 	return {
 		embeds: [embed],
-		components: [row1, row2, row3],
+		components: [
+			{
+				type: 1 /** ActionRow */,
+				components: [
+					new SelectMenuComponent({
+						type: 3 /** SelectMenu */,
+						options: clan.participants
+							.filter((p) => Boolean(p.medals))
+							.sort((a, b) => b.medals - a.medals)
+							.first(25)
+							.map(
+								(participant, i) =>
+									new SelectMenuOption({
+										...translate("commands.clan.riverRaceLog.menu.options", {
+											lng,
+											participant,
+											rank: i + 1,
+										}),
+										value: participant.tag,
+									})
+							),
+						placeholder: translate(
+							"commands.clan.riverRaceLog.menu.placeholder",
+							{
+								lng,
+							}
+						),
+						custom_id: buildCustomMenuId(MenuActions.PlayerInfo),
+					}),
+				],
+			},
+			{
+				type: 1 /** ActionRow */,
+				components: [
+					createActionButton(
+						ButtonActions.ClanInfo,
+						{
+							label: translate("commands.clan.buttons.clanInfo.label", { lng }),
+						},
+						tag
+					),
+					createActionButton(
+						ButtonActions.CurrentRiverRace,
+						{
+							label: translate("commands.clan.buttons.currentRiverRace.label", {
+								lng,
+							}),
+						},
+						tag
+					),
+				],
+			},
+			{
+				type: 1 /** ActionRow */,
+				components: [
+					createActionButton(
+						ButtonActions.RiverRaceLog,
+						{
+							emoji: Emojis.BackArrow,
+							label: translate("common.back", { lng }),
+							disabled,
+						},
+						tag,
+						`${index !== undefined ? index + 1 : 1}`,
+						id
+					),
+					createActionButton(
+						ButtonActions.RiverRaceLog,
+						{
+							emoji: Emojis.ForwardArrow,
+							label: translate("common.next", { lng }),
+							disabled: index === undefined || index === 0,
+						},
+						tag,
+						`${index !== undefined ? index - 1 : 0}`,
+						id
+					),
+				],
+			},
+		],
 		ephemeral,
 	};
 };

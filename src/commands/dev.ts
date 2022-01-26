@@ -8,8 +8,9 @@ import {
 	TimestampStyles,
 } from "@discordjs/builders";
 import { Constants, Util } from "discord.js";
-import { Buffer } from "node:buffer";
-import { ChildProcess, exec, execFile } from "node:child_process";
+import type { Buffer } from "node:buffer";
+import type { ChildProcess } from "node:child_process";
+import { exec, execFile } from "node:child_process";
 import { createWriteStream } from "node:fs";
 import { unlink } from "node:fs/promises";
 import {

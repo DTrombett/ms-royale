@@ -1,4 +1,5 @@
-import { t, TOptionsBase } from "i18next";
+import type { TOptionsBase } from "i18next";
+import { t } from "i18next";
 import type { TranslationKeys, TranslationResult } from ".";
 
 /**

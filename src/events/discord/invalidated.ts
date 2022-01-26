@@ -1,5 +1,6 @@
 import { exit, memoryUsage } from "node:process";
-import Constants, { CustomClient, EventOptions, EventType } from "../../util";
+import type { EventOptions } from "../../util";
+import Constants, { CustomClient, EventType } from "../../util";
 
 const digits = Constants.percentageDigits();
 

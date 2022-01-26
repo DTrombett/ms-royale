@@ -1,12 +1,8 @@
 import { Embed, SelectMenuOption } from "@discordjs/builders";
-import type ClientRoyale from "apiroyale";
 import { CurrentRiverRace } from "apiroyale";
-import { APIEmbedField } from "discord-api-types/v9";
-import {
-	ActionRow,
-	Constants as DiscordConstants,
-	SelectMenuComponent,
-} from "discord.js";
+import type { APIEmbedField } from "discord-api-types/v9";
+import { Constants as DiscordConstants, SelectMenuComponent } from "discord.js";
+import type { APIMethod } from "..";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
@@ -23,10 +19,10 @@ import validateTag from "../validateTag";
  * @param options - Additional options
  * @returns A promise that resolves with the message options
  */
-export const currentRiverRace = async (
-	client: ClientRoyale,
-	tag: string,
-	{ ephemeral, lng }: { lng?: string; ephemeral?: boolean }
+export const currentRiverRace: APIMethod<string> = async (
+	client,
+	tag,
+	{ ephemeral, lng }
 ) => {
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
@@ -98,50 +94,57 @@ export const currentRiverRace = async (
 				}))
 		);
 
-	const row1 = new ActionRow().addComponents(
-		new SelectMenuComponent()
-			.addOptions(
-				...participants.first(25).map(
-					(participant, i) =>
-						new SelectMenuOption({
-							...translate("commands.clan.currentRiverRace.menu.options", {
-								lng,
-								participant,
-								rank: i + 1,
-							}),
-							value: participant.tag,
-						})
-				)
-			)
-			.setPlaceholder(
-				translate("commands.clan.currentRiverRace.menu.placeholder", { lng })
-			)
-			.setCustomId(buildCustomMenuId(MenuActions.PlayerInfo))
-	);
-	const row2 = new ActionRow().addComponents(
-		createActionButton(
-			ButtonActions.ClanInfo,
-			{
-				label: translate("commands.clan.buttons.clanInfo.label", {
-					lng,
-				}),
-			},
-			tag
-		),
-		createActionButton(
-			ButtonActions.RiverRaceLog,
-			{
-				label: translate("commands.clan.buttons.riverRaceLog.label", {
-					lng,
-				}),
-			},
-			tag
-		)
-	);
-
 	return {
 		embeds: [embed],
-		components: [row1, row2],
+		components: [
+			{
+				type: 1 /** ActionRow */,
+				components: [
+					new SelectMenuComponent({
+						type: 3 /** SelectMenu */,
+						options: participants.first(25).map(
+							(participant, i) =>
+								new SelectMenuOption({
+									...translate("commands.clan.currentRiverRace.menu.options", {
+										lng,
+										participant,
+										rank: i + 1,
+									}),
+									value: participant.tag,
+								})
+						),
+						placeholder: translate(
+							"commands.clan.currentRiverRace.menu.placeholder",
+							{ lng }
+						),
+						custom_id: buildCustomMenuId(MenuActions.PlayerInfo),
+					}),
+				],
+			},
+			{
+				type: 1 /** ActionRow */,
+				components: [
+					createActionButton(
+						ButtonActions.ClanInfo,
+						{
+							label: translate("commands.clan.buttons.clanInfo.label", {
+								lng,
+							}),
+						},
+						tag
+					),
+					createActionButton(
+						ButtonActions.RiverRaceLog,
+						{
+							label: translate("commands.clan.buttons.riverRaceLog.label", {
+								lng,
+							}),
+						},
+						tag
+					),
+				],
+			},
+		],
 		ephemeral,
 	};
 };
