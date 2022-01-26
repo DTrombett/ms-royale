@@ -38,7 +38,7 @@
     "discord.js": "^14.0.0-dev.1643155629.b640272",
     "dotenv": "^14.3.2",
     "erlpack": "github:discord/erlpack",
-    "i18next": "^21.6.7",
+    "i18next": "^21.6.10",
     "i18next-fs-backend": "^1.1.4",
     "prettier": "^2.5.1",
     "utf-8-validate": "^5.0.8",
