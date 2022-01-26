@@ -105,6 +105,39 @@
 					"label": "Member list"
 				}
 			},
+			"members": {
+				"title": "Clan members {{size}}/50",
+				"invalidSort": "You didn't provide a valid sort option. Try choosing one of the options that appears in the command!",
+				"menu": {
+					"options": {
+						"r": {
+							"label": "Rank",
+							"description": "Sort by the rank of the member"
+						},
+						"dpw": {
+							"label": "Weekly donations",
+							"description": "Sort by the amount of donations done in the last week"
+						},
+						"lsd": {
+							"label": "Last seen (desc)",
+							"description": "Sort by the last time the member was online (descending)"
+						},
+						"n": {
+							"label": "Name",
+							"description": "Sort the members alphabetically"
+						},
+						"ls": {
+							"label": "Last seen",
+							"description": "Sort by the last time the member was online"
+						},
+						"drpw": {
+							"label": "Weekly donations received",
+							"description": "Sort by the amount of donations received in the last week"
+						}
+					},
+					"placeholder": "Sort by..."
+				}
+			},
 			"search": {
 				"menu": {
 					"placeholder": "Choose a clan...",

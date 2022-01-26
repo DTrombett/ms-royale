@@ -111,7 +111,12 @@ export type ButtonActionsTypes = {
 	[ButtonActions.PlayerInfo]: [player: APITag];
 	[ButtonActions.PlayerAchievements]: [player: APITag];
 	[ButtonActions.PlayerUpcomingChests]: [player: APITag];
-	[ButtonActions.ClanMembers]: [clan: APITag];
+	[ButtonActions.ClanMembers]: [
+		clan: APITag,
+		id?: Snowflake,
+		index?: `${number}`,
+		sort?: SortMethod
+	];
 };
 
 /**
@@ -157,97 +162,103 @@ export enum CustomEmojis {
 	/**
 	 * The emoji of a war trophy
 	 */
-	warTrophy = "<:wartrophy:906920944868671498>",
+	WarTrophy = "<:wartrophy:906920944868671498>",
 
 	/**
 	 * The profile emoji of a user
 	 */
-	user = "<:user:915686990723285022>",
+	User = "<:user:915686990723285022>",
 
 	/**
 	 * The emoji of donations
 	 */
-	donations = "<:donations:915687097984241685>",
+	Donations = "<:donations:915687097984241685>",
 
 	/**
 	 * The emoji for clan members
 	 */
-	clanMembers = "<:members:915688913413210123>",
+	ClanMembers = "<:members:915688913413210123>",
 
 	/**
 	 * The emoji of the king level
 	 */
-	kingLevel = "<:kinglevel:916016946774958101>",
+	KingLevel = "<:kinglevel:916016946774958101>",
 
 	/**
 	 * The emoji for copying a deck
 	 */
-	copyDeck = "<:copydeck:916029046700261417>",
+	CopyDeck = "<:copydeck:916029046700261417>",
 
 	/**
 	 * The emoji of a clan invite
 	 */
-	clanInvite = "<:claninvite:916032272631750698>",
+	ClanInvite = "<:claninvite:916032272631750698>",
 
 	/**
 	 * The emoji for a win
 	 */
-	win = "<:win:916339474403848223>",
+	Win = "<:win:916339474403848223>",
 
 	/**
 	 * The emoji for a loss
 	 */
-	lose = "<:lose:916339513591222322>",
+	Lose = "<:lose:916339513591222322>",
 
 	/**
 	 * The emoji for cards
 	 */
-	cards = "<:cards:916340767021203478>",
+	Cards = "<:cards:916340767021203478>",
 
 	/**
 	 * The emoji for a medal
 	 */
-	medal = "<:medal:918514839670886400>",
+	Medal = "<:medal:918514839670886400>",
 
 	/**
 	 * The emoji for a war point
 	 */
-	warPoint = "<:warpoint:918522796747915304>",
+	WarPoint = "<:warpoint:918522796747915304>",
 
 	/**
 	 * The emoji for a boat attack
 	 */
-	boatAttack = "<:boatattack:918909257745825793>",
+	BoatAttack = "<:boatattack:918909257745825793>",
 
 	/**
 	 * The emoji for a war deck
 	 */
-	warDeck = "<:wardeck:918908890761035817>",
+	WarDeck = "<:wardeck:918908890761035817>",
 
 	/**
 	 * The emoji for a war in a training state
 	 */
-	training = "<:training:927624101219160207>",
+	Training = "<:training:927624101219160207>",
 
 	/**
 	 * The emoji for a clan war
 	 */
-	clanWar = "<:clanwar:933014402880393237>",
+	ClanWar = "<:clanwar:933014402880393237>",
 
 	/**
 	 * The emoji for an achievement
 	 */
-	achievement = "<:achievement:931157677130784778>",
+	Achievement = "<:achievement:931157677130784778>",
 
 	/**
 	 * The emoji for a chest
 	 */
-	chest = "<:chest:931886438541303839>",
+	Chest = "<:chest:931886438541303839>",
+
+	/**
+	 * The emoji for received donations
+	 */
+	DonationsReceived = "<:donationsreceived:935866046815014952>",
 }
 
 /**
  * Emojis for the bot
  */
+
 export enum Emojis {
 	/**
 	 * The emoji for a check mark
@@ -370,6 +381,16 @@ export enum Emojis {
 	ForwardArrow = "➡",
 
 	/**
+	 * The emoji for an up arrow
+	 */
+	UpArrow = "⬆",
+
+	/**
+	 * The emoji for a down arrow
+	 */
+	DownArrow = "⬇",
+
+	/**
 	 * The emoji for a medal
 	 */
 	medal = "🏅",
@@ -413,6 +434,16 @@ export enum Emojis {
 	 * The emoji for today
 	 */
 	Today = "📅",
+
+	/**
+	 * The emoji for a watch
+	 */
+	Watch = "⌚",
+
+	/**
+	 * The emoji for the alphabet
+	 */
+	Alphabet = "🔤",
 }
 
 /**
@@ -547,6 +578,11 @@ export enum MenuActions {
 	 * Show info about a clan
 	 */
 	ClanInfo = "clan",
+
+	/**
+	 * Show info about a clan's members
+	 */
+	ClanMembers = "members",
 }
 
 /**
@@ -555,6 +591,7 @@ export enum MenuActions {
 export type MenuActionsTypes = {
 	[MenuActions.PlayerInfo]: [];
 	[MenuActions.ClanInfo]: [];
+	[MenuActions.ClanMembers]: [tag: APITag, id?: Snowflake];
 };
 
 /**
@@ -564,6 +601,18 @@ export type ReplyableInteraction =
 	| ButtonInteraction
 	| CommandInteraction
 	| SelectMenuInteraction;
+
+/**
+ * How members should be sorted in a clan
+ */
+export enum SortMethod {
+	Rank = "r",
+	DonationsPerWeek = "dpw",
+	LastSeenDesc = "lsd",
+	Name = "n",
+	LastSeen = "ls",
+	DonationsReceivedPerWeek = "drpw",
+}
 
 /**
  * A string identifier for a translation value

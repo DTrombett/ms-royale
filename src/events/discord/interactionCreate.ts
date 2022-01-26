@@ -1,9 +1,9 @@
 import { GuildChannel } from "discord.js";
-import type { EventOptions } from "../../util";
+import type { EventOptions, SortMethod } from "../../util";
 import {
 	ButtonActions,
 	clanInfo,
-	// clanMembers,
+	clanMembers,
 	currentRiverRace,
 	CustomClient,
 	destructureCustomButtonId,
@@ -113,13 +113,28 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
+				case MenuActions.ClanMembers:
+					(interaction.user.id === args[1]
+						? interaction.deferUpdate()
+						: interaction.deferReply({ ephemeral: true })
+					)
+						.then(async () =>
+							interaction.editReply({
+								...(await clanMembers(this.client, args[0]!, {
+									lng,
+									sort: interaction.values[0] as SortMethod,
+									id: args[1]!,
+								})),
+							})
+						)
+						.catch(CustomClient.printToStderr);
+					break;
 				default:
 					void CustomClient.printToStderr(
 						`Received unknown action: ${action as string}`,
 						true
 					);
-					await interaction.deferReply({ ephemeral: true });
-					break;
+					await interaction.deferUpdate();
 			}
 			return;
 		}
@@ -208,22 +223,21 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						.catch(CustomClient.printToStderr);
 					break;
 				case ButtonActions.ClanMembers:
-					interaction
-						.reply({
-							content: "Questo comando non è ancora disponibile!",
-							ephemeral: true,
-						})
+					(interaction.user.id === args[1]
+						? interaction.deferUpdate()
+						: interaction.deferReply({ ephemeral: true })
+					)
+						.then(async () =>
+							interaction.editReply(
+								await clanMembers(this.client, args[0], {
+									lng: getInteractionLocale(interaction),
+									index: args[2] !== undefined ? Number(args[2]) : undefined,
+									sort: args[3],
+									id: interaction.user.id,
+								})
+							)
+						)
 						.catch(CustomClient.printToStderr);
-					// interaction
-					// 	.deferReply({ ephemeral: true })
-					// 	.then(async () =>
-					// 		interaction.editReply(
-					// 			await clanMembers(this.client, args[0], {
-					// 				lng: getInteractionLocale(interaction),
-					// 			})
-					// 		)
-					// 	)
-					// 	.catch(CustomClient.printToStderr);
 					break;
 				case ButtonActions.CurrentRiverRace:
 					interaction
@@ -278,7 +292,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						`Received unknown action: ${action as string}`,
 						true
 					);
-					break;
+					await interaction.deferUpdate();
 			}
 		}
 	},

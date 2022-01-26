@@ -12,12 +12,12 @@ export const ButtonEmojis: Record<ButtonActions, CustomEmojis | Emojis> = {
 	[ButtonActions.NextPage]: Emojis.ForwardArrow,
 	[ButtonActions.PreviousPage]: Emojis.BackArrow,
 	[ButtonActions.RiverRaceLog]: Emojis.Log,
-	[ButtonActions.CurrentRiverRace]: CustomEmojis.clanWar,
+	[ButtonActions.CurrentRiverRace]: CustomEmojis.ClanWar,
 	[ButtonActions.ClanInfo]: Emojis.CrossedSwords,
-	[ButtonActions.PlayerInfo]: CustomEmojis.user,
-	[ButtonActions.PlayerAchievements]: CustomEmojis.achievement,
-	[ButtonActions.PlayerUpcomingChests]: CustomEmojis.chest,
-	[ButtonActions.ClanMembers]: CustomEmojis.clanMembers,
+	[ButtonActions.PlayerInfo]: CustomEmojis.User,
+	[ButtonActions.PlayerAchievements]: CustomEmojis.Achievement,
+	[ButtonActions.PlayerUpcomingChests]: CustomEmojis.Chest,
+	[ButtonActions.ClanMembers]: CustomEmojis.ClanMembers,
 };
 
 /**

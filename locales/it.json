@@ -105,6 +105,39 @@
 					"label": "Lista membri"
 				}
 			},
+			"members": {
+				"title": "Membri del clan {{size}}/50",
+				"invalidSort": "Non hai selezionato un ordine valido. Prova a cliccare una delle opzioni che appaiono nel comando!",
+				"menu": {
+					"options": {
+						"r": {
+							"label": "Posizione in classifica",
+							"description": "Ordina dal membro con la posizione in classifica migliore"
+						},
+						"dpw": {
+							"label": "Donazioni settimanali",
+							"description": "Ordina dal membro con più donazioni nell'ultima settimana"
+						},
+						"lsd": {
+							"label": "Ultimo accesso meno recente",
+							"description": "Ordina dal membro che ha fatto l'accesso meno recentemente"
+						},
+						"n": {
+							"label": "Nome",
+							"description": "Ordina i membri alfabeticamente"
+						},
+						"ls": {
+							"label": "Ultimo accesso",
+							"description": "Ordina dal membro che ha fatto l'accesso più recentemente"
+						},
+						"drpw": {
+							"label": "Donazioni ricevute settimanali",
+							"description": "Ordina dal membro con più donazioni ricevute nell'ultima settimana"
+						}
+					},
+					"placeholder": "Ordina per..."
+				}
+			},
 			"search": {
 				"menu": {
 					"placeholder": "Scegli un clan...",
@@ -114,9 +147,6 @@
 					}
 				},
 				"notFound": "Nessun clan trovato!"
-			},
-			"members": {
-				"title": "Membri del clan {{size}}/50"
 			},
 			"riverRaceLog": {
 				"footer": "Guerra terminata il",

@@ -533,8 +533,7 @@ export const command: CommandOptions = {
 				collector?.on("collect", (message) => {
 					const input = `${message.content}\n`;
 
-					if (message.deletable)
-						message.delete().catch(CustomClient.printToStderr);
+					message.delete().catch(CustomClient.printToStderr);
 					output += input;
 					child.stdin?.write(input);
 				});
@@ -544,9 +543,9 @@ export const command: CommandOptions = {
 				collector?.stop();
 				unlink("./tmp/cpp.exe").catch(CustomClient.printToStderr);
 				await interaction.editReply({
-					content: `${output}\n\nProcesso terminato in ${
+					content: `${output}\n\n**Processo terminato in ${
 						Date.now() - now
-					}ms con codice ${exitCode}`,
+					}ms con codice ${exitCode}**`,
 				});
 				break;
 			default:

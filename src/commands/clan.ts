@@ -4,13 +4,17 @@ import type { Snowflake } from "discord-api-types/v9";
 import type { CommandOptions } from "../util";
 import Constants, {
 	autocompleteClanTag,
+	autocompleteSort,
+	cast,
 	clanInfo,
+	clanMembers,
 	currentRiverRace,
 	CustomClient,
 	getInteractionLocale,
 	importJson,
 	riverRaceLog,
 	searchClan,
+	SortMethod,
 	translate,
 } from "../util";
 
@@ -19,6 +23,7 @@ enum SubCommands {
 	Info = "info",
 	RiverRaceLog = "guerre-passate",
 	CurrentRiverRace = "guerra",
+	ClanMembers = "membri",
 }
 enum SearchOptions {
 	Name = "nome",
@@ -36,6 +41,10 @@ enum RiverRaceLogOptions {
 enum CurrentRiverRaceOptions {
 	Tag = "tag",
 }
+enum ClanMembersOptions {
+	Tag = "tag",
+	Sort = "ordine",
+}
 enum AutoCompletableInfoOptions {
 	Tag = "tag",
 }
@@ -44,6 +53,10 @@ enum AutoCompletableRiverRaceLogOptions {
 }
 enum AutoCompletableRiverRaceOptions {
 	Tag = "tag",
+}
+enum AutoCompletableClanMembersOptions {
+	Tag = "tag",
+	Sort = "ordine",
 }
 
 export const command: CommandOptions = {
@@ -118,6 +131,25 @@ export const command: CommandOptions = {
 						.setDescription(
 							"Il tag del clan. Non fa differenza tra maiuscole e minuscole ed è possibile omettere l'hashtag"
 						)
+						.setAutocomplete(true)
+				)
+		)
+		.addSubcommand((clanMembersCmd) =>
+			clanMembersCmd
+				.setName(SubCommands.ClanMembers)
+				.setDescription("Mostra i membri di un clan")
+				.addStringOption((tag) =>
+					tag
+						.setName(ClanMembersOptions.Tag)
+						.setDescription(
+							"Il tag del clan. Non fa differenza tra maiuscole e minuscole ed è possibile omettere l'hashtag"
+						)
+						.setAutocomplete(true)
+				)
+				.addStringOption((sort) =>
+					sort
+						.setName(ClanMembersOptions.Sort)
+						.setDescription("Come ordinare i membri. Default: rank")
 						.setAutocomplete(true)
 				)
 		),
@@ -281,6 +313,54 @@ export const command: CommandOptions = {
 					...(await currentRiverRace(this.client, tag, { lng })),
 				});
 				break;
+			case SubCommands.ClanMembers:
+				let sort =
+					interaction.options.getString(ClanMembersOptions.Sort) ??
+					SortMethod.Rank;
+
+				if (!Object.values(SortMethod).includes(sort as SortMethod))
+					if (Object.keys(SortMethod).includes(sort))
+						sort = SortMethod[sort as keyof typeof SortMethod];
+					else {
+						await interaction.reply({
+							content: translate("commands.clan.members.invalidSort", { lng }),
+							ephemeral: true,
+						});
+						break;
+					}
+
+				await interaction.deferReply();
+				cast<SortMethod>(sort);
+				tag = interaction.options.getString(ClanMembersOptions.Tag);
+				if (tag == null) {
+					const playerTag = (
+						await importJson("players").catch(
+							() => ({} as Record<Snowflake, APITag>)
+						)
+					)[interaction.user.id];
+
+					if (playerTag !== undefined)
+						tag = await this.client.players
+							.fetch(playerTag)
+							.then((p) => p.clan?.tag ?? null)
+							.catch(() => null);
+					if (tag == null) {
+						await interaction.editReply({
+							content: translate("commands.clan.noTag", { lng }),
+						});
+						break;
+					}
+				}
+
+				// Fetch the clan members and display it
+				await interaction.editReply({
+					...(await clanMembers(this.client, tag, {
+						lng,
+						id: interaction.user.id,
+						sort,
+					})),
+				});
+				break;
 			default:
 				void CustomClient.printToStderr(
 					new Error(
@@ -299,6 +379,7 @@ export const command: CommandOptions = {
 
 		switch (
 			option.name as
+				| AutoCompletableClanMembersOptions
 				| AutoCompletableInfoOptions
 				| AutoCompletableRiverRaceLogOptions
 				| AutoCompletableRiverRaceOptions
@@ -306,6 +387,10 @@ export const command: CommandOptions = {
 			case AutoCompletableInfoOptions.Tag:
 				// Autocomplete the clan tag
 				await autocompleteClanTag(this.client, option, interaction);
+				break;
+			case AutoCompletableClanMembersOptions.Sort:
+				// Autocomplete the sort method
+				await autocompleteSort(option, interaction);
 				break;
 			default:
 				void CustomClient.printToStderr(

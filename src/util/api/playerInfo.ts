@@ -90,7 +90,7 @@ export const playerInfo: APIMethod<string> = async (
 									`https://link.clashroyale.com/deck/it?deck=${player.deck
 										.map((card) => card.id)
 										.join(";")}&id=${player.id.slice(1)}`
-							  )} ${CustomEmojis.copyDeck}`
+							  )} ${CustomEmojis.CopyDeck}`
 							: ""
 				  }`
 				: translate("commands.player.info.fields.deck.empty", { lng }),

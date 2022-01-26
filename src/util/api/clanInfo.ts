@@ -127,7 +127,7 @@ export const clanInfo: APIMethod<string> = async (
 									fallbackLng,
 								}),
 								value: member.tag,
-								emoji: resolveEmojiIdentifier(CustomEmojis.user),
+								emoji: resolveEmojiIdentifier(CustomEmojis.User),
 							})),
 						placeholder: translate("commands.clan.info.menu.placeholder", {
 							lng,

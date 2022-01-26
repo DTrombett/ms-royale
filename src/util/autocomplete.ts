@@ -3,6 +3,7 @@ import type {
 	ApplicationCommandOptionChoice,
 	AutocompleteInteraction,
 } from "discord.js";
+import { SortMethod } from ".";
 import type CustomClient from "./CustomClient";
 import { getInteractionLocale } from "./locales";
 import matchStrings from "./matchStrings";
@@ -93,5 +94,29 @@ export const autocompletePlayerTag = (
 			name: translate("common.tagPreview", { lng, structure }),
 			value: structure.tag,
 		}))
+	);
+};
+
+/**
+ * Autocomplete a sort option.
+ * @param option - The option provided by the user
+ * @param interaction - The interaction to use
+ */
+export const autocompleteSort = (
+	option: ApplicationCommandOptionChoice,
+	interaction: AutocompleteInteraction
+) => {
+	const lng = getInteractionLocale(interaction);
+	const value = option.value.toString().toLowerCase();
+
+	return interaction.respond(
+		Object.values(SortMethod)
+			.map((sort) => ({
+				name: translate(`commands.clan.members.menu.options.${sort}.label`, {
+					lng,
+				}),
+				value: sort,
+			}))
+			.filter(({ name }) => name.toLowerCase().includes(value))
 	);
 };

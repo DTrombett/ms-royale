@@ -57,10 +57,10 @@ export const destructureCustomMenuId = <T extends MenuActions>(
 	action: T;
 	args: MenuActionsTypes[T];
 } => {
-	const args = id.split("-") as MenuActionsTypes[T];
+	const [action, ...args] = id.split("-") as [T, ...MenuActionsTypes[T]];
 
 	return {
-		action: args.splice(0, 1)[0] as T,
+		action,
 		args,
 	};
 };
