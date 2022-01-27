@@ -33,8 +33,10 @@ export class CustomClient extends ClientRoyale {
 		intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 		allowedMentions: { parse: [], repliedUser: false, roles: [], users: [] },
 		failIfNotExists: false,
-		http: { api: "https://canary.discord.com/api" },
-		invalidRequestWarningInterval: 9_998,
+		rest: {
+			api: "https://canary.discord.com/api",
+			invalidRequestWarningInterval: 9_998,
+		},
 		makeCache: Options.cacheWithLimits({
 			...Options.defaultMakeCacheSettings,
 			BaseGuildEmojiManager: 0,
@@ -43,7 +45,7 @@ export class CustomClient extends ClientRoyale {
 			GuildInviteManager: 0,
 			GuildMemberManager: 0,
 			GuildStickerManager: 0,
-			MessageManager: 100,
+			MessageManager: 0,
 			PresenceManager: 0,
 			ReactionManager: 0,
 			ReactionUserManager: 0,
@@ -55,9 +57,6 @@ export class CustomClient extends ClientRoyale {
 		presence: {
 			activities: [{ name: "Clash Royale", type: 0 }],
 		},
-		rejectOnRateLimit: () => true,
-		restGlobalRateLimit: 50,
-		restTimeOffset: 1000,
 		shards: "auto",
 	});
 
@@ -158,7 +157,7 @@ export class CustomClient extends ClientRoyale {
 	 * @returns A promise that resolves when the client is ready
 	 */
 	async login() {
-		await Promise.all([
+		return Promise.all([
 			use(Backend).init({
 				backend: {
 					loadPath: fileURLToPath(
@@ -180,9 +179,8 @@ export class CustomClient extends ClientRoyale {
 					void importJson<any>(file.replace(".json", ""));
 			}),
 			loadCommands(this),
-			loadEvents(this, EventType.Discord),
-			loadEvents(this, EventType.APIRoyale),
 			this.bot.login(),
+			...Object.values(EventType).map((type) => loadEvents(this, type)),
 		]);
 	}
 }

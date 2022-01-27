@@ -2,6 +2,7 @@ import type {
 	SlashCommandBuilder,
 	SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
+import type { RestEvents } from "@discordjs/rest";
 import type { APITag, ClientEvents, ClientRoyale } from "apiroyale";
 import type { Snowflake } from "discord-api-types/v9";
 import type {
@@ -455,10 +456,14 @@ export type EventOptions<
 		? keyof ClientEvents
 		: T extends EventType.Discord
 		? keyof DiscordEvents
+		: T extends EventType.Rest
+		? keyof RestEvents
 		: never = T extends EventType.APIRoyale
 		? keyof ClientEvents
 		: T extends EventType.Discord
 		? keyof DiscordEvents
+		: T extends EventType.Rest
+		? keyof RestEvents
 		: never
 > = {
 	/**
@@ -480,6 +485,8 @@ export type EventOptions<
 			? ClientEvents[K]
 			: K extends keyof DiscordEvents
 			? DiscordEvents[K]
+			: K extends keyof RestEvents
+			? RestEvents[K]
 			: never
 	) => Awaitable<void>;
 
@@ -495,6 +502,7 @@ export type EventOptions<
 export enum EventType {
 	Discord = "discord",
 	APIRoyale = "royale",
+	Rest = "rest",
 }
 
 /**

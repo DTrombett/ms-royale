@@ -1,3 +1,4 @@
+import type { RestEvents } from "@discordjs/rest";
 import type { ClientEvents, ClientRoyale } from "apiroyale";
 import type { Client, ClientEvents as DiscordEvents } from "discord.js";
 import type { CustomClient, EventOptions } from ".";
@@ -12,10 +13,14 @@ export class Event<
 		? keyof ClientEvents
 		: T extends EventType.Discord
 		? keyof DiscordEvents
+		: T extends EventType.Rest
+		? keyof RestEvents
 		: never = T extends EventType.APIRoyale
 		? keyof ClientEvents
 		: T extends EventType.Discord
 		? keyof DiscordEvents
+		: T extends EventType.Rest
+		? keyof RestEvents
 		: never
 > {
 	/**
@@ -89,6 +94,12 @@ export class Event<
 						this.on as Parameters<Client["on"]>[1]
 					);
 					break;
+				case EventType.Rest:
+					this.client.bot.rest.on(
+						this.name as keyof RestEvents,
+						this.on as Parameters<Client["rest"]["on"]>[1]
+					);
+					break;
 				default:
 			}
 		if (this.once)
@@ -105,29 +116,14 @@ export class Event<
 						this.once as Parameters<Client["once"]>[1]
 					);
 					break;
+				case EventType.Rest:
+					this.client.bot.rest.once(
+						this.name as keyof RestEvents,
+						this.on as Parameters<Client["rest"]["on"]>[1]
+					);
+					break;
 				default:
 			}
-	}
-
-	/**
-	 * Emits this event.
-	 * @param args - The arguments to pass to the event
-	 */
-	emit(...args: Parameters<NonNullable<this["on"]>>): boolean {
-		switch (this.type) {
-			case EventType.APIRoyale:
-				return this.client.emit(
-					this.name as keyof ClientEvents,
-					...(args as Parameters<ClientRoyale["emit"]>[1])
-				);
-			case EventType.Discord:
-				return this.client.bot.emit(
-					this.name as keyof DiscordEvents,
-					...(args as Parameters<Client["emit"]>[1] as [])
-				);
-			default:
-		}
-		return false;
 	}
 
 	/**
@@ -148,6 +144,12 @@ export class Event<
 						this.on as Parameters<Client["on"]>[1]
 					);
 					break;
+				case EventType.Rest:
+					this.client.bot.rest.off(
+						this.name as keyof RestEvents,
+						this.on as Parameters<Client["rest"]["on"]>[1]
+					);
+					break;
 				default:
 			}
 		if (this.once)
@@ -164,26 +166,14 @@ export class Event<
 						this.once as Parameters<Client["once"]>[1]
 					);
 					break;
+				case EventType.Rest:
+					this.client.bot.rest.off(
+						this.name as keyof RestEvents,
+						this.on as Parameters<Client["rest"]["on"]>[1]
+					);
+					break;
 				default:
 			}
-	}
-
-	/**
-	 * Checks if this event has the once listener attached.
-	 */
-	hasOnceListener(): this is this & { once: NonNullable<Event<T, K>["once"]> } {
-		return Boolean(
-			this.once && this.client.listeners(this.name).includes(this.once)
-		);
-	}
-
-	/**
-	 * Checks if this event has the on listener attached.
-	 */
-	hasOnListener(): this is this & { on: NonNullable<Event<T, K>["on"]> } {
-		return Boolean(
-			this.on && this.client.listeners(this.name).includes(this.on)
-		);
 	}
 }
 
