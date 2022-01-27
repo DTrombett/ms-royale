@@ -11,6 +11,7 @@ export * from "./CustomClient";
 export * from "./customId";
 export * from "./database";
 export * from "./eval";
+export * from "./occurrences";
 export * from "./Event";
 export * from "./getRandomInt";
 export * from "./getRandomString";

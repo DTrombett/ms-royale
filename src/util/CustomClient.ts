@@ -13,6 +13,7 @@ import { importJson } from "./database";
 import type Event from "./Event";
 import loadCommands from "./loadCommands";
 import loadEvents from "./loadEvents";
+import occurrences from "./occurrences";
 import { EventType } from "./types";
 
 const locale = Constants.locale();
@@ -21,6 +22,11 @@ const locale = Constants.locale();
  * A custom class to interact with Clash Royale API and Discord
  */
 export class CustomClient extends ClientRoyale {
+	/**
+	 * Number of logged lines
+	 */
+	static lines = 0;
+
 	/**
 	 * If the client is blocked and should not perform any action
 	 */
@@ -123,6 +129,7 @@ export class CustomClient extends ClientRoyale {
 		const formatted = CustomClient.format(message);
 
 		stdout.write(formatted);
+		CustomClient.lines += occurrences(formatted, "\n");
 		if (log) await CustomClient.logToFile(formatted);
 	}
 
@@ -135,6 +142,7 @@ export class CustomClient extends ClientRoyale {
 		const formatted = CustomClient.format(message);
 
 		stderr.write(formatted);
+		CustomClient.lines += occurrences(formatted, "\n");
 		if (log) await CustomClient.logToFile(formatted);
 	}
 
