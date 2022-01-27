@@ -11,7 +11,7 @@ import { Constants, Util } from "discord.js";
 import type { Buffer } from "node:buffer";
 import type { ChildProcess } from "node:child_process";
 import { exec, execFile } from "node:child_process";
-import { createWriteStream } from "node:fs";
+import { createReadStream, createWriteStream } from "node:fs";
 import { unlink } from "node:fs/promises";
 import {
 	argv,
@@ -38,6 +38,7 @@ enum SubCommands {
 	uptimeCmd = "uptime",
 	pull = "pull",
 	cpp = "cpp",
+	logs = "logs",
 }
 enum SubCommandOptions {
 	cmd = "cmd",
@@ -50,6 +51,7 @@ enum SubCommandOptions {
 	code = "code",
 	include = "include",
 	namespaces = "namespaces",
+	lines = "lines",
 }
 
 const bytesToMb = (memory: number) =>
@@ -213,6 +215,23 @@ export const command: CommandOptions = {
 						)
 				)
 		)
+		.addSubcommand((logs) =>
+			logs
+				.setName(SubCommands.logs)
+				.setDescription("Mostra i log del bot")
+				.addIntegerOption((lines) =>
+					lines
+						.setName(SubCommandOptions.lines)
+						.setDescription("Numero di righe da mostrare (default: max)")
+				)
+				.addBooleanOption((ephemeral) =>
+					ephemeral
+						.setName(SubCommandOptions.ephemeral)
+						.setDescription(
+							"Scegli se mostrare il risultato privatamente (default: true)"
+						)
+				)
+		)
 		.addSubcommand((test) =>
 			test.setName(SubCommands.test).setDescription("Un comando di test")
 		),
@@ -229,6 +248,8 @@ export const command: CommandOptions = {
 			commands: string[],
 			error: Error | undefined,
 			exitCode: number,
+			lines: number | null,
+			logs: string[],
 			memory: NodeJS.MemoryUsage,
 			output: string,
 			processUptime: Date,
@@ -546,6 +567,51 @@ export const command: CommandOptions = {
 					content: `${output}\n\n**Processo terminato in ${
 						Date.now() - now
 					}ms con codice ${exitCode}**`,
+				});
+				break;
+			case SubCommands.logs:
+				logs = await new Promise<string[]>((resolve) => {
+					let data = "";
+
+					createReadStream(`./debug.log`)
+						.setEncoding("utf8")
+						.on("data", (chunk) => (data += chunk))
+						.once("end", () => {
+							resolve(data.split("\n"));
+						})
+						.once("error", (err) => {
+							interaction
+								.editReply({
+									content: `Errore durante la lettura del file di log: ${CustomClient.inspect(
+										err
+									)}`,
+								})
+								.catch(CustomClient.printToStderr);
+							resolve([]);
+						});
+				});
+				if (!logs.length) break;
+				const { length } = logs;
+
+				lines = interaction.options.getInteger(SubCommandOptions.lines);
+				if (lines != null && lines > 0)
+					logs = logs.slice(Math.max(0, length - lines - 1));
+				while (logs.join("\n").length > 4096 - 7) logs.shift();
+				await interaction.editReply({
+					content: `Logs letti in ${
+						Date.now() - now
+					}ms\nRighe totali: ${length}\nRighe visualizzate: ${logs.length}`,
+					embeds: [
+						new Embed()
+							.setAuthor({
+								name: interaction.user.tag,
+								iconURL: interaction.user.displayAvatarURL(),
+							})
+							.setTitle("Logs")
+							.setDescription(codeBlock(Util.escapeCodeBlock(logs.join("\n"))))
+							.setColor(Constants.Colors.BLURPLE)
+							.setTimestamp(),
+					],
 				});
 				break;
 			default:
