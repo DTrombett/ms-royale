@@ -35,7 +35,7 @@
     "bufferutil": "^4.0.6",
     "cron-parser": "^4.2.1",
     "discord-api-types": "^0.26.1",
-    "discord.js": "^14.0.0-dev.1643285129.72767a1",
+    "discord.js": "^14.0.0-dev.1643544396.388f535",
     "dotenv": "^14.3.2",
     "erlpack": "github:discord/erlpack",
     "i18next": "^21.6.10",

@@ -1,5 +1,5 @@
 import { ClientRoyale } from "apiroyale";
-import { Client, Intents, Options } from "discord.js";
+import { Client, Options } from "discord.js";
 import { use } from "i18next";
 import Backend from "i18next-fs-backend";
 import { createWriteStream } from "node:fs";
@@ -7,6 +7,7 @@ import { readdir } from "node:fs/promises";
 import { stderr, stdout } from "node:process";
 import { fileURLToPath, URL } from "node:url";
 import { inspect } from "node:util";
+import color, { Color } from "./colors";
 import type Command from "./Command";
 import Constants from "./Constants";
 import { importJson } from "./database";
@@ -36,7 +37,7 @@ export class CustomClient extends ClientRoyale {
 	 * The Discord client
 	 */
 	bot = new Client({
-		intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+		intents: ["Guilds", "GuildMessages"],
 		allowedMentions: { parse: [], repliedUser: false, roles: [], users: [] },
 		failIfNotExists: false,
 		rest: {
@@ -141,7 +142,7 @@ export class CustomClient extends ClientRoyale {
 	static async printToStderr(this: void, message: unknown, log = false) {
 		const formatted = CustomClient.format(message);
 
-		stderr.write(formatted);
+		stderr.write(color(formatted, Color.Red));
 		CustomClient.lines += occurrences(formatted, "\n");
 		if (log) await CustomClient.logToFile(formatted);
 	}

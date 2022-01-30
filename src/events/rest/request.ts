@@ -1,5 +1,5 @@
 import type { EventOptions } from "../../util";
-import { CustomClient, EventType } from "../../util";
+import { Color, color, CustomClient, EventType } from "../../util";
 
 export const requests: {
 	[key: `${string} /${string}`]: [number, number] | undefined;
@@ -9,11 +9,9 @@ export const event: EventOptions<EventType.Rest, "request"> = {
 	name: "request",
 	type: EventType.Rest,
 	on(request) {
-		void CustomClient.printToStdout(
-			(requests[`${request.method.toUpperCase()} ${request.path}`] = [
-				CustomClient.lines,
-				Date.now(),
-			])
-		);
+		const text = `${request.method.toUpperCase()} ${request.path}` as const;
+
+		requests[text] = [CustomClient.lines, Date.now()];
+		void CustomClient.printToStdout(color(text, Color.Red));
 	},
 };
