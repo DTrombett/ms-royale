@@ -169,7 +169,7 @@
 				}
 			},
 			"currentRiverRace": {
-				"title": "Week {{race.week}} - $t(commands.clan.currentRiverRace.day, { \"context\": \"{{training}}\" }) {{race.day}}",
+				"title": "Week {{race.week}} - $t(commands.clan.currentRiverRace.day, { \"context\": \"{{training}}\" }) {{day}}",
 				"day_true": "Training day",
 				"day_false": "War day",
 				"field": {

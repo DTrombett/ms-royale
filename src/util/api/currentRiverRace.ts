@@ -46,6 +46,7 @@ export const currentRiverRace: APIMethod<string> = async (
 			translate("commands.clan.currentRiverRace.title", {
 				lng,
 				race,
+				day: training ? race.day : race.day - 3,
 				training,
 			})
 		)
