@@ -50,11 +50,7 @@ export const currentRiverRace: APIMethod<string> = async (
 				training,
 			})
 		)
-		.setColor(
-			training
-				? Colors.Green
-				: Colors.DarkPurple
-		)
+		.setColor(training ? Colors.Green : Colors.DarkPurple)
 		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(race.lastUpdate)
 		.setThumbnail(race.clan.badgeUrl)
