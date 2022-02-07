@@ -1,6 +1,6 @@
 import { Embed, hyperlink } from "@discordjs/builders";
 import { Player } from "apiroyale";
-import { Constants as DiscordConstants } from "discord.js";
+import { Colors } from "discord.js";
 import type { APIMethod } from "..";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
@@ -44,7 +44,7 @@ export const playerInfo: APIMethod<string> = async (
 	);
 	const embed = new Embed()
 		.setTitle(translate("commands.player.info.title", { lng, player }))
-		.setColor(DiscordConstants.Colors.BLUE)
+		.setColor(Colors.Blue)
 		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(player.lastUpdate)
 		.setURL(Constants.playerLink(tag))

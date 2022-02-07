@@ -1,7 +1,7 @@
 import { Embed } from "@discordjs/builders";
 import { Clan } from "apiroyale";
 import type { APISelectMenuOption } from "discord-api-types/v9";
-import { Constants as DiscordConstants, SelectMenuComponent } from "discord.js";
+import { Colors, SelectMenuComponent } from "discord.js";
 import type { APIMethod } from "..";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
@@ -46,7 +46,7 @@ export const clanInfo: APIMethod<string> = async (
 	const embed = new Embed()
 		.setTitle(translate("commands.clan.info.title", { lng, clan, fallbackLng }))
 		.setDescription(clan.description)
-		.setColor(DiscordConstants.Colors.BLUE)
+		.setColor(Colors.Blue)
 		.setFooter({ text: translate("common.lastUpdated", { lng, fallbackLng }) })
 		.setTimestamp(clan.lastUpdate)
 		.setThumbnail(clan.badgeUrl)

@@ -1,6 +1,6 @@
 import { bold, Embed } from "@discordjs/builders";
 import { Player } from "apiroyale";
-import { Constants as DiscordConstants } from "discord.js";
+import { Colors } from "discord.js";
 import type { APIMethod } from "..";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
@@ -41,7 +41,7 @@ export const playerAchievements: APIMethod<string> = async (
 			url: Constants.playerLink(tag),
 		})
 		.setTitle(translate("commands.player.achievements.title", { lng }))
-		.setColor(DiscordConstants.Colors.GREEN)
+		.setColor(Colors.Green)
 		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(player.lastUpdate)
 		.setURL(Constants.playerLink(tag))

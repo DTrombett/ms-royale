@@ -1,6 +1,6 @@
 import { bold, Embed } from "@discordjs/builders";
 import { UpcomingChestManager } from "apiroyale";
-import { Constants as DiscordConstants } from "discord.js";
+import { Colors } from "discord.js";
 import type { APIMethod } from "..";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
@@ -39,7 +39,7 @@ export const playerUpcomingChests: APIMethod<string> = async (
 	const chestNames = translate("chests", { lng });
 	const embed = new Embed()
 		.setTitle(translate("commands.player.upcomingChests.title", { lng }))
-		.setColor(DiscordConstants.Colors.BLURPLE)
+		.setColor(Colors.Blurple)
 		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(chests.first()!.lastUpdate)
 		.setURL(`https://royaleapi.com/player/${tag.slice(1)}`)

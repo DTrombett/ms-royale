@@ -7,7 +7,7 @@ import {
 	time,
 	TimestampStyles,
 } from "@discordjs/builders";
-import { Constants, Util } from "discord.js";
+import { Colors, Util } from "discord.js";
 import type { Buffer } from "node:buffer";
 import type { ChildProcess } from "node:child_process";
 import { exec, execFile } from "node:child_process";
@@ -282,9 +282,7 @@ export const command: CommandOptions = {
 							.setDescription(
 								codeBlock(Util.escapeCodeBlock(output.slice(0, 4096 - 7)))
 							)
-							.setColor(
-								exitCode === 0 ? Constants.Colors.GREEN : Constants.Colors.RED
-							)
+							.setColor(exitCode === 0 ? Colors.Green : Colors.Red)
 							.setTimestamp(),
 					],
 				});
@@ -323,7 +321,7 @@ export const command: CommandOptions = {
 									Util.escapeCodeBlock(code).slice(0, 1024 - 9)
 								),
 							})
-							.setColor(Constants.Colors.BLURPLE)
+							.setColor(Colors.Blurple)
 							.setTimestamp(),
 					],
 				});
@@ -401,7 +399,7 @@ export const command: CommandOptions = {
 									TimestampStyles.RelativeTime
 								)} (${time(botUptime)})`
 							)
-							.setColor(Constants.Colors.BLURPLE)
+							.setColor(Colors.Blurple)
 							.setTimestamp(),
 					],
 				});
@@ -452,9 +450,7 @@ export const command: CommandOptions = {
 							.setDescription(
 								codeBlock(Util.escapeCodeBlock(output.slice(0, 4096 - 7)))
 							)
-							.setColor(
-								exitCode ? Constants.Colors.GREEN : Constants.Colors.RED
-							)
+							.setColor(exitCode ? Colors.Green : Colors.Red)
 							.setTimestamp(),
 					],
 				});
@@ -514,7 +510,7 @@ export const command: CommandOptions = {
 								.setDescription(
 									codeBlock(Util.escapeCodeBlock(output.slice(0, 4096 - 7)))
 								)
-								.setColor(Constants.Colors.RED)
+								.setColor(Colors.Red)
 								.setTimestamp(),
 							new Embed()
 								.setAuthor({
@@ -528,7 +524,7 @@ export const command: CommandOptions = {
 										Util.escapeCodeBlock(code.slice(0, 4096 - 7))
 									)
 								)
-								.setColor(Constants.Colors.BLURPLE)
+								.setColor(Colors.Blurple)
 								.setTimestamp(),
 						],
 					});
@@ -609,7 +605,7 @@ export const command: CommandOptions = {
 							})
 							.setTitle("Logs")
 							.setDescription(codeBlock(Util.escapeCodeBlock(logs.join("\n"))))
-							.setColor(Constants.Colors.BLURPLE)
+							.setColor(Colors.Blurple)
 							.setTimestamp(),
 					],
 				});

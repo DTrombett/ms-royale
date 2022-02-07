@@ -10,7 +10,7 @@ import type {
 	APISelectMenuOption,
 	Snowflake,
 } from "discord-api-types/v9";
-import { Constants as DiscordConstants } from "discord.js";
+import { Colors } from "discord.js";
 import { cast, resolveEmojiIdentifier } from "..";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
@@ -118,7 +118,7 @@ export const clanMembers: APIMethod<
 		.setTitle(
 			translate("commands.clan.members.title", { lng, size: members.size })
 		)
-		.setColor(DiscordConstants.Colors.BLURPLE)
+		.setColor(Colors.Blurple)
 		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(members.first()?.lastUpdate)
 		.setURL(Constants.clanLink(tag))

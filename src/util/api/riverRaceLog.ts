@@ -1,7 +1,7 @@
 import { Embed, SelectMenuOption } from "@discordjs/builders";
 import { FinishedRiverRaceManager, RiverRaceLogResults } from "apiroyale";
 import type { APIEmbedField, Snowflake } from "discord-api-types/v9";
-import { Constants as DiscordConstants, SelectMenuComponent } from "discord.js";
+import { Colors, SelectMenuComponent } from "discord.js";
 import type { APIMethod } from "..";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
@@ -59,7 +59,7 @@ export const riverRaceLog: APIMethod<
 	const { clan } = race.leaderboard.get(tag)!;
 	const embed = new Embed()
 		.setTitle(translate("commands.clan.riverRaceLog.title", { lng, race }))
-		.setColor(DiscordConstants.Colors.BLURPLE)
+		.setColor(Colors.Blurple)
 		.setThumbnail(clan.badgeUrl)
 		.setFooter({
 			text: translate("commands.clan.riverRaceLog.footer", { lng }),
