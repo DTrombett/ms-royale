@@ -1,7 +1,7 @@
 import { Embed, SelectMenuOption } from "@discordjs/builders";
 import { CurrentRiverRace } from "apiroyale";
 import type { APIEmbedField } from "discord-api-types/v9";
-import { Constants as DiscordConstants, SelectMenuComponent } from "discord.js";
+import { Colors, SelectMenuComponent } from "discord.js";
 import type { APIMethod } from "..";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
@@ -52,8 +52,8 @@ export const currentRiverRace: APIMethod<string> = async (
 		)
 		.setColor(
 			training
-				? DiscordConstants.Colors.GREEN
-				: DiscordConstants.Colors.DARK_PURPLE
+				? Colors.Green
+				: Colors.DarkPurple
 		)
 		.setFooter({ text: translate("common.lastUpdated", { lng }) })
 		.setTimestamp(race.lastUpdate)

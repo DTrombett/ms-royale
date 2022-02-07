@@ -1,6 +1,6 @@
 import { Embed } from "@discordjs/builders";
 import type { Clan } from "apiroyale";
-import { Constants as DiscordConstants } from "discord.js";
+import { Colors } from "discord.js";
 import { env } from "node:process";
 import type { EventOptions } from "../../util";
 import Constants, {
@@ -20,7 +20,7 @@ const constructClanUpdateEmbed = (
 		.setURL(Constants.clanLink(newClan.tag))
 		.setAuthor({ name: newClan.name })
 		.setThumbnail(newClan.badgeUrl)
-		.setColor(DiscordConstants.Colors.BLURPLE);
+		.setColor(Colors.Blurple);
 
 	if (oldClan.name !== newClan.name)
 		embed.addField(
