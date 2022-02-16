@@ -34,7 +34,7 @@
     "apiroyale": "github:DTrombett/apiroyale",
     "bufferutil": "^4.0.6",
     "cron-parser": "^4.2.1",
-    "discord-api-types": "^0.26.1",
+    "discord-api-types": "^0.27.1",
     "discord.js": "^14.0.0-dev.1644537979.298b226",
     "dotenv": "^16.0.0",
     "erlpack": "github:discord/erlpack",
