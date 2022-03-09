@@ -41,7 +41,7 @@
     "i18next": "^21.6.13",
     "i18next-fs-backend": "^1.1.4",
     "prettier": "^2.5.1",
-    "utf-8-validate": "^5.0.8",
+    "utf-8-validate": "^5.0.9",
     "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
