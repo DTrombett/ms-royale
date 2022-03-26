@@ -3,8 +3,8 @@ import type {
 	APIApplicationCommand,
 	APIApplicationCommandPermission,
 	APIGuildApplicationCommandPermissions,
-} from "discord-api-types/v9";
-import { APIVersion, Routes } from "discord-api-types/v9";
+} from "discord-api-types/v10";
+import { APIVersion, Routes } from "discord-api-types/v10";
 import { EnumResolvers } from "discord.js";
 import { config } from "dotenv";
 import { promises } from "node:fs";

@@ -1,6 +1,6 @@
 import { Embed, SelectMenuOption } from "@discordjs/builders";
 import { CurrentRiverRace } from "apiroyale";
-import type { APIEmbedField } from "discord-api-types/v9";
+import type { APIEmbedField } from "discord-api-types/v10";
 import { Colors, SelectMenuComponent } from "discord.js";
 import type { APIMethod } from "..";
 import Constants from "../Constants";

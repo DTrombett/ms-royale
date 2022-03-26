@@ -1,6 +1,6 @@
 import { Embed } from "@discordjs/builders";
 import { Clan } from "apiroyale";
-import type { APISelectMenuOption } from "discord-api-types/v9";
+import type { APISelectMenuOption } from "discord-api-types/v10";
 import { Colors, SelectMenuComponent } from "discord.js";
 import type { APIMethod } from "..";
 import capitalize from "../capitalize";

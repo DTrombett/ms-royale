@@ -9,7 +9,7 @@ import type {
 	APIEmbedField,
 	APISelectMenuOption,
 	Snowflake,
-} from "discord-api-types/v9";
+} from "discord-api-types/v10";
 import { Colors } from "discord.js";
 import { cast, resolveEmojiIdentifier } from "..";
 import capitalize from "../capitalize";

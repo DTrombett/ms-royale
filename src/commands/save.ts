@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { ActionRow } from "discord.js";
+import { ComponentType } from "discord-api-types/v10";
 import type { CommandOptions } from "../util";
 import {
 	autocompletePlayerTag,
@@ -68,17 +68,20 @@ export const command: CommandOptions = {
 		await interaction.editReply({
 			content: translate("commands.save.content", { lng }),
 			components: [
-				new ActionRow().addComponents(
-					createActionButton(
-						ButtonActions.PlayerInfo,
-						{
-							label: translate("commands.player.buttons.playerInfo.label", {
-								lng,
-							}),
-						},
-						tag
-					)
-				),
+				{
+					type: ComponentType.ActionRow,
+					components: [
+						createActionButton(
+							ButtonActions.PlayerInfo,
+							{
+								label: translate("commands.player.buttons.playerInfo.label", {
+									lng,
+								}),
+							},
+							tag
+						),
+					],
+				},
 			],
 		});
 	},

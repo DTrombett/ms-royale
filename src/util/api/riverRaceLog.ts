@@ -1,6 +1,6 @@
 import { Embed, SelectMenuOption } from "@discordjs/builders";
 import { FinishedRiverRaceManager, RiverRaceLogResults } from "apiroyale";
-import type { APIEmbedField, Snowflake } from "discord-api-types/v9";
+import type { APIEmbedField, Snowflake } from "discord-api-types/v10";
 import { Colors, SelectMenuComponent } from "discord.js";
 import type { APIMethod } from "..";
 import createActionButton from "../createActionButton";

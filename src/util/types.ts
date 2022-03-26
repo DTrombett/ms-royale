@@ -4,7 +4,7 @@ import type {
 } from "@discordjs/builders";
 import type { RestEvents } from "@discordjs/rest";
 import type { APITag, ClientEvents, ClientRoyale } from "apiroyale";
-import type { Snowflake } from "discord-api-types/v9";
+import type { Snowflake } from "discord-api-types/v10";
 import type {
 	AutocompleteInteraction,
 	Awaitable,

@@ -1,6 +1,9 @@
-import type { APIMessageComponentEmoji } from "discord-api-types/v9";
-import type { ButtonStyle } from "discord.js";
-import { ButtonComponent } from "discord.js";
+import type {
+	APIButtonComponentWithCustomId,
+	APIMessageComponentEmoji,
+} from "discord-api-types/v10";
+import { ComponentType } from "discord-api-types/v10";
+import { ButtonStyle } from "discord.js";
 import { buildCustomButtonId } from "./customId";
 import type { ButtonActionsTypes } from "./types";
 import { ButtonActions, CustomEmojis, Emojis } from "./types";
@@ -52,17 +55,18 @@ export const createActionButton = <T extends ButtonActions>(
 		disabled,
 	}: {
 		emoji?: CustomEmojis | Emojis;
-		style?: ButtonStyle;
+		style?: APIButtonComponentWithCustomId["style"];
 		label: string;
 		disabled?: boolean;
 	},
 	...args: ButtonActionsTypes[T]
-) =>
-	new ButtonComponent()
-		.setCustomId(buildCustomButtonId(action, ...args))
-		.setEmoji(resolveEmojiIdentifier(emoji ?? ButtonEmojis[action]))
-		.setStyle(style ?? 1)
-		.setLabel(label)
-		.setDisabled(disabled ?? false);
+): APIButtonComponentWithCustomId => ({
+	type: ComponentType.Button,
+	custom_id: buildCustomButtonId(action, ...args),
+	emoji: resolveEmojiIdentifier(emoji ?? ButtonEmojis[action]),
+	style: style ?? ButtonStyle.Primary,
+	label,
+	disabled: disabled ?? false,
+});
 
 export default createActionButton;
