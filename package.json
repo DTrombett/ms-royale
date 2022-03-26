@@ -19,7 +19,7 @@
   "keywords": [],
   "type": "module",
   "engines": {
-    "node": ">=14.13.1 || >=16.0.0"
+    "node": ">=16.9.0"
   },
   "repository": {
     "type": "git",
