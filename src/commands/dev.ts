@@ -24,7 +24,14 @@ import {
 } from "node:process";
 import prettier from "prettier";
 import type { CommandOptions } from "../util";
-import { CustomClient, parseEval, restart } from "../util";
+import {
+	CustomClient,
+	importJson,
+	normalizeTag,
+	parseEval,
+	restart,
+	writeJson,
+} from "../util";
 
 enum SubCommands {
 	shell = "shell",
@@ -37,6 +44,7 @@ enum SubCommands {
 	pull = "pull",
 	cpp = "cpp",
 	logs = "logs",
+	save = "save",
 }
 enum SubCommandOptions {
 	cmd = "cmd",
@@ -50,6 +58,8 @@ enum SubCommandOptions {
 	include = "include",
 	namespaces = "namespaces",
 	lines = "lines",
+	user = "user",
+	tag = "tag",
 }
 
 const bytesToMb = (memory: number) =>
@@ -228,6 +238,23 @@ export const command: CommandOptions = {
 						.setDescription(
 							"Scegli se mostrare il risultato privatamente (default: true)"
 						)
+				)
+		)
+		.addSubcommand((save) =>
+			save
+				.setName(SubCommands.save)
+				.setDescription("Salva il tag di un utente")
+				.addUserOption((user) =>
+					user
+						.setName(SubCommandOptions.user)
+						.setDescription("Utente da salvare")
+						.setRequired(true)
+				)
+				.addStringOption((tag) =>
+					tag
+						.setName(SubCommandOptions.tag)
+						.setDescription("Tag da salvare")
+						.setRequired(true)
 				)
 		)
 		.addSubcommand((test) =>
@@ -611,6 +638,28 @@ export const command: CommandOptions = {
 						},
 					],
 				});
+				break;
+			case SubCommands.save:
+				const tag = normalizeTag(
+						interaction.options.getString(SubCommandOptions.tag, true)
+					),
+					{ id } = interaction.options.getUser(SubCommandOptions.user, true);
+
+				await writeJson("players", {
+					...(await importJson("players").catch(() => ({}))),
+					[id]: tag,
+				})
+					.then(() =>
+						interaction.editReply({
+							content: `Salvato il tag ${tag} per l'utente <@!${id}>`,
+							allowedMentions: { users: [id] },
+						})
+					)
+					.catch(({ message }: Error) =>
+						interaction.editReply({
+							content: message,
+						})
+					);
 				break;
 			default:
 				await interaction.editReply("Comando non riconosciuto");
