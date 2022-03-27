@@ -1,15 +1,12 @@
-import {
-	Embed,
-	SelectMenuComponent,
-	time,
-	TimestampStyles,
-} from "@discordjs/builders";
+import { TimestampStyles } from "@discordjs/builders";
 import { ClanMemberList } from "apiroyale";
 import type {
+	APIEmbed,
 	APIEmbedField,
 	APISelectMenuOption,
 	Snowflake,
 } from "discord-api-types/v10";
+import { ComponentType } from "discord-api-types/v10";
 import { Colors } from "discord.js";
 import { cast, resolveEmojiIdentifier } from "..";
 import capitalize from "../capitalize";
@@ -86,43 +83,45 @@ export const clanMembers: APIMethod<
 				return 0;
 		}
 	});
-	const fields: APIEmbedField[] = [...members.values()]
-		.filter((_, i) => i >= index * 10 && i < (index + 1) * 10)
-		.map<APIEmbedField>((member, i) => {
-			const { rankDifference } = member;
+	const embed: APIEmbed = {
+		title: translate("commands.clan.members.title", {
+			lng,
+			size: members.size,
+		}),
+		color: Colors.Blurple,
+		footer: { text: translate("common.lastUpdated", { lng }) },
+		timestamp: members.first()?.lastUpdate.toISOString(),
+		url: Constants.clanLink(tag),
+		fields: members
+			.filter(
+				({ rank }) => rank - 1 >= index * 10 && rank - 1 < (index + 1) * 10
+			)
+			.map<APIEmbedField>((member) => {
+				const { rankDifference } = member;
 
-			return {
-				name: `${i + 1 + 10 * index}) ${translate("common.tagPreview", {
-					lng,
-					structure: member,
-				})}`,
-				value: `${capitalize(member.role)} - ${CustomEmojis.Donations} ${
-					member.donationsPerWeek
-				} - ${Emojis.Trophy} ${member.trophies} (#${member.rank}${
-					rankDifference
-						? ` - ${Math.abs(rankDifference)}${
-								Emojis[rankDifference > 0 ? "UpArrow" : "DownArrow"]
-						  }`
-						: ""
-				})\n${Emojis.Watch} ${time(
-					member.lastSeen,
-					TimestampStyles.LongDateTime
-				)} (${time(member.lastSeen, TimestampStyles.RelativeTime)})\n${
-					CustomEmojis.DonationsReceived
-				} ${member.donationsReceivedPerWeek} - ${CustomEmojis.KingLevel} ${
-					member.kingLevel
-				}`,
-			};
-		});
-	const embed = new Embed()
-		.setTitle(
-			translate("commands.clan.members.title", { lng, size: members.size })
-		)
-		.setColor(Colors.Blurple)
-		.setFooter({ text: translate("common.lastUpdated", { lng }) })
-		.setTimestamp(members.first()?.lastUpdate)
-		.setURL(Constants.clanLink(tag))
-		.addFields(...fields);
+				return {
+					name: `${member.rank}) ${translate("common.tagPreview", {
+						lng,
+						structure: member,
+					})}`,
+					value: `${capitalize(member.role)} - ${CustomEmojis.Donations} ${
+						member.donationsPerWeek
+					} - ${Emojis.Trophy} ${member.trophies} (#${member.rank}${
+						rankDifference
+							? ` - ${Math.abs(rankDifference)}${
+									Emojis[rankDifference > 0 ? "UpArrow" : "DownArrow"]
+							  }`
+							: ""
+					})\n${Emojis.Watch} <t:${member.lastSeen.getTime() / 1000}:${
+						TimestampStyles.LongDateTime
+					}> (<t:${member.lastSeen.getTime() / 1000}:${
+						TimestampStyles.RelativeTime
+					}>)\n${CustomEmojis.DonationsReceived} ${
+						member.donationsReceivedPerWeek
+					} - ${CustomEmojis.KingLevel} ${member.kingLevel}`,
+				};
+			}),
+	};
 	const options: APISelectMenuOption[] = [];
 	const translatedOptions = translate("commands.clan.members.menu.options", {
 		lng,
@@ -147,20 +146,20 @@ export const clanMembers: APIMethod<
 		embeds: [embed],
 		components: [
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
-					new SelectMenuComponent({
-						type: 3 /** SelectMenu */,
+					{
+						type: ComponentType.SelectMenu,
 						options,
 						placeholder: translate("commands.clan.members.menu.placeholder", {
 							lng,
 						}),
 						custom_id: buildCustomMenuId(MenuActions.ClanMembers, tag, id),
-					}),
+					},
 				],
 			},
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
 						ButtonActions.ClanInfo,
@@ -190,7 +189,7 @@ export const clanMembers: APIMethod<
 				],
 			},
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
 						ButtonActions.ClanMembers,

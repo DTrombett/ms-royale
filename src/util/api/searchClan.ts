@@ -1,8 +1,8 @@
-import { bold, SelectMenuOption } from "@discordjs/builders";
 import type { ClientRoyale, SearchClanOptions } from "apiroyale";
 import { ClanSearchResults } from "apiroyale";
+import { ComponentType } from "discord-api-types/v10";
 import type { Snowflake } from "discord.js";
-import { SelectMenuComponent, Util } from "discord.js";
+import { Util } from "discord.js";
 import type { APIMethod } from "..";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
@@ -40,29 +40,26 @@ export const searchClan: APIMethod<
 	return {
 		components: [
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
-					new SelectMenuComponent({
-						type: 3 /** SelectMenu */,
-						options: results.map(
-							(clan) =>
-								new SelectMenuOption({
-									...translate("commands.clan.search.menu.options", {
-										lng,
-										clan,
-									}),
-									value: clan.tag,
-								})
-						),
+					{
+						type: ComponentType.SelectMenu,
+						options: results.map((clan) => ({
+							...translate("commands.clan.search.menu.options", {
+								lng,
+								clan,
+							}),
+							value: clan.tag,
+						})),
 						placeholder: translate("commands.clan.search.menu.placeholder", {
 							lng,
 						}),
 						custom_id: buildCustomMenuId(MenuActions.ClanInfo),
-					}),
+					},
 				],
 			},
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
 						ButtonActions.PreviousPage,
@@ -83,15 +80,13 @@ export const searchClan: APIMethod<
 				],
 			},
 		],
-		content: ` Risultati per la seguente ricerca richiesta da <@${id}>:\n\n${bold(
-			"Nome"
-		)}: ${
+		content: ` Risultati per la seguente ricerca richiesta da <@${id}>:\n\n**Nome**: ${
 			options.name != null ? Util.escapeMarkdown(options.name) : "-"
-		}\n${bold("Id posizione")}: ${options.location?.toString() ?? "-"}\n${bold(
-			"Minimo membri"
-		)}: ${options.minMembers ?? "-"}\n${bold("Massimo membri")}: ${
+		}\n**Id posizione**: ${
+			options.location?.toString() ?? "-"
+		}\n**Minimo membri**: ${options.minMembers ?? "-"}\n**Massimo membri**: ${
 			options.maxMembers ?? "-"
-		}\n${bold("Punteggio minimo")}: ${options.minScore ?? "-"}`,
+		}\n**Punteggio minimo**: ${options.minScore ?? "-"}`,
 		ephemeral,
 	};
 };

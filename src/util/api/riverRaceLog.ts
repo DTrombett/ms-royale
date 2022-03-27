@@ -1,7 +1,7 @@
-import { Embed, SelectMenuOption } from "@discordjs/builders";
 import { FinishedRiverRaceManager, RiverRaceLogResults } from "apiroyale";
-import type { APIEmbedField, Snowflake } from "discord-api-types/v10";
-import { Colors, SelectMenuComponent } from "discord.js";
+import type { APIEmbed, Snowflake } from "discord-api-types/v10";
+import { ComponentType } from "discord-api-types/v10";
+import { Colors } from "discord.js";
 import type { APIMethod } from "..";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
@@ -57,53 +57,48 @@ export const riverRaceLog: APIMethod<
 			ephemeral: true,
 		};
 	const { clan } = race.leaderboard.get(tag)!;
-	const embed = new Embed()
-		.setTitle(translate("commands.clan.riverRaceLog.title", { lng, race }))
-		.setColor(Colors.Blurple)
-		.setThumbnail(clan.badgeUrl)
-		.setFooter({
+	const embed: APIEmbed = {
+		title: translate("commands.clan.riverRaceLog.title", { lng, race }),
+		color: Colors.Blurple,
+		thumbnail: { url: clan.badgeUrl },
+		footer: {
 			text: translate("commands.clan.riverRaceLog.footer", { lng }),
-		})
-		.setTimestamp(race.finishTime)
-		.addFields(
-			...race.leaderboard.map<APIEmbedField>((standing) =>
-				translate("commands.clan.riverRaceLog.field", {
-					lng,
-					standing,
-					finishedAt: standing.clan.finishedAt
-						? Math.round(standing.clan.finishedAt.getTime() / 1000)
-						: "",
-					finished: (standing.clan.finishedAt !== null).toString(),
-					participants: standing.clan.participants.filter(
-						(p) => p.decksUsed > 0
-					).size,
-				})
-			)
-		);
+		},
+		timestamp: race.finishTime.toISOString(),
+		fields: race.leaderboard.map((standing) =>
+			translate("commands.clan.riverRaceLog.field", {
+				lng,
+				standing,
+				finishedAt: standing.clan.finishedAt
+					? Math.round(standing.clan.finishedAt.getTime() / 1000)
+					: "",
+				finished: (standing.clan.finishedAt !== null).toString(),
+				participants: standing.clan.participants.filter((p) => p.decksUsed > 0)
+					.size,
+			})
+		),
+	};
 
 	return {
 		embeds: [embed],
 		components: [
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
-					new SelectMenuComponent({
-						type: 3 /** SelectMenu */,
+					{
+						type: ComponentType.SelectMenu,
 						options: clan.participants
 							.filter((p) => Boolean(p.medals))
 							.sort((a, b) => b.medals - a.medals)
 							.first(25)
-							.map(
-								(participant, i) =>
-									new SelectMenuOption({
-										...translate("commands.clan.riverRaceLog.menu.options", {
-											lng,
-											participant,
-											rank: i + 1,
-										}),
-										value: participant.tag,
-									})
-							),
+							.map((participant, i) => ({
+								...translate("commands.clan.riverRaceLog.menu.options", {
+									lng,
+									participant,
+									rank: i + 1,
+								}),
+								value: participant.tag,
+							})),
 						placeholder: translate(
 							"commands.clan.riverRaceLog.menu.placeholder",
 							{
@@ -111,11 +106,11 @@ export const riverRaceLog: APIMethod<
 							}
 						),
 						custom_id: buildCustomMenuId(MenuActions.PlayerInfo),
-					}),
+					},
 				],
 			},
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
 						ButtonActions.ClanInfo,
@@ -136,7 +131,7 @@ export const riverRaceLog: APIMethod<
 				],
 			},
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
 						ButtonActions.RiverRaceLog,

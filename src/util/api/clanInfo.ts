@@ -1,7 +1,7 @@
-import { Embed } from "@discordjs/builders";
 import { Clan } from "apiroyale";
-import type { APISelectMenuOption } from "discord-api-types/v10";
-import { Colors, SelectMenuComponent } from "discord.js";
+import type { APIEmbed, APISelectMenuOption } from "discord-api-types/v10";
+import { ComponentType } from "discord-api-types/v10";
+import { Colors } from "discord.js";
 import type { APIMethod } from "..";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
@@ -43,79 +43,80 @@ export const clanInfo: APIMethod<string> = async (
 
 	if (!(clan instanceof Clan)) return clan;
 	const fallbackLng = locationToLocale(clan.location);
-	const embed = new Embed()
-		.setTitle(translate("commands.clan.info.title", { lng, clan, fallbackLng }))
-		.setDescription(clan.description)
-		.setColor(Colors.Blue)
-		.setFooter({ text: translate("common.lastUpdated", { lng, fallbackLng }) })
-		.setTimestamp(clan.lastUpdate)
-		.setThumbnail(clan.badgeUrl)
-		.setURL(Constants.clanLink(tag));
-
-	embed
-		.addField({
-			...translate("commands.clan.info.fields.warTrophies", {
-				lng,
-				warTrophies: clan.warTrophies,
-				fallbackLng,
-			}),
-		})
-		.addField({
-			...translate("commands.clan.info.fields.location", {
-				lng,
-				location: clan.locationName,
-				fallbackLng,
-			}),
-			inline: true,
-		})
-		.addField({
-			...translate("commands.clan.info.fields.requiredTrophies", {
-				lng,
-				requiredTrophies: clan.requiredTrophies,
-				fallbackLng,
-			}),
-			inline: true,
-		})
-		.addField({
-			...translate("commands.clan.info.fields.weeklyDonations", {
-				lng,
-				weeklyDonations: clan.donationsPerWeek,
-				fallbackLng,
-			}),
-			inline: true,
-		})
-		.addField({
-			...translate("commands.clan.info.fields.score", {
-				lng,
-				score: clan.score,
-				fallbackLng,
-			}),
-			inline: true,
-		})
-		.addField({
-			...translate("commands.clan.info.fields.type", {
-				lng,
-				type: capitalize(clan.type),
-				fallbackLng,
-			}),
-			inline: true,
-		})
-		.addField({
-			...translate("commands.clan.info.fields.memberCount", {
-				lng,
-				memberCount: clan.members.size,
-				fallbackLng,
-			}),
-		});
+	const embed: APIEmbed = {
+		title: translate("commands.clan.info.title", { lng, clan, fallbackLng }),
+		description: clan.description,
+		color: Colors.Blue,
+		footer: { text: translate("common.lastUpdated", { lng, fallbackLng }) },
+		timestamp: clan.lastUpdate.toISOString(),
+		thumbnail: { url: clan.badgeUrl },
+		url: Constants.clanLink(tag),
+		fields: [
+			{
+				...translate("commands.clan.info.fields.warTrophies", {
+					lng,
+					warTrophies: clan.warTrophies,
+					fallbackLng,
+				}),
+			},
+			{
+				...translate("commands.clan.info.fields.location", {
+					lng,
+					location: clan.locationName,
+					fallbackLng,
+				}),
+				inline: true,
+			},
+			{
+				...translate("commands.clan.info.fields.requiredTrophies", {
+					lng,
+					requiredTrophies: clan.requiredTrophies,
+					fallbackLng,
+				}),
+				inline: true,
+			},
+			{
+				...translate("commands.clan.info.fields.weeklyDonations", {
+					lng,
+					weeklyDonations: clan.donationsPerWeek,
+					fallbackLng,
+				}),
+				inline: true,
+			},
+			{
+				...translate("commands.clan.info.fields.score", {
+					lng,
+					score: clan.score,
+					fallbackLng,
+				}),
+				inline: true,
+			},
+			{
+				...translate("commands.clan.info.fields.type", {
+					lng,
+					type: capitalize(clan.type),
+					fallbackLng,
+				}),
+				inline: true,
+			},
+			{
+				...translate("commands.clan.info.fields.memberCount", {
+					lng,
+					memberCount: clan.members.size,
+					fallbackLng,
+				}),
+			},
+		],
+	};
 
 	return {
 		embeds: [embed],
 		components: [
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
-					new SelectMenuComponent({
-						type: 3 /** SelectMenu */,
+					{
+						type: ComponentType.SelectMenu,
 						options: clan.members
 							.first(25)
 							.map<APISelectMenuOption>((member) => ({
@@ -134,11 +135,11 @@ export const clanInfo: APIMethod<string> = async (
 							fallbackLng,
 						}),
 						custom_id: buildCustomMenuId(MenuActions.PlayerInfo),
-					}),
+					},
 				],
 			},
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
 						ButtonActions.ClanMembers,

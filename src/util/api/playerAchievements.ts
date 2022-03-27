@@ -1,5 +1,6 @@
-import { bold, Embed } from "@discordjs/builders";
 import { Player } from "apiroyale";
+import type { APIEmbed } from "discord-api-types/v10";
+import { ComponentType } from "discord-api-types/v10";
 import { Colors } from "discord.js";
 import type { APIMethod } from "..";
 import Constants from "../Constants";
@@ -35,40 +36,37 @@ export const playerAchievements: APIMethod<string> = async (
 	});
 
 	if (!(player instanceof Player)) return player;
-	const embed = new Embed()
-		.setAuthor({
+	const embed: APIEmbed = {
+		author: {
 			name: translate("commands.player.achievements.author", { lng, player }),
 			url: Constants.playerLink(tag),
-		})
-		.setTitle(translate("commands.player.achievements.title", { lng }))
-		.setColor(Colors.Green)
-		.setFooter({ text: translate("common.lastUpdated", { lng }) })
-		.setTimestamp(player.lastUpdate)
-		.setURL(Constants.playerLink(tag))
-		.setDescription(
-			player.achievements
-				.map(
-					(achievement) =>
-						`• ${bold(achievement.name)}: ${achievement.info}${
-							achievement.level
-								? ` ${Emojis.Star.repeat(achievement.level)}`
-								: ""
-						} - ${achievement.progress}/${achievement.target}${
-							achievement.completed
-								? ""
-								: ` (${achievement.percentage.toFixed(
-										Constants.percentageDigits()
-								  )}%)`
-						}`
-				)
-				.join("\n")
-		);
+		},
+		title: translate("commands.player.achievements.title", { lng }),
+		color: Colors.Green,
+		footer: { text: translate("common.lastUpdated", { lng }) },
+		timestamp: player.lastUpdate.toISOString(),
+		url: Constants.playerLink(tag),
+		description: player.achievements
+			.map(
+				(achievement) =>
+					`• **${achievement.name}**: ${achievement.info}${
+						achievement.level ? ` ${Emojis.Star.repeat(achievement.level)}` : ""
+					} - ${achievement.progress}/${achievement.target}${
+						achievement.completed
+							? ""
+							: ` (${achievement.percentage.toFixed(
+									Constants.percentageDigits()
+							  )}%)`
+					}`
+			)
+			.join("\n"),
+	};
 
 	return {
 		embeds: [embed],
 		components: [
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
 						ButtonActions.PlayerInfo,

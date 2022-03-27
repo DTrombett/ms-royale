@@ -1,7 +1,7 @@
-import { Embed, SelectMenuOption } from "@discordjs/builders";
 import { CurrentRiverRace } from "apiroyale";
-import type { APIEmbedField } from "discord-api-types/v10";
-import { Colors, SelectMenuComponent } from "discord.js";
+import type { APIEmbed } from "discord-api-types/v10";
+import { ComponentType } from "discord-api-types/v10";
+import { Colors } from "discord.js";
 import type { APIMethod } from "..";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
@@ -41,85 +41,77 @@ export const currentRiverRace: APIMethod<string> = async (
 	const participants = race.clan.participants.filter((p) =>
 		Boolean(p.decksUsed)
 	);
-	const embed = new Embed()
-		.setTitle(
-			translate("commands.clan.currentRiverRace.title", {
-				lng,
-				race,
-				day: training ? race.day : race.day - 3,
-				training,
-			})
-		)
-		.setColor(training ? Colors.Green : Colors.DarkPurple)
-		.setFooter({ text: translate("common.lastUpdated", { lng }) })
-		.setTimestamp(race.lastUpdate)
-		.setThumbnail(race.clan.badgeUrl)
-		.setURL(Constants.clanLink(tag))
-		.setDescription(
-			race.leaderboard
-				.map((standing) =>
-					translate("commands.clan.currentRiverRace.description", {
-						lng,
-						standing,
-						participants: (race.warDays.size
-							? standing.participants.filter((p) => Boolean(p.medals))
-							: standing.participants
-						).size,
-						context: training.toString(),
-					})
-				)
-				.join("\n")
-		)
-		.addFields(
-			...race.warDays
-				.filter((period) => period.week === race.week)
-				.map<APIEmbedField>((period) => ({
-					name: translate("commands.clan.currentRiverRace.field.name", {
-						lng,
-						period,
-						p: period,
-					}),
-					value: period.leaderboard
-						.map((standing) =>
-							translate("commands.clan.currentRiverRace.field.value", {
-								lng,
-								standing,
-								clanName: race.leaderboard.get(standing.clanTag)!.name,
-							})
-						)
-						.join("\n"),
-				}))
-		);
+	const embed: APIEmbed = {
+		title: translate("commands.clan.currentRiverRace.title", {
+			lng,
+			race,
+			day: training ? race.day : race.day - 3,
+			training,
+		}),
+		color: training ? Colors.Green : Colors.DarkPurple,
+		footer: { text: translate("common.lastUpdated", { lng }) },
+		timestamp: race.lastUpdate.toISOString(),
+		thumbnail: { url: race.clan.badgeUrl },
+		url: Constants.clanLink(tag),
+		description: race.leaderboard
+			.map((standing) =>
+				translate("commands.clan.currentRiverRace.description", {
+					lng,
+					standing,
+					participants: (race.warDays.size
+						? standing.participants.filter((p) => Boolean(p.medals))
+						: standing.participants
+					).size,
+					context: training.toString(),
+				})
+			)
+			.join("\n"),
+		fields: race.warDays
+			.filter((period) => period.week === race.week)
+			.map((period) => ({
+				name: translate("commands.clan.currentRiverRace.field.name", {
+					lng,
+					period,
+					p: period,
+				}),
+				value: period.leaderboard
+					.map((standing) =>
+						translate("commands.clan.currentRiverRace.field.value", {
+							lng,
+							standing,
+							clanName: race.leaderboard.get(standing.clanTag)!.name,
+						})
+					)
+					.join("\n"),
+			})),
+	};
 
 	return {
 		embeds: [embed],
 		components: [
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
-					new SelectMenuComponent({
-						type: 3 /** SelectMenu */,
-						options: participants.first(25).map(
-							(participant, i) =>
-								new SelectMenuOption({
-									...translate("commands.clan.currentRiverRace.menu.options", {
-										lng,
-										participant,
-										rank: i + 1,
-									}),
-									value: participant.tag,
-								})
-						),
+					{
+						type: ComponentType.SelectMenu,
+						options: participants.first(25).map((participant, i) => ({
+							...translate("commands.clan.currentRiverRace.menu.options", {
+								lng,
+								participant,
+								rank: i + 1,
+							}),
+							value: participant.tag,
+						})),
 						placeholder: translate(
 							"commands.clan.currentRiverRace.menu.placeholder",
 							{ lng }
 						),
 						custom_id: buildCustomMenuId(MenuActions.PlayerInfo),
-					}),
+					},
 				],
 			},
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
 						ButtonActions.ClanInfo,

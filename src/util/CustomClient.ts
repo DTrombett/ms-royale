@@ -45,7 +45,7 @@ export class CustomClient extends ClientRoyale {
 			invalidRequestWarningInterval: 9_998,
 		},
 		makeCache: Options.cacheWithLimits({
-			...Options.defaultMakeCacheSettings,
+			...Options.DefaultMakeCacheSettings,
 			BaseGuildEmojiManager: 0,
 			GuildBanManager: 0,
 			GuildEmojiManager: 0,

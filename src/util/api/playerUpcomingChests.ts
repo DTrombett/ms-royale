@@ -1,5 +1,6 @@
-import { bold, Embed } from "@discordjs/builders";
 import { UpcomingChestManager } from "apiroyale";
+import type { APIEmbed } from "discord-api-types/v10";
+import { ComponentType } from "discord-api-types/v10";
 import { Colors } from "discord.js";
 import type { APIMethod } from "..";
 import createActionButton from "../createActionButton";
@@ -37,28 +38,27 @@ export const playerUpcomingChests: APIMethod<string> = async (
 
 	if (!(chests instanceof UpcomingChestManager)) return chests;
 	const chestNames = translate("chests", { lng });
-	const embed = new Embed()
-		.setTitle(translate("commands.player.upcomingChests.title", { lng }))
-		.setColor(Colors.Blurple)
-		.setFooter({ text: translate("common.lastUpdated", { lng }) })
-		.setTimestamp(chests.first()!.lastUpdate)
-		.setURL(`https://royaleapi.com/player/${tag.slice(1)}`)
-		.setDescription(
-			chests
-				.map(
-					(c, i) =>
-						`• ${bold(chestNames[c.name] || c.name)} (${Number(i) + 1})${
-							i === "8" ? "\n" : ""
-						}`
-				)
-				.join("\n")
-		);
+	const embed: APIEmbed = {
+		title: translate("commands.player.upcomingChests.title", { lng }),
+		color: Colors.Blurple,
+		footer: { text: translate("common.lastUpdated", { lng }) },
+		timestamp: chests.first()!.lastUpdate.toISOString(),
+		url: `https://royaleapi.com/player/${tag.slice(1)}`,
+		description: chests
+			.map(
+				(c, i) =>
+					`• **${chestNames[c.name] || c.name}** (${Number(i) + 1})${
+						i === "8" ? "\n" : ""
+					}`
+			)
+			.join("\n"),
+	};
 
 	return {
 		embeds: [embed],
 		components: [
 			{
-				type: 1 /** ActionRow */,
+				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
 						ButtonActions.PlayerInfo,
