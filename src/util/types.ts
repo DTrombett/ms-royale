@@ -39,7 +39,7 @@ export type APIMethod<
 	O extends Record<string, unknown> = Record<never, never>
 > = (
 	client: ClientRoyale,
-	id: T,
+	arg: T,
 	options: O & {
 		lng?: string;
 		ephemeral?: boolean;

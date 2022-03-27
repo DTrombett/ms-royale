@@ -46,44 +46,56 @@ export const command: CommandOptions = {
 			});
 			return;
 		}
-		await interaction.deferReply();
-		try {
-			await Promise.all([
-				this.client.players.fetch(normalizeTag(tag)),
-				writeJson("players", {
-					...(await importJson("players").catch(() => ({}))),
-					[interaction.user.id]: tag,
-				}),
-			]);
-		} catch (error: unknown) {
-			await interaction.editReply({
-				content:
-					error instanceof Error
-						? error.message
-						: translate("common.unknownError", { lng }),
-			});
-			return;
-		}
+		const [player] = await Promise.all([
+			this.client.players.fetch(normalizeTag(tag)).catch((err: Error) => err),
+			interaction.deferReply(),
+		]);
 
-		await interaction.editReply({
-			content: translate("commands.save.content", { lng }),
-			components: [
-				{
-					type: ComponentType.ActionRow,
+		if (player instanceof Error)
+			await interaction.reply({
+				content: player.message,
+				ephemeral: true,
+			});
+		await importJson("players")
+			.catch(() => ({}))
+			.then((json) =>
+				writeJson("players", {
+					...json,
+					[interaction.user.id]: tag,
+				})
+			)
+			.then(() =>
+				interaction.editReply({
+					content: translate("commands.save.content", { lng, player }),
 					components: [
-						createActionButton(
-							ButtonActions.PlayerInfo,
-							{
-								label: translate("commands.player.buttons.playerInfo.label", {
-									lng,
-								}),
-							},
-							tag
-						),
+						{
+							type: ComponentType.ActionRow,
+							components: [
+								createActionButton(
+									ButtonActions.PlayerInfo,
+									{
+										label: translate(
+											"commands.player.buttons.playerInfo.label",
+											{
+												lng,
+											}
+										),
+									},
+									tag
+								),
+							],
+						},
 					],
-				},
-			],
-		});
+				})
+			)
+			.catch((error: unknown) =>
+				interaction.editReply({
+					content:
+						error instanceof Error
+							? error.message
+							: translate("common.unknownError", { lng }),
+				})
+			);
 	},
 	async autocomplete(interaction) {
 		const option = interaction.options.getFocused(true);

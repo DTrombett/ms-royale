@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { APITag, SearchClanOptions } from "apiroyale";
-import type { Snowflake } from "discord-api-types/v10";
+import type { SearchClanOptions } from "apiroyale";
 import type { CommandOptions } from "../util";
 import Constants, {
 	autocompleteClanTag,
@@ -155,42 +154,44 @@ export const command: CommandOptions = {
 		),
 	async run(interaction) {
 		const lng = getInteractionLocale(interaction);
-		let tag: string | null;
+		let deferred = false,
+			tag: string | null;
 
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Info:
-				await interaction.deferReply();
 				tag = interaction.options.getString(InfoOptions.Tag);
 
 				if (tag == null) {
-					const playerTag = (
-						await importJson("players").catch(
-							() => ({} as Record<Snowflake, APITag>)
-						)
-					)[interaction.user.id];
+					const playerTag = await importJson("players")
+						.then((json) => json[interaction.user.id])
+						.catch(() => undefined);
 
-					if (playerTag !== undefined)
-						tag = await this.client.players
-							.fetch(playerTag)
-							.then((p) => p.clan?.tag ?? null)
-							.catch(() => null);
+					if (playerTag !== undefined) {
+						[tag] = await Promise.all([
+							this.client.players
+								.fetch(playerTag)
+								.then((p) => p.clan?.tag ?? null)
+								.catch(() => null),
+							interaction.deferReply(),
+						]);
+						deferred = true;
+					}
 					if (tag == null) {
-						await interaction.editReply({
+						await interaction[deferred ? "editReply" : "reply"]({
 							content: translate("commands.clan.noTag", { lng }),
 						});
 						break;
 					}
 				}
+				const [info] = await Promise.all([
+					clanInfo(this.client, tag, { lng }),
+					deferred || interaction.deferReply(),
+				]);
 
 				// Display the clan info
-				await interaction.editReply(
-					await clanInfo(this.client, tag, {
-						lng: getInteractionLocale(interaction),
-					})
-				);
+				await interaction.editReply(info);
 				break;
 			case SubCommands.Search:
-				await interaction.deferReply();
 				/**
 				 * The location option provided
 				 */
@@ -243,75 +244,86 @@ export const command: CommandOptions = {
 					minScore,
 					name,
 				};
-
 				// Search the clans with the provided options and display them
-				await interaction.editReply({
-					...(await searchClan(this.client, options, {
+				const [searchResults] = await Promise.all([
+					searchClan(this.client, options, {
 						lng,
 						id: interaction.user.id,
-					})),
-				});
+					}),
+					interaction.deferReply(),
+				]);
+
+				await interaction.editReply(searchResults);
 				break;
 			case SubCommands.RiverRaceLog:
-				await interaction.deferReply();
 				tag = interaction.options.getString(RiverRaceLogOptions.Tag);
 
 				if (tag == null) {
-					const playerTag = (
-						await importJson("players").catch(
-							() => ({} as Record<Snowflake, APITag>)
-						)
-					)[interaction.user.id];
+					const playerTag = await importJson("players")
+						.then((json) => json[interaction.user.id])
+						.catch(() => undefined);
 
-					if (playerTag !== undefined)
-						tag = await this.client.players
-							.fetch(playerTag)
-							.then((p) => p.clan?.tag ?? null)
-							.catch(() => null);
+					if (playerTag !== undefined) {
+						[tag] = await Promise.all([
+							this.client.players
+								.fetch(playerTag)
+								.then((p) => p.clan?.tag ?? null)
+								.catch(() => null),
+							interaction.deferReply(),
+						]);
+						deferred = true;
+					}
 					if (tag == null) {
-						await interaction.editReply({
+						await interaction[deferred ? "editReply" : "reply"]({
 							content: translate("commands.clan.noTag", { lng }),
 						});
 						break;
 					}
 				}
-
-				// Fetch the river race log for the clan and display it
-				await interaction.editReply({
-					...(await riverRaceLog(this.client, tag, {
+				const [log] = await Promise.all([
+					riverRaceLog(this.client, tag, {
 						id: interaction.user.id,
 						lng,
-					})),
-				});
+					}),
+					deferred || interaction.deferReply(),
+				]);
+
+				// Fetch the river race log for the clan and display it
+				await interaction.editReply(log);
 				break;
 			case SubCommands.CurrentRiverRace:
 				await interaction.deferReply();
 				tag = interaction.options.getString(CurrentRiverRaceOptions.Tag);
 
 				if (tag == null) {
-					const playerTag = (
-						await importJson("players").catch(
-							() => ({} as Record<Snowflake, APITag>)
-						)
-					)[interaction.user.id];
+					const playerTag = await importJson("players")
+						.then((json) => json[interaction.user.id])
+						.catch(() => undefined);
 
-					if (playerTag !== undefined)
-						tag = await this.client.players
-							.fetch(playerTag)
-							.then((p) => p.clan?.tag ?? null)
-							.catch(() => null);
+					if (playerTag !== undefined) {
+						[tag] = await Promise.all([
+							this.client.players
+								.fetch(playerTag)
+								.then((p) => p.clan?.tag ?? null)
+								.catch(() => null),
+							interaction.deferReply(),
+						]);
+						deferred = true;
+					}
 					if (tag == null) {
-						await interaction.editReply({
+						await interaction[deferred ? "editReply" : "reply"]({
 							content: translate("commands.clan.noTag", { lng }),
 						});
 						break;
 					}
 				}
+				const [race] = await Promise.all([
+					currentRiverRace(this.client, tag, { lng }),
+					deferred || interaction.deferReply(),
+				]);
 
 				// Fetch the current river race for the clan and display it
-				await interaction.editReply({
-					...(await currentRiverRace(this.client, tag, { lng })),
-				});
+				await interaction.editReply(race);
 				break;
 			case SubCommands.ClanMembers:
 				let sort =
@@ -333,33 +345,38 @@ export const command: CommandOptions = {
 				cast<SortMethod>(sort);
 				tag = interaction.options.getString(ClanMembersOptions.Tag);
 				if (tag == null) {
-					const playerTag = (
-						await importJson("players").catch(
-							() => ({} as Record<Snowflake, APITag>)
-						)
-					)[interaction.user.id];
+					const playerTag = await importJson("players")
+						.then((json) => json[interaction.user.id])
+						.catch(() => undefined);
 
-					if (playerTag !== undefined)
-						tag = await this.client.players
-							.fetch(playerTag)
-							.then((p) => p.clan?.tag ?? null)
-							.catch(() => null);
+					if (playerTag !== undefined) {
+						[tag] = await Promise.all([
+							this.client.players
+								.fetch(playerTag)
+								.then((p) => p.clan?.tag ?? null)
+								.catch(() => null),
+							interaction.deferReply(),
+						]);
+						deferred = true;
+					}
 					if (tag == null) {
-						await interaction.editReply({
+						await interaction[deferred ? "editReply" : "reply"]({
 							content: translate("commands.clan.noTag", { lng }),
 						});
 						break;
 					}
 				}
-
-				// Fetch the clan members and display it
-				await interaction.editReply({
-					...(await clanMembers(this.client, tag, {
+				const [members] = await Promise.all([
+					clanMembers(this.client, tag, {
 						lng,
 						id: interaction.user.id,
 						sort,
-					})),
-				});
+					}),
+					deferred || interaction.deferReply(),
+				]);
+
+				// Fetch the clan members and display it
+				await interaction.editReply(members);
 				break;
 			default:
 				void CustomClient.printToStderr(

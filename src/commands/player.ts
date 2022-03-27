@@ -1,6 +1,4 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type { APITag } from "apiroyale";
-import type { Snowflake } from "discord-api-types/v10";
 import type { CommandOptions } from "../util";
 import Constants, {
 	autocompletePlayerTag,
@@ -65,16 +63,37 @@ export const command: CommandOptions = {
 		),
 	async run(interaction) {
 		const lng = getInteractionLocale(interaction);
+		let options, tag: string | undefined;
 
 		switch (interaction.options.getSubcommand() as SubCommands) {
 			case SubCommands.Info:
-				const tag =
+				tag =
 					interaction.options.getString(InfoOptions.Tag) ??
-					(
-						await importJson("players").catch(
-							() => ({} as Record<Snowflake, APITag>)
-						)
-					)[interaction.user.id];
+					(await importJson("players")
+						.then((json) => json[interaction.user.id])
+						.catch(() => undefined));
+
+				if (tag === undefined) {
+					await interaction.reply({
+						content: translate("commands.player.info.noTag", { lng }),
+						ephemeral: true,
+					});
+					break;
+				}
+				// Display the player info
+				[options] = await Promise.all([
+					playerInfo(this.client, tag, { lng }),
+					interaction.deferReply(),
+				]);
+
+				await interaction.editReply(options);
+				break;
+			case SubCommands.UpcomingChests:
+				tag =
+					interaction.options.getString(InfoOptions.Tag) ??
+					(await importJson("players")
+						.then((json) => json[interaction.user.id])
+						.catch(() => undefined));
 
 				if (tag == null) {
 					await interaction.reply({
@@ -83,35 +102,13 @@ export const command: CommandOptions = {
 					});
 					break;
 				}
-
-				// Display the player info
-				await interaction.deferReply();
-				await interaction.editReply({
-					...(await playerInfo(this.client, tag, { lng })),
-				});
-				break;
-			case SubCommands.UpcomingChests:
-				const tag2 =
-					interaction.options.getString(UpcomingChestsOptions.Tag) ??
-					(
-						await importJson("players").catch(
-							() => ({} as Record<Snowflake, APITag>)
-						)
-					)[interaction.user.id];
-
-				if (tag2 == null) {
-					await interaction.reply({
-						content: translate("commands.player.info.noTag", { lng }),
-						ephemeral: true,
-					});
-					break;
-				}
-
 				// Display the player's upcoming chests
-				await interaction.deferReply();
-				await interaction.editReply({
-					...(await playerUpcomingChests(this.client, tag2, { lng })),
-				});
+				[options] = await Promise.all([
+					playerUpcomingChests(this.client, tag, { lng }),
+					interaction.deferReply(),
+				]);
+
+				await interaction.editReply(options);
 				break;
 			default:
 				void CustomClient.printToStderr(
