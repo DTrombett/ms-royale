@@ -16,7 +16,14 @@ import { URL } from "node:url";
 import type { CommandOptions } from "./util";
 import Constants from "./util";
 
-if (!("DISCORD_TOKEN" in env)) config({ debug: true });
+if (!("DISCORD_TOKEN" in env)) {
+	const { error } = config();
+
+	if (error) {
+		console.error(error);
+		exit(0);
+	}
+}
 console.time("Register slash commands");
 
 const {
