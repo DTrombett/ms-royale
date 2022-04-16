@@ -1,6 +1,7 @@
 import { bold } from "@discordjs/builders";
 import type { APITag, PlayerBadge, PlayerBadgeManager } from "apiroyale";
 import type { Snowflake } from "discord-api-types/v10";
+import type { ClientApplication } from "discord.js";
 import { env } from "node:process";
 import { author, name } from "../../package.json";
 
@@ -218,11 +219,16 @@ export const Constants = {
 		}` as const,
 
 	/**
-	 * The invite URL for the bot
+	 * The invite URL for the bot.
+	 * @param application - The application
 	 */
-	inviteUrl: `https://discord.com/api/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID!}&scope=${[
-		"applications.commands",
-	].join("%20")}`,
+	inviteUrl: (application: ClientApplication) =>
+		application.customInstallURL ??
+		(`https://discord.com/api/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID!}&scope=${(
+			application.installParams?.scopes ?? ["application.commands"]
+		).join("%20")}&permissions=${
+			application.installParams?.permissions.bitfield ?? 0
+		}&response_type=code` as const),
 
 	/**
 	 * The bot's locale
