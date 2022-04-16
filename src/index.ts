@@ -53,7 +53,9 @@ app.get(`/${RoyaleUrls.playerInfoPath}`, (req, res) => {
 	return undefined;
 });
 app.use((_, res) => {
-	res.redirect(Constants.inviteUrl);
+	if (client.bot.application)
+		res.redirect(Constants.inviteUrl(client.bot.application));
+	else res.sendStatus(404);
 });
 
 app.listen(3000);
