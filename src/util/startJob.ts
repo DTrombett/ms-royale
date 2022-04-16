@@ -5,8 +5,6 @@ import Constants from "./Constants";
 import CustomClient from "./CustomClient";
 
 const parsed = parser.parseExpression("0 0 0 * * *");
-const clanTag = Constants.mainClanTag();
-const secondClanTag = Constants.secondClanTag();
 const { CLAN_CHANNEL: clanChannelId } = env;
 
 /**
@@ -28,10 +26,10 @@ export const startJob = (client: CustomClient) =>
 		}
 		channel
 			.bulkDelete(2)
-			.then(() => clanInfo(client, clanTag, {}))
+			.then(() => clanInfo(client, Constants.mainClanTag, {}))
 			.then((data) =>
 				Promise.all([
-					clanInfo(client, secondClanTag, {}),
+					clanInfo(client, Constants.secondClanTag, {}),
 					channel.send({
 						...data,
 					}),

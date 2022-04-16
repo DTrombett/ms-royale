@@ -1,5 +1,5 @@
-import { Embed } from "@discordjs/builders";
 import type { Clan } from "apiroyale";
+import type { APIEmbed } from "discord-api-types/v10";
 import { Colors } from "discord.js";
 import { env } from "node:process";
 import type { EventOptions } from "../../util";
@@ -15,15 +15,17 @@ const constructClanUpdateEmbed = (
 	oldClan: Clan,
 	lng?: string
 ) => {
-	const embed = new Embed()
-		.setTitle(translate("events.clanUpdate.title", { lng }))
-		.setURL(Constants.clanLink(newClan.tag))
-		.setAuthor({ name: newClan.name })
-		.setThumbnail(newClan.badgeUrl)
-		.setColor(Colors.Blurple);
+	const embed: APIEmbed = {
+		title: translate("events.clanUpdate.title", { lng }),
+		url: Constants.clanLink(newClan.tag),
+		author: { name: newClan.name },
+		thumbnail: { url: newClan.badgeUrl },
+		color: Colors.Blurple,
+		fields: [],
+	};
 
 	if (oldClan.name !== newClan.name)
-		embed.addField(
+		embed.fields!.push(
 			translate("events.clanUpdate.fields.name", {
 				lng,
 				old: oldClan.name,
@@ -31,7 +33,7 @@ const constructClanUpdateEmbed = (
 			})
 		);
 	if (oldClan.description !== newClan.description)
-		embed.addField(
+		embed.fields!.push(
 			translate("events.clanUpdate.fields.description", {
 				lng,
 				new: newClan.description,
@@ -39,7 +41,7 @@ const constructClanUpdateEmbed = (
 			})
 		);
 	if (oldClan.badgeId !== newClan.badgeId)
-		embed.addField(
+		embed.fields!.push(
 			translate("events.clanUpdate.fields.badgeId", {
 				lng,
 				old: oldClan.badgeId,
@@ -47,7 +49,7 @@ const constructClanUpdateEmbed = (
 			})
 		);
 	if (oldClan.locationName !== newClan.locationName)
-		embed.addField(
+		embed.fields!.push(
 			translate("events.clanUpdate.fields.location", {
 				lng,
 				old: oldClan.locationName,
@@ -55,7 +57,7 @@ const constructClanUpdateEmbed = (
 			})
 		);
 	if (oldClan.requiredTrophies !== newClan.requiredTrophies)
-		embed.addField(
+		embed.fields!.push(
 			translate("events.clanUpdate.fields.requiredTrophies", {
 				lng,
 				old: oldClan.requiredTrophies,
@@ -63,29 +65,32 @@ const constructClanUpdateEmbed = (
 			})
 		);
 	if (oldClan.type !== newClan.type)
-		embed.addField(
+		embed.fields!.push(
 			translate("events.clanUpdate.fields.type", {
 				lng,
 				old: oldClan.type,
 				new: newClan.type,
 			})
 		);
-	for (const [tag, member] of oldClan.members)
-		if (!newClan.members.has(tag))
-			embed.addField(
+	embed.fields!.push(
+		...oldClan.members
+			.filter(({ tag }) => !newClan.members.has(tag))
+			.map((member) =>
 				translate("events.clanUpdate.fields.memberLeft", {
 					lng,
 					member,
 				})
-			);
-	for (const [tag, member] of newClan.members)
-		if (!oldClan.members.has(tag))
-			embed.addField(
+			),
+		...newClan.members
+			.filter(({ tag }) => !oldClan.members.has(tag))
+			.map((member) =>
 				translate("events.clanUpdate.fields.memberJoined", {
 					lng,
 					member,
 				})
-			);
+			)
+	);
+	embed.fields = embed.fields!.slice(0, 25);
 	return embed;
 };
 
@@ -94,7 +99,7 @@ export const event: EventOptions<EventType.APIRoyale, "clanUpdate"> = {
 	type: EventType.APIRoyale,
 	on(oldClan, newClan) {
 		// Prepare the embed only if it's the main clan
-		if (newClan.tag !== Constants.mainClanTag()) return;
+		if (newClan.tag !== Constants.mainClanTag) return;
 		/**
 		 * The channel to send the embed to
 		 */
@@ -117,7 +122,7 @@ export const event: EventOptions<EventType.APIRoyale, "clanUpdate"> = {
 		);
 
 		// Send the embed only if we have at least one field
-		if (embed.fields.length)
+		if (embed.fields!.length)
 			channel.send({ embeds: [embed] }).catch(CustomClient.printToStderr);
 	},
 };

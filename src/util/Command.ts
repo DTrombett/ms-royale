@@ -7,8 +7,6 @@ import type { CommandOptions } from ".";
 import Constants from "./Constants";
 import CustomClient from "./CustomClient";
 
-const owners = Constants.owners();
-
 /**
  * A class representing a Discord slash command
  */
@@ -73,7 +71,8 @@ export class Command {
 	 */
 	async autocomplete(interaction: AutocompleteInteraction) {
 		try {
-			if (this.reserved && !owners.includes(interaction.user.id)) return;
+			if (this.reserved && !Constants.owners.includes(interaction.user.id))
+				return;
 			await this._autocomplete?.(interaction);
 		} catch (message) {
 			void CustomClient.printToStderr(message, true);
@@ -100,7 +99,7 @@ export class Command {
 	 */
 	async run(interaction: ChatInputCommandInteraction) {
 		try {
-			if (this.reserved && !owners.includes(interaction.user.id)) {
+			if (this.reserved && !Constants.owners.includes(interaction.user.id)) {
 				await interaction.reply({
 					content: "Questo comando è riservato ai proprietari del bot.",
 				});

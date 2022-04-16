@@ -3,7 +3,6 @@ import Constants from "./Constants";
 import type { Variables } from "./types";
 
 export const databaseCache: Partial<Variables> = {};
-const folder = Constants.variablesFolderName();
 
 /**
  * Parse the JSON contents of a file.
@@ -23,7 +22,7 @@ export const importJson = <T extends keyof Variables>(
 
 		let data = "";
 
-		createReadStream(`./${folder}/${name}.json`)
+		createReadStream(`./${Constants.variablesFolderName}/${name}.json`)
 			.setEncoding("utf8")
 			.on("data", (chunk) => (data += chunk))
 			.once("end", () => {
@@ -53,7 +52,7 @@ export const writeJson = <T extends keyof Variables>(
 			const stringified = JSON.stringify(data);
 
 			databaseCache[name] = data;
-			createWriteStream(`./${folder}/${name}.json`)
+			createWriteStream(`./${Constants.variablesFolderName}/${name}.json`)
 				.once("error", reject)
 				.once("finish", resolve)
 				.setDefaultEncoding("utf8")

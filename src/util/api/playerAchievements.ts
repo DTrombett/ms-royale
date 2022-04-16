@@ -55,7 +55,7 @@ export const playerAchievements: APIMethod<string> = async (
 						achievement.completed
 							? ""
 							: ` (${achievement.percentage.toFixed(
-									Constants.percentageDigits()
+									Constants.percentageDigits
 							  )}%)`
 					}`
 			)

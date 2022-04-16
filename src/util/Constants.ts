@@ -1,6 +1,47 @@
 import { bold } from "@discordjs/builders";
 import type { APITag, PlayerBadge, PlayerBadgeManager } from "apiroyale";
+import type { Snowflake } from "discord-api-types/v10";
 import { env } from "node:process";
+import { author, name } from "../../package.json";
+
+const prod = env.NODE_ENV === "production";
+
+export const RoyaleUrls = {
+	/**
+	 * The schema of the royale url
+	 */
+	SCHEMA: "clashroyale://" as const,
+
+	/**
+	 * The path for clan info
+	 */
+	clanInfoPath: "clanInfo" as const,
+
+	/**
+	 * The path for player info
+	 */
+	playerInfoPath: "playerInfo" as const,
+
+	/**
+	 * Builds a Clash Royale url.
+	 * @param path - The path of the url
+	 */
+	build: (path: string) => `${RoyaleUrls.SCHEMA}${path}` as const,
+
+	/**
+	 * The url for clan info.
+	 * @param tag - The tag of the clan
+	 */
+	clanInfo: (tag: APITag) =>
+		RoyaleUrls.build(`${RoyaleUrls.clanInfoPath}?id=${tag.slice(1)}`),
+
+	/**
+	 * The url for player info.
+	 * @param tag - The tag of the player
+	 */
+	playerInfo: (tag: APITag) =>
+		RoyaleUrls.build(`${RoyaleUrls.playerInfoPath}?id=${tag.slice(1)}`),
+};
 
 /**
  * Constants about time
@@ -94,49 +135,49 @@ export const TIME = {
 
 export const Constants = {
 	/**
-	 * The label used for the online event of the client.
+	 * The label used for the online event of the client
 	 */
-	clientOnlineLabel: () => "Client online" as const,
+	clientOnlineLabel: "Client online",
 
 	/**
-	 * The tag of the main clan.
+	 * The tag of the main clan
 	 */
-	mainClanTag: () => "#L2Y2L2PC" as const,
+	mainClanTag: "#L2Y2L2PC",
 
 	/**
-	 * The tag of the main clan.
+	 * The tag of the main clan
 	 */
-	secondClanTag: () => "#QGY89R8U" as const,
+	secondClanTag: "#QGY89R8U",
 
 	/**
-	 * Number of milliseconds before fetching the main clan again.
+	 * Number of milliseconds before fetching the main clan again
 	 */
-	mainClanFetchInterval: () => TIME.millisecondsPerMinute * 5,
+	mainClanFetchInterval: TIME.millisecondsPerMinute * 5,
 
 	/**
-	 * The name of the folder with commands.
+	 * The name of the folder with commands
 	 */
-	commandsFolderName: () => "commands" as const,
+	commandsFolderName: "commands",
 
 	/**
-	 * The name of the folder with events.
+	 * The name of the folder with events
 	 */
-	eventsFolderName: () => "events" as const,
+	eventsFolderName: "events",
 
 	/**
-	 * A zero-width space.
+	 * A zero-width space
 	 */
-	zeroWidthSpace: () => "\u200b" as const,
+	zeroWidthSpace: "\u200b",
 
 	/**
-	 * Number of digits after the decimal point for percentage.
+	 * Number of digits after the decimal point for percentage
 	 */
-	percentageDigits: () => 2 as const,
+	percentageDigits: 2,
 
 	/**
-	 * Bot owners.
+	 * Bot owners
 	 */
-	owners: () => ["597505862449496065", "584465680506814465"],
+	owners: ["597505862449496065", "584465680506814465"] as Snowflake[],
 
 	/**
 	 * The message to log when a command is not recognized.
@@ -150,14 +191,18 @@ export const Constants = {
 	 * @param tag - The clan tag
 	 */
 	clanLink: (tag: APITag) =>
-		`https://royaleapi.com/clan/${tag.slice(1)}` as const,
+		prod
+			? Constants.website(`${RoyaleUrls.clanInfoPath}?tag=${tag.slice(1)}`)
+			: (`https://royaleapi.com/clan/${tag.slice(1)}` as const),
 
 	/**
 	 * The link for player info.
-	 * @param clan - The player tag
+	 * @param tag - The player tag
 	 */
 	playerLink: (tag: APITag) =>
-		`https://royaleapi.com/player/${tag.slice(1)}` as const,
+		prod
+			? Constants.website(`${RoyaleUrls.playerInfoPath}?tag=${tag.slice(1)}`)
+			: (`https://royaleapi.com/player/${tag.slice(1)}` as const),
 
 	/**
 	 * The embed field value for the player's badges.
@@ -173,22 +218,28 @@ export const Constants = {
 		}` as const,
 
 	/**
-	 * The invite URL for the bot.
+	 * The invite URL for the bot
 	 */
-	inviteUrl: () =>
-		`https://discord.com/api/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID!}&scope=${[
-			"applications.commands",
-		].join("%20")}` as const,
+	inviteUrl: `https://discord.com/api/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID!}&scope=${[
+		"applications.commands",
+	].join("%20")}`,
 
 	/**
-	 * The bot's locale.
+	 * The bot's locale
 	 */
-	locale: () => "it-IT" as const,
+	locale: "it-IT",
 
 	/**
-	 * The folder with saved variables.
+	 * The folder with saved variables
 	 */
-	variablesFolderName: () => "database" as const,
+	variablesFolderName: "database",
+
+	/**
+	 * The url of the bot's website.
+	 * @param path - The path to append to the url
+	 */
+	website: (...path: string[]) =>
+		`https://${name}.${author}.repl.co/${path.join("/")}` as const,
 } as const;
 
 export default Constants;

@@ -8,10 +8,9 @@
     "build": "tsup",
     "commands": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings dist/registerCommands.js",
     "lint": "eslint src --fix",
-    "prepare": "npm test && husky install",
+    "prepare": "npm run build && npm run commands",
     "prettier": "prettier --write src/**/*.ts",
-    "start:no-build": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings ./dist/index.js",
-    "start": "npm run build && npm run start:no-build",
+    "start": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings ./dist/index.js",
     "test": "eslint src && tsc --noEmit"
   },
   "author": "DTrombett",
@@ -29,23 +28,28 @@
     "url": "https://github.com/DTrombett/ms-royale/issues"
   },
   "dependencies": {
-    "@discordjs/builders": "^0.12.0",
-    "@discordjs/rest": "^0.3.0",
+    "@discordjs/builders": "^0.13.0-dev.1649937819-b01f414",
+    "@discordjs/rest": "^0.4.0-dev.1649937819-b01f414",
     "apiroyale": "github:DTrombett/apiroyale",
-    "bufferutil": "^4.0.6",
     "cron-parser": "^4.3.0",
     "discord-api-types": "*",
-    "discord.js": "^14.0.0-dev.1644537979.298b226",
+    "discord.js": "^14.0.0-dev.1649937833-b01f414",
     "dotenv": "^16.0.0",
-    "erlpack": "github:discord/erlpack",
+    "express": "^4.17.3",
     "i18next": "^21.6.16",
     "i18next-fs-backend": "^1.1.4",
-    "prettier": "^2.6.2",
+    "node": "^17.7.2",
+    "prettier": "^2.6.2"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.6",
+    "erlpack": "github:discord/erlpack",
     "utf-8-validate": "^5.0.9",
     "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.2",
+    "@types/express": "^4.17.13",
     "@types/i18next-fs-backend": "^1.1.2",
     "@types/node": "^17.0.9",
     "@types/node-fetch": "^2.6.1",

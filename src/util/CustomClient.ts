@@ -17,8 +17,6 @@ import loadEvents from "./loadEvents";
 import occurrences from "./occurrences";
 import { EventType } from "./types";
 
-const locale = Constants.locale();
-
 /**
  * A custom class to interact with Clash Royale API and Discord
  */
@@ -154,7 +152,7 @@ export class CustomClient extends ClientRoyale {
 	 */
 	private static format(this: void, message: unknown): string {
 		return `${CustomClient.inspect(message)} (${new Date().toLocaleString(
-			locale,
+			Constants.locale,
 			{
 				timeZone: "Europe/Rome",
 			}

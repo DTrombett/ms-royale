@@ -3,8 +3,6 @@ import { ButtonStyle, ComponentType } from "discord-api-types/v10";
 import type { CommandOptions } from "../util";
 import { Constants, Emojis, resolveEmojiIdentifier } from "../util";
 
-const inviteUrl = Constants.inviteUrl();
-
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder()
 		.setName("invite")
@@ -22,7 +20,7 @@ export const command: CommandOptions = {
 							emoji: resolveEmojiIdentifier(Emojis.Robot),
 							label: "Aggiungi al server",
 							style: ButtonStyle.Link,
-							url: inviteUrl,
+							url: Constants.inviteUrl,
 						},
 					],
 				},

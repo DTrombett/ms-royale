@@ -250,10 +250,6 @@
 				"noTag": "You haven't saved any tags. Try the `/save` command to save it or use the `tag` option to see the info of a specific player.",
 				"title": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })",
 				"fields": {
-					"badges": {
-						"name": "Badges",
-						"value": "TODO"
-					},
 					"bestTrophies": {
 						"name": "Highest trophies",
 						"value": "🏆 {{bestTrophies}}"

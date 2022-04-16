@@ -11,7 +11,6 @@ import translate from "../translate";
 import { ButtonActions, CustomEmojis } from "../types";
 import validateTag from "../validateTag";
 
-const digits = Constants.percentageDigits();
 /**
  * Displays information about a player.
  * @param client - The client
@@ -91,9 +90,9 @@ export const playerInfo: APIMethod<string> = async (
 										lng,
 								  })}](https://link.clashroyale.com/deck/it?deck=${player.deck
 										.map((card) => card.id)
-										.join(";")}&id=${player.id.slice(1)} ${
+										.join(";")}&id=${player.id.slice(1)}) ${
 										CustomEmojis.CopyDeck
-								  })`
+								  }`
 								: ""
 					  }`
 					: translate("commands.player.info.fields.deck.empty", { lng }),
@@ -136,16 +135,10 @@ export const playerInfo: APIMethod<string> = async (
 		);
 	embed.fields!.push(
 		{
-			...translate("commands.player.info.fields.badges", {
-				lng,
-			}),
-			value: Constants.playerInfoBadgesFieldValue(player.badges),
-		},
-		{
 			...translate("commands.player.info.fields.wins", {
 				lng,
 				wins: player.wins,
-				winRatio: player.winPercentage.toFixed(digits),
+				winRatio: player.winPercentage.toFixed(Constants.percentageDigits),
 			}),
 			inline: true,
 		},
@@ -153,7 +146,9 @@ export const playerInfo: APIMethod<string> = async (
 			...translate("commands.player.info.fields.threeCrownWins", {
 				lng,
 				threeCrownWins: player.threeCrownWins,
-				threeCrownWinRatio: player.threeCrownWinPercentage.toFixed(digits),
+				threeCrownWinRatio: player.threeCrownWinPercentage.toFixed(
+					Constants.percentageDigits
+				),
 			}),
 			inline: true,
 		},
@@ -161,7 +156,9 @@ export const playerInfo: APIMethod<string> = async (
 			...translate("commands.player.info.fields.losses", {
 				lng,
 				losses: player.losses,
-				lossesPercent: player.lossPercentage.toFixed(digits),
+				lossesPercent: player.lossPercentage.toFixed(
+					Constants.percentageDigits
+				),
 			}),
 			inline: true,
 		},
