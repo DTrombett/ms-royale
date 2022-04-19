@@ -98,7 +98,7 @@ export const clanMembers: APIMethod<
 				const { rankDifference } = member;
 
 				return {
-					name: `${i}) ${translate("common.tagPreview", {
+					name: `${i + 1 + 10 * index}) ${translate("common.tagPreview", {
 						lng,
 						structure: member,
 					})}`,
