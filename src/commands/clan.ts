@@ -292,7 +292,6 @@ export const command: CommandOptions = {
 				await interaction.editReply(log);
 				break;
 			case SubCommands.CurrentRiverRace:
-				await interaction.deferReply();
 				tag = interaction.options.getString(CurrentRiverRaceOptions.Tag);
 
 				if (tag == null) {
@@ -341,7 +340,6 @@ export const command: CommandOptions = {
 						break;
 					}
 
-				await interaction.deferReply();
 				cast<SortMethod>(sort);
 				tag = interaction.options.getString(ClanMembersOptions.Tag);
 				if (tag == null) {
