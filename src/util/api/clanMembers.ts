@@ -92,15 +92,13 @@ export const clanMembers: APIMethod<
 		footer: { text: translate("common.lastUpdated", { lng }) },
 		timestamp: members.first()?.lastUpdate.toISOString(),
 		url: Constants.clanLink(tag),
-		fields: members
-			.filter(
-				({ rank }) => rank - 1 >= index * 10 && rank - 1 < (index + 1) * 10
-			)
-			.map<APIEmbedField>((member) => {
+		fields: [...members.values()] // TODO: use members.slice when it'll be implemented
+			.slice(index * 10, index * 10 + 10)
+			.map<APIEmbedField>((member, i) => {
 				const { rankDifference } = member;
 
 				return {
-					name: `${member.rank}) ${translate("common.tagPreview", {
+					name: `${i}) ${translate("common.tagPreview", {
 						lng,
 						structure: member,
 					})}`,
