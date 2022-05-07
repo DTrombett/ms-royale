@@ -1,20 +1,19 @@
-import { Clan } from "apiroyale";
-import type { APIEmbed, APISelectMenuOption } from "discord-api-types/v10";
+import type { APISelectMenuOption } from "discord-api-types/v10";
 import { ComponentType } from "discord-api-types/v10";
 import { Colors } from "discord.js";
 import type { APIMethod } from "..";
+import { transformDate } from "../APIDate";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
 import createActionButton, {
 	resolveEmojiIdentifier,
 } from "../createActionButton";
 import CustomClient from "../CustomClient";
-import { buildCustomMenuId } from "../customId";
+import { createActionId } from "../customId";
 import { locationToLocale } from "../locales";
 import normalizeTag from "../normalizeTag";
-import toLocaleString from "../toLocaleString";
 import translate from "../translate";
-import { ButtonActions, CustomEmojis, MenuActions } from "../types";
+import { CustomEmojis } from "../types";
 import validateTag from "../validateTag";
 
 /**
@@ -41,90 +40,97 @@ export const clanInfo: APIMethod<string> = async (
 		return { content: error.message, ephemeral: true };
 	});
 
-	if (!(clan instanceof Clan)) return clan;
+	if (!("tag" in clan)) return clan;
 	const fallbackLng = locationToLocale(clan.location);
-	const embed: APIEmbed = {
-		title: translate("commands.clan.info.title", { lng, clan, fallbackLng }),
-		description: clan.description,
-		color: Colors.Blue,
-		footer: { text: translate("common.lastUpdated", { lng, fallbackLng }) },
-		timestamp: clan.lastUpdate.toISOString(),
-		thumbnail: { url: clan.badgeUrl },
-		url: Constants.clanLink(tag),
-		fields: [
-			{
-				...translate("commands.clan.info.fields.warTrophies", {
-					lng,
-					warTrophies: clan.warTrophies,
-					fallbackLng,
-				}),
-			},
-			{
-				...translate("commands.clan.info.fields.location", {
-					lng,
-					location: clan.locationName,
-					fallbackLng,
-				}),
-				inline: true,
-			},
-			{
-				...translate("commands.clan.info.fields.requiredTrophies", {
-					lng,
-					requiredTrophies: clan.requiredTrophies,
-					fallbackLng,
-				}),
-				inline: true,
-			},
-			{
-				...translate("commands.clan.info.fields.weeklyDonations", {
-					lng,
-					weeklyDonations: clan.donationsPerWeek,
-					fallbackLng,
-				}),
-				inline: true,
-			},
-			{
-				...translate("commands.clan.info.fields.score", {
-					lng,
-					score: clan.score,
-					fallbackLng,
-				}),
-				inline: true,
-			},
-			{
-				...translate("commands.clan.info.fields.type", {
-					lng,
-					type: capitalize(clan.type),
-					fallbackLng,
-				}),
-				inline: true,
-			},
-			{
-				...translate("commands.clan.info.fields.memberCount", {
-					lng,
-					memberCount: clan.members.size,
-					fallbackLng,
-				}),
-			},
-		],
-	};
 
 	return {
-		embeds: [embed],
+		embeds: [
+			{
+				title: translate("commands.clan.info.title", {
+					lng,
+					clan,
+					fallbackLng,
+				}),
+				description: clan.description,
+				color: Colors.Blue,
+				footer: { text: translate("common.footer", { lng, fallbackLng }) },
+				timestamp: new Date(client.clans.maxAges[tag]!).toISOString(),
+				thumbnail: {
+					url: Constants.clanBadgeUrl(clan.badgeId),
+				},
+				url: Constants.clanLink(tag),
+				fields: [
+					{
+						...translate("commands.clan.info.fields.warTrophies", {
+							lng,
+							warTrophies: clan.clanWarTrophies,
+							fallbackLng,
+						}),
+					},
+					{
+						...translate("commands.clan.info.fields.location", {
+							lng,
+							location: clan.location.name,
+							fallbackLng,
+						}),
+						inline: true,
+					},
+					{
+						...translate("commands.clan.info.fields.requiredTrophies", {
+							lng,
+							requiredTrophies: clan.requiredTrophies,
+							fallbackLng,
+						}),
+						inline: true,
+					},
+					{
+						...translate("commands.clan.info.fields.weeklyDonations", {
+							lng,
+							weeklyDonations: clan.donationsPerWeek,
+							fallbackLng,
+						}),
+						inline: true,
+					},
+					{
+						...translate("commands.clan.info.fields.score", {
+							lng,
+							score: clan.clanScore,
+							fallbackLng,
+						}),
+						inline: true,
+					},
+					{
+						...translate("commands.clan.info.fields.type", {
+							lng,
+							type: capitalize(clan.type),
+							fallbackLng,
+						}),
+						inline: true,
+					},
+					{
+						...translate("commands.clan.info.fields.memberCount", {
+							lng,
+							memberCount: clan.members,
+							fallbackLng,
+						}),
+					},
+				],
+			},
+		],
 		components: [
 			{
 				type: ComponentType.ActionRow,
 				components: [
 					{
 						type: ComponentType.SelectMenu,
-						options: clan.members
-							.first(25)
+						options: clan.memberList
+							.slice(0, 25)
 							.map<APISelectMenuOption>((member) => ({
 								...translate("commands.clan.info.menu.options", {
 									lng,
 									member,
 									role: capitalize(member.role),
-									lastSeen: toLocaleString(member.lastSeen, lng),
+									lastSeen: transformDate(member.lastSeen),
 									fallbackLng,
 								}),
 								value: member.tag,
@@ -134,7 +140,7 @@ export const clanInfo: APIMethod<string> = async (
 							lng,
 							fallbackLng,
 						}),
-						custom_id: buildCustomMenuId(MenuActions.PlayerInfo),
+						custom_id: createActionId("player"),
 					},
 				],
 			},
@@ -142,7 +148,7 @@ export const clanInfo: APIMethod<string> = async (
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						ButtonActions.ClanMembers,
+						"cm",
 						{
 							label: translate("commands.clan.buttons.clanMembers.label", {
 								lng,
@@ -152,7 +158,7 @@ export const clanInfo: APIMethod<string> = async (
 						tag
 					),
 					createActionButton(
-						ButtonActions.CurrentRiverRace,
+						"cr",
 						{
 							label: translate("commands.clan.buttons.currentRiverRace.label", {
 								lng,
@@ -162,7 +168,7 @@ export const clanInfo: APIMethod<string> = async (
 						tag
 					),
 					createActionButton(
-						ButtonActions.RiverRaceLog,
+						"rl",
 						{
 							label: translate("commands.clan.buttons.riverRaceLog.label", {
 								lng,

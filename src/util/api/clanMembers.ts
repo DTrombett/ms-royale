@@ -1,29 +1,22 @@
 import { TimestampStyles } from "@discordjs/builders";
-import { ClanMemberList } from "apiroyale";
 import type {
-	APIEmbed,
 	APIEmbedField,
 	APISelectMenuOption,
 	Snowflake,
 } from "discord-api-types/v10";
 import { ComponentType } from "discord-api-types/v10";
 import { Colors } from "discord.js";
+import type { APIMethod } from "..";
 import { cast, resolveEmojiIdentifier } from "..";
+import { convertDate } from "../APIDate";
 import capitalize from "../capitalize";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
-import { buildCustomMenuId } from "../customId";
+import { createActionId } from "../customId";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
-import type { APIMethod } from "../types";
-import {
-	ButtonActions,
-	CustomEmojis,
-	Emojis,
-	MenuActions,
-	SortMethod,
-} from "../types";
+import { CustomEmojis, Emojis, SortMethod } from "../types";
 import validateTag from "../validateTag";
 
 const emojis: Record<SortMethod, CustomEmojis | Emojis> = {
@@ -57,69 +50,36 @@ export const clanMembers: APIMethod<
 			ephemeral: true,
 		};
 
-	const members = await client
-		.fetchClanMembers({ tag })
-		.catch((error: Error) => {
-			void CustomClient.printToStderr(error);
-			return { content: error.message, ephemeral: true };
-		});
+	const members = await client.clans.fetchMembers(tag).catch((error: Error) => {
+		void CustomClient.printToStderr(error);
+		return { content: error.message, ephemeral: true };
+	});
 
-	if (!(members instanceof ClanMemberList)) return members;
-	members.sort((m1, m2) => {
+	if (!("items" in members)) return members;
+	members.items.sort((m1, m2) => {
 		switch (sort) {
 			case SortMethod.Rank:
-				return m1.rank - m2.rank;
+				return m1.clanRank - m2.clanRank;
 			case SortMethod.DonationsPerWeek:
-				return m2.donationsPerWeek - m1.donationsPerWeek;
+				return m2.donations - m1.donations;
 			case SortMethod.Name:
 				return m1.name.localeCompare(m2.name);
 			case SortMethod.DonationsReceivedPerWeek:
-				return m2.donationsReceivedPerWeek - m1.donationsReceivedPerWeek;
+				return m2.donationsReceived - m1.donationsReceived;
 			case SortMethod.LastSeen:
-				return m2.lastSeen.getTime() - m1.lastSeen.getTime();
+				return (
+					convertDate(m2.lastSeen).getTime() -
+					convertDate(m1.lastSeen).getTime()
+				);
 			case SortMethod.LastSeenDesc:
-				return m1.lastSeen.getTime() - m2.lastSeen.getTime();
+				return (
+					convertDate(m1.lastSeen).getTime() -
+					convertDate(m2.lastSeen).getTime()
+				);
 			default:
 				return 0;
 		}
 	});
-	const embed: APIEmbed = {
-		title: translate("commands.clan.members.title", {
-			lng,
-			size: members.size,
-		}),
-		color: Colors.Blurple,
-		footer: { text: translate("common.lastUpdated", { lng }) },
-		timestamp: members.first()?.lastUpdate.toISOString(),
-		url: Constants.clanLink(tag),
-		fields: [...members.values()] // TODO: use members.slice when it'll be implemented
-			.slice(index * 10, index * 10 + 10)
-			.map<APIEmbedField>((member, i) => {
-				const { rankDifference } = member;
-
-				return {
-					name: `${i + 1 + 10 * index}) ${translate("common.tagPreview", {
-						lng,
-						structure: member,
-					})}`,
-					value: `${capitalize(member.role)} - ${CustomEmojis.Donations} ${
-						member.donationsPerWeek
-					} - ${Emojis.Trophy} ${member.trophies} (#${member.rank}${
-						rankDifference
-							? ` - ${Math.abs(rankDifference)}${
-									Emojis[rankDifference > 0 ? "UpArrow" : "DownArrow"]
-							  }`
-							: ""
-					})\n${Emojis.Watch} <t:${member.lastSeen.getTime() / 1000}:${
-						TimestampStyles.LongDateTime
-					}> (<t:${member.lastSeen.getTime() / 1000}:${
-						TimestampStyles.RelativeTime
-					}>)\n${CustomEmojis.DonationsReceived} ${
-						member.donationsReceivedPerWeek
-					} - ${CustomEmojis.KingLevel} ${member.kingLevel}`,
-				};
-			}),
-	};
 	const options: APISelectMenuOption[] = [];
 	const translatedOptions = translate("commands.clan.members.menu.options", {
 		lng,
@@ -141,7 +101,49 @@ export const clanMembers: APIMethod<
 		}
 
 	return {
-		embeds: [embed],
+		embeds: [
+			{
+				title: translate("commands.clan.members.title", {
+					lng,
+					size: members.items.length,
+				}),
+				color: Colors.Blurple,
+				footer: { text: translate("common.footer", { lng }) },
+				timestamp: new Date(
+					client.players.maxAges[members.items[0].tag]!
+				).toISOString(),
+				url: Constants.clanLink(tag),
+				fields: members.items
+					.slice(index * 10, index * 10 + 10)
+					.map<APIEmbedField>((member, i) => {
+						const rankDifference = member.clanRank - member.previousClanRank;
+
+						return {
+							name: `${i + 1 + 10 * index}) ${translate("common.tagPreview", {
+								lng,
+								structure: member,
+							})}`,
+							value: `${capitalize(member.role)} - ${CustomEmojis.Donations} ${
+								member.donations
+							} - ${Emojis.Trophy} ${member.trophies} (#${member.clanRank}${
+								rankDifference
+									? ` - ${Math.abs(rankDifference)}${
+											Emojis[rankDifference > 0 ? "UpArrow" : "DownArrow"]
+									  }`
+									: ""
+							})\n${Emojis.Watch} <t:${
+								convertDate(member.lastSeen).getTime() / 1000
+							}:${TimestampStyles.LongDateTime}> (<t:${
+								convertDate(member.lastSeen).getTime() / 1000
+							}:${TimestampStyles.RelativeTime}>)\n${
+								CustomEmojis.DonationsReceived
+							} ${member.donationsReceived} - ${CustomEmojis.KingLevel} ${
+								member.expLevel
+							}`,
+						};
+					}),
+			},
+		],
 		components: [
 			{
 				type: ComponentType.ActionRow,
@@ -152,7 +154,7 @@ export const clanMembers: APIMethod<
 						placeholder: translate("commands.clan.members.menu.placeholder", {
 							lng,
 						}),
-						custom_id: buildCustomMenuId(MenuActions.ClanMembers, tag, id),
+						custom_id: createActionId("members", tag, id),
 					},
 				],
 			},
@@ -160,14 +162,14 @@ export const clanMembers: APIMethod<
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						ButtonActions.ClanInfo,
+						"ci",
 						{
 							label: translate("commands.clan.buttons.clanInfo.label", { lng }),
 						},
 						tag
 					),
 					createActionButton(
-						ButtonActions.CurrentRiverRace,
+						"cr",
 						{
 							label: translate("commands.clan.buttons.currentRiverRace.label", {
 								lng,
@@ -176,7 +178,7 @@ export const clanMembers: APIMethod<
 						tag
 					),
 					createActionButton(
-						ButtonActions.RiverRaceLog,
+						"rl",
 						{
 							label: translate("commands.clan.buttons.riverRaceLog.label", {
 								lng,
@@ -190,7 +192,7 @@ export const clanMembers: APIMethod<
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						ButtonActions.ClanMembers,
+						"cm",
 						{
 							emoji: Emojis.BackArrow,
 							label: translate("common.back", { lng }),
@@ -202,11 +204,11 @@ export const clanMembers: APIMethod<
 						sort
 					),
 					createActionButton(
-						ButtonActions.ClanMembers,
+						"cm",
 						{
 							emoji: Emojis.ForwardArrow,
 							label: translate("common.next", { lng }),
-							disabled: members.size <= (index + 1) * 10,
+							disabled: members.items.length <= (index + 1) * 10,
 						},
 						tag,
 						id,

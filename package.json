@@ -30,7 +30,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.14.0-dev.1650586175-61a44c5",
     "@discordjs/rest": "^0.4.0-dev.1649937819-b01f414",
-    "apiroyale": "github:DTrombett/apiroyale",
+    "apiroyale": "^2.0.0",
     "cron-parser": "^4.3.0",
     "discord-api-types": "*",
     "discord.js": "^14.0.0-dev.1649937833-b01f414",
@@ -39,7 +39,8 @@
     "i18next": "^21.6.16",
     "i18next-fs-backend": "^1.1.4",
     "node": "^17.7.2",
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "royale-api-types": "^1.1.0"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.6",

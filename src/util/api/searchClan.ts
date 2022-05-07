@@ -6,9 +6,9 @@ import { Util } from "discord.js";
 import type { APIMethod } from "..";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
-import { buildCustomMenuId } from "../customId";
+import { createActionId } from "../customId";
 import translate from "../translate";
-import { ButtonActions, MenuActions } from "../types";
+import { MenuActions } from "../types";
 
 /**
  * Search a clan.
@@ -54,7 +54,7 @@ export const searchClan: APIMethod<
 						placeholder: translate("commands.clan.search.menu.placeholder", {
 							lng,
 						}),
-						custom_id: buildCustomMenuId(MenuActions.ClanInfo),
+						custom_id: createActionId(MenuActions.ClanInfo),
 					},
 				],
 			},
@@ -62,7 +62,7 @@ export const searchClan: APIMethod<
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						ButtonActions.PreviousPage,
+						Actions.PreviousPage,
 						{
 							label: translate("common.back", { lng }),
 							disabled: results.paging.cursors.before == null,
@@ -70,7 +70,7 @@ export const searchClan: APIMethod<
 						results.paging.cursors.before ?? ""
 					),
 					createActionButton(
-						ButtonActions.NextPage,
+						Actions.NextPage,
 						{
 							label: translate("common.next", { lng }),
 							disabled: results.paging.cursors.after == null,

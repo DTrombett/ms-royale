@@ -26,6 +26,7 @@ export * from "./occurrences";
 export * from "./restart";
 export * from "./startJob";
 export * from "./toLocaleString";
+export * from "./APIDate";
 export * from "./translate";
 export * from "./types";
 export * from "./validateTag";

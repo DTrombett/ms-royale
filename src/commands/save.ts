@@ -3,7 +3,6 @@ import { ComponentType } from "discord-api-types/v10";
 import type { CommandOptions } from "../util";
 import {
 	autocompletePlayerTag,
-	ButtonActions,
 	Constants,
 	createActionButton,
 	CustomClient,
@@ -72,7 +71,7 @@ export const command: CommandOptions = {
 							type: ComponentType.ActionRow,
 							components: [
 								createActionButton(
-									ButtonActions.PlayerInfo,
+									Actions.PlayerInfo,
 									{
 										label: translate(
 											"commands.player.buttons.playerInfo.label",

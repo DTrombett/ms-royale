@@ -5,7 +5,7 @@
 		"tagPreview": "{{structure.name}} ({{structure.tag}})",
 		"invalidCommand": "Comando non riconosciuto!",
 		"invalidTag": "Hai inserito un tag non valido!\nI caratteri validi nei tag sono: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V",
-		"lastUpdated": "Ultimo aggiornamento",
+		"footer": "Prossimo aggiornamento",
 		"unknownError": "Si è verificato un errore sconosciuto, riprova più tardi!",
 		"zeroWidthSpace": "\u200b"
 	},
@@ -241,6 +241,10 @@
 			},
 			"achievements": {
 				"title": "Obiettivi",
+				"author": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })"
+			},
+			"badges": {
+				"title": "Emblemi",
 				"author": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })"
 			},
 			"upcomingChests": {

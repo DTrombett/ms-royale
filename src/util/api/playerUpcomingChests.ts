@@ -7,7 +7,6 @@ import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
-import { ButtonActions } from "../types";
 import validateTag from "../validateTag";
 
 /**
@@ -61,7 +60,7 @@ export const playerUpcomingChests: APIMethod<string> = async (
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						ButtonActions.PlayerInfo,
+						Actions.PlayerInfo,
 						{
 							label: translate("commands.player.buttons.playerInfo.label", {
 								lng,

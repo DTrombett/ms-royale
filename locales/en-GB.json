@@ -5,7 +5,7 @@
 		"tagPreview": "{{structure.name}} ({{structure.tag}})",
 		"invalidCommand": "Command not recognized!",
 		"invalidTag": "An invalid tag was provided!\nThese are the valid characters for a tag: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V",
-		"lastUpdated": "Last updated",
+		"footer": "Next update",
 		"unknownError": "An unknown error occurred, please retry later!",
 		"zeroWidthSpace": "\u200b"
 	},

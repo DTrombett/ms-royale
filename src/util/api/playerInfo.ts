@@ -8,7 +8,7 @@ import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
-import { ButtonActions, CustomEmojis } from "../types";
+import { CustomEmojis } from "../types";
 import validateTag from "../validateTag";
 
 /**
@@ -243,7 +243,7 @@ export const playerInfo: APIMethod<string> = async (
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						ButtonActions.PlayerAchievements,
+						Actions.PlayerAchievements,
 						{
 							label: translate("commands.player.buttons.achievements.label", {
 								lng,
@@ -252,7 +252,7 @@ export const playerInfo: APIMethod<string> = async (
 						tag
 					),
 					createActionButton(
-						ButtonActions.PlayerUpcomingChests,
+						Actions.PlayerUpcomingChests,
 						{
 							label: translate("commands.player.buttons.upcomingChests.label", {
 								lng,
@@ -261,7 +261,7 @@ export const playerInfo: APIMethod<string> = async (
 						tag
 					),
 					createActionButton(
-						ButtonActions.ClanInfo,
+						Actions.ClanInfo,
 						{
 							label: translate("commands.clan.buttons.clanInfo.label", { lng }),
 							disabled: player.clan === undefined,

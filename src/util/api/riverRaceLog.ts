@@ -5,10 +5,10 @@ import { Colors } from "discord.js";
 import type { APIMethod } from "..";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
-import { buildCustomMenuId } from "../customId";
+import { createActionId } from "../customId";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
-import { ButtonActions, Emojis, MenuActions } from "../types";
+import { Emojis, MenuActions } from "../types";
 import validateTag from "../validateTag";
 
 /**
@@ -105,7 +105,7 @@ export const riverRaceLog: APIMethod<
 								lng,
 							}
 						),
-						custom_id: buildCustomMenuId(MenuActions.PlayerInfo),
+						custom_id: createActionId(MenuActions.PlayerInfo),
 					},
 				],
 			},
@@ -113,14 +113,14 @@ export const riverRaceLog: APIMethod<
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						ButtonActions.ClanInfo,
+						Actions.ClanInfo,
 						{
 							label: translate("commands.clan.buttons.clanInfo.label", { lng }),
 						},
 						tag
 					),
 					createActionButton(
-						ButtonActions.CurrentRiverRace,
+						Actions.CurrentRiverRace,
 						{
 							label: translate("commands.clan.buttons.currentRiverRace.label", {
 								lng,
@@ -134,7 +134,7 @@ export const riverRaceLog: APIMethod<
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						ButtonActions.RiverRaceLog,
+						Actions.RiverRaceLog,
 						{
 							emoji: Emojis.BackArrow,
 							label: translate("common.back", { lng }),
@@ -145,7 +145,7 @@ export const riverRaceLog: APIMethod<
 						id
 					),
 					createActionButton(
-						ButtonActions.RiverRaceLog,
+						Actions.RiverRaceLog,
 						{
 							emoji: Emojis.ForwardArrow,
 							label: translate("common.next", { lng }),

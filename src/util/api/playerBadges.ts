@@ -6,17 +6,16 @@ import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
-import { Emojis } from "../types";
 import validateTag from "../validateTag";
 
 /**
- * Displays information about a player's achievements.
+ * Displays information about a player's badges.
  * @param client - The client
  * @param tag - The tag of the player
  * @param options - Additional options
  * @returns A promise that resolves with the message options
  */
-export const playerAchievements: APIMethod<string> = async (
+export const playerBadges: APIMethod<string> = async (
 	client,
 	tag,
 	{ ephemeral, lng }
@@ -39,32 +38,36 @@ export const playerAchievements: APIMethod<string> = async (
 		embeds: [
 			{
 				author: {
-					name: translate("commands.player.achievements.author", {
+					name: translate("commands.player.badges.author", {
 						lng,
 						player,
 					}),
 					url: Constants.playerLink(tag),
 				},
-				title: translate("commands.player.achievements.title", { lng }),
+				title: translate("commands.player.badges.title", { lng }),
 				color: Colors.Green,
 				footer: { text: translate("common.footer", { lng }) },
 				timestamp: new Date(client.players.maxAges[tag]!).toISOString(),
 				url: Constants.playerLink(tag),
-				description: player.achievements
-					.map(
-						(achievement) =>
-							`• **${achievement.name}**: ${achievement.info}${
-								achievement.stars
-									? ` ${Emojis.Star.repeat(achievement.stars)}`
-									: ""
-							} - ${achievement.value}/${achievement.target}${
-								achievement.value >= achievement.target
-									? ""
-									: ` (${(
-											(achievement.value / achievement.target) *
-											100
-									  ).toFixed(Constants.percentageDigits)}%)`
-							}`
+				description: Array(Math.ceil(player.badges.length / 4))
+					.fill(undefined)
+					.map((_, index) => index * 4)
+					.map((begin) => player.badges.slice(begin, begin + 4))
+					.map((badges) =>
+						badges
+							.map(
+								(badge) =>
+									`**${badge.name}** (Liv. ${badge.level}/${badge.maxLevel} - ${
+										badge.progress
+									}/${badge.target}${
+										badge.level === badge.maxLevel
+											? ""
+											: ` - (${((badge.progress / badge.target) * 100).toFixed(
+													Constants.percentageDigits
+											  )}%)`
+									})` // TODO: move this to locales
+							)
+							.join(", ")
 					)
 					.join("\n"),
 			},
