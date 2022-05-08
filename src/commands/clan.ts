@@ -44,6 +44,9 @@ enum ClanMembersOptions {
 	Tag = "tag",
 	Sort = "ordine",
 }
+enum AutoCompletableSearchOptions {
+	Location = "posizione",
+}
 enum AutoCompletableInfoOptions {
 	Tag = "tag",
 }
@@ -56,7 +59,7 @@ enum AutoCompletableRiverRaceOptions {
 enum AutoCompletableClanMembersOptions {
 	Tag = "tag",
 	Sort = "ordine",
-}
+} // TODO: Use only one enum
 
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder()
@@ -203,14 +206,10 @@ export const command: CommandOptions = {
 				 */
 				const location =
 					locationProvided != null
-						? this.client.locations.find(
-								(l) =>
-									l.id === locationProvided ||
-									l.name.toLowerCase() === locationProvided
-						  )?.id ??
-						  (!Number.isNaN(Number(locationProvided))
-								? (locationProvided as `${number}`)
-								: undefined)
+						? Number(locationProvided) ||
+						  this.client.locations.find(
+								(l) => l.name.toLowerCase() === locationProvided
+						  )?.id
 						: undefined;
 				/**
 				 * The max members option provided
@@ -398,6 +397,7 @@ export const command: CommandOptions = {
 				| AutoCompletableInfoOptions
 				| AutoCompletableRiverRaceLogOptions
 				| AutoCompletableRiverRaceOptions
+				| AutoCompletableSearchOptions
 		) {
 			case AutoCompletableInfoOptions.Tag:
 				// Autocomplete the clan tag
@@ -406,6 +406,9 @@ export const command: CommandOptions = {
 			case AutoCompletableClanMembersOptions.Sort:
 				// Autocomplete the sort method
 				await autocompleteSort(option, interaction);
+				break;
+			case AutoCompletableSearchOptions.Location:
+				// TODO
 				break;
 			default:
 				void CustomClient.printToStderr(

@@ -1,14 +1,15 @@
-import { FinishedRiverRaceManager, RiverRaceLogResults } from "apiroyale";
 import type { APIEmbed, Snowflake } from "discord-api-types/v10";
 import { ComponentType } from "discord-api-types/v10";
 import { Colors } from "discord.js";
 import type { APIMethod } from "..";
+import { convertDate, transformDate } from "../APIDate";
+import Constants from "../Constants";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import { createActionId } from "../customId";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
-import { Emojis, MenuActions } from "../types";
+import { Emojis } from "../types";
 import validateTag from "../validateTag";
 
 /**
@@ -18,6 +19,7 @@ import validateTag from "../validateTag";
  * @param options - Additional options
  * @returns A promise that resolves with the message options
  */
+// TODO: Use cursors
 export const riverRaceLog: APIMethod<
 	string,
 	{
@@ -32,51 +34,45 @@ export const riverRaceLog: APIMethod<
 			ephemeral: true,
 		};
 
-	let log:
-		| FinishedRiverRaceManager
-		| RiverRaceLogResults
-		| { content: string; ephemeral: boolean }
-		| undefined = client.allClans.get(tag)?.riverRaceLog;
-	if (!log || log.size === 0)
-		log = await client.fetchRiverRaceLog({ tag }).catch((error: Error) => {
-			void CustomClient.printToStderr(error);
-			return { content: error.message, ephemeral: true };
-		});
+	const log = await client.riverRaceLogs.fetch(tag).catch((error: Error) => {
+		void CustomClient.printToStderr(error);
+		return { content: error.message, ephemeral: true };
+	});
 
-	if (
-		!(log instanceof RiverRaceLogResults) &&
-		!(log instanceof FinishedRiverRaceManager)
-	)
-		return log;
-	const race = index !== undefined ? log.at(index) : log.first();
-	const disabled = index === log.size - 1;
+	if (!("items" in log)) return log;
+	const race = log.items.at(index ?? 0);
+	const disabled = index === log.items.length - 1;
 
 	if (race === undefined)
 		return {
 			content: translate("commands.clan.riverRaceLog.notFound", { lng }),
 			ephemeral: true,
 		};
-	const { clan } = race.leaderboard.get(tag)!;
+	const { clan } = race.standings.find(
+		(standing) => standing.clan.tag === tag
+	)!;
 	const embed: APIEmbed = {
 		title: translate("commands.clan.riverRaceLog.title", { lng, race }),
 		color: Colors.Blurple,
-		thumbnail: { url: clan.badgeUrl },
+		thumbnail: { url: Constants.clanBadgeUrl(clan.badgeId) },
 		footer: {
 			text: translate("commands.clan.riverRaceLog.footer", { lng }),
 		},
-		timestamp: race.finishTime.toISOString(),
-		fields: race.leaderboard.map((standing) =>
-			translate("commands.clan.riverRaceLog.field", {
+		timestamp: transformDate(race.createdDate),
+		fields: race.standings.map((standing) => {
+			const finishTime =
+				standing.clan.finishTime !== undefined
+					? convertDate(standing.clan.finishTime)
+					: undefined;
+			return translate("commands.clan.riverRaceLog.field", {
 				lng,
 				standing,
-				finishedAt: standing.clan.finishedAt
-					? Math.round(standing.clan.finishedAt.getTime() / 1000)
-					: "",
-				finished: (standing.clan.finishedAt !== null).toString(),
-				participants: standing.clan.participants.filter((p) => p.decksUsed > 0)
-					.size,
-			})
-		),
+				finishedAt: finishTime ? Math.round(finishTime.getTime() / 1000) : "",
+				finished: finishTime !== undefined,
+				participants: standing.clan.participants.filter((p) => p.decksUsed)
+					.length,
+			});
+		}),
 	};
 
 	return {
@@ -88,9 +84,9 @@ export const riverRaceLog: APIMethod<
 					{
 						type: ComponentType.SelectMenu,
 						options: clan.participants
-							.filter((p) => Boolean(p.medals))
-							.sort((a, b) => b.medals - a.medals)
-							.first(25)
+							.filter((p) => p.fame)
+							.sort((a, b) => b.fame - a.fame)
+							.slice(0, 25)
 							.map((participant, i) => ({
 								...translate("commands.clan.riverRaceLog.menu.options", {
 									lng,
@@ -105,7 +101,7 @@ export const riverRaceLog: APIMethod<
 								lng,
 							}
 						),
-						custom_id: createActionId(MenuActions.PlayerInfo),
+						custom_id: createActionId("player"),
 					},
 				],
 			},
@@ -113,14 +109,14 @@ export const riverRaceLog: APIMethod<
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						Actions.ClanInfo,
+						"ci",
 						{
 							label: translate("commands.clan.buttons.clanInfo.label", { lng }),
 						},
 						tag
 					),
 					createActionButton(
-						Actions.CurrentRiverRace,
+						"cr",
 						{
 							label: translate("commands.clan.buttons.currentRiverRace.label", {
 								lng,
@@ -134,7 +130,7 @@ export const riverRaceLog: APIMethod<
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						Actions.RiverRaceLog,
+						"rl",
 						{
 							emoji: Emojis.BackArrow,
 							label: translate("common.back", { lng }),
@@ -145,7 +141,7 @@ export const riverRaceLog: APIMethod<
 						id
 					),
 					createActionButton(
-						Actions.RiverRaceLog,
+						"rl",
 						{
 							emoji: Emojis.ForwardArrow,
 							label: translate("common.next", { lng }),

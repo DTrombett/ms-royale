@@ -1,5 +1,10 @@
 import { GuildChannel } from "discord.js";
-import type { EventOptions, SortMethod } from "../../util";
+import type {
+	ButtonActions,
+	EventOptions,
+	MenuActions,
+	SortMethod,
+} from "../../util";
 import {
 	clanInfo,
 	clanMembers,
@@ -9,7 +14,6 @@ import {
 	getInteractionLocale,
 	getSearchOptions,
 	interactionCommand,
-	MenuActions,
 	parseActionId,
 	playerAchievements,
 	playerInfo,
@@ -67,7 +71,9 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 			return;
 		}
 		if (interaction.isSelectMenu()) {
-			const { action, args } = parseActionId(interaction.customId);
+			const { action, args } = parseActionId<keyof MenuActions>(
+				interaction.customId
+			);
 			const lng = getInteractionLocale(interaction);
 
 			void CustomClient.printToStdout(
@@ -87,7 +93,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 				true
 			);
 			switch (action) {
-				case MenuActions.ClanInfo:
+				case "clan":
 					interaction
 						.deferReply({ ephemeral: true })
 						.then(async () =>
@@ -99,7 +105,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
-				case MenuActions.PlayerInfo:
+				case "player":
 					interaction
 						.deferReply({ ephemeral: true })
 						.then(async () =>
@@ -111,14 +117,14 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
-				case MenuActions.ClanMembers:
+				case "members":
 					(interaction.user.id === args[1]
 						? interaction.deferUpdate()
 						: interaction.deferReply({ ephemeral: true })
 					)
 						.then(async () =>
 							interaction.editReply({
-								...(await clanMembers(this.client, args[0], {
+								...(await clanMembers(this.client, args[0]!, {
 									lng,
 									sort: interaction.values[0] as SortMethod,
 									id: args[1]!,
@@ -137,7 +143,9 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 			return;
 		}
 		if (interaction.isButton()) {
-			const { action, args } = parseActionId(interaction.customId);
+			const { action, args } = parseActionId<keyof ButtonActions>(
+				interaction.customId
+			);
 			const lng = getInteractionLocale(interaction);
 
 			void CustomClient.printToStdout(
@@ -155,7 +163,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 				true
 			);
 			switch (action) {
-				case Actions.NextPage:
+				case "after":
 					(interaction.user.id ===
 					interaction.message.content.split("<@")[1].split(">")[0]
 						? interaction.deferUpdate()
@@ -173,7 +181,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
-				case Actions.PreviousPage:
+				case "before":
 					(interaction.user.id ===
 					interaction.message.content.split("<@")[1].split(">")[0]
 						? interaction.deferUpdate()
@@ -191,7 +199,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
-				case Actions.RiverRaceLog:
+				case "rl":
 					(interaction.user.id === args[2]
 						? interaction.deferUpdate()
 						: interaction.deferReply({ ephemeral: true })
@@ -208,7 +216,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
-				case Actions.ClanInfo:
+				case "ci":
 					interaction
 						.deferReply({ ephemeral: true })
 						.then(async () =>
@@ -220,7 +228,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
-				case Actions.ClanMembers:
+				case "cm":
 					(interaction.user.id === args[1]
 						? interaction.deferUpdate()
 						: interaction.deferReply({ ephemeral: true })
@@ -237,7 +245,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
-				case Actions.CurrentRiverRace:
+				case "cr":
 					interaction
 						.deferReply({ ephemeral: true })
 						.then(async () =>
@@ -249,7 +257,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
-				case Actions.PlayerInfo:
+				case "pi":
 					interaction
 						.deferReply({ ephemeral: true })
 						.then(async () =>
@@ -261,7 +269,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
-				case Actions.PlayerAchievements:
+				case "ai":
 					interaction
 						.deferReply({ ephemeral: true })
 						.then(async () =>
@@ -273,7 +281,7 @@ export const event: EventOptions<EventType.Discord, "interactionCreate"> = {
 						)
 						.catch(CustomClient.printToStderr);
 					break;
-				case Actions.PlayerUpcomingChests:
+				case "uc":
 					interaction
 						.deferReply({ ephemeral: true })
 						.then(async () =>

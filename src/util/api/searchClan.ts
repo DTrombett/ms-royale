@@ -1,5 +1,4 @@
 import type { ClientRoyale, SearchClanOptions } from "apiroyale";
-import { ClanSearchResults } from "apiroyale";
 import { ComponentType } from "discord-api-types/v10";
 import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
@@ -8,7 +7,6 @@ import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import { createActionId } from "../customId";
 import translate from "../translate";
-import { MenuActions } from "../types";
 
 /**
  * Search a clan.
@@ -30,8 +28,8 @@ export const searchClan: APIMethod<
 		return { content: error.message, ephemeral: true };
 	});
 
-	if (!(results instanceof ClanSearchResults)) return results;
-	if (!results.size)
+	if (!("items" in results)) return results;
+	if (!results.items.length)
 		return {
 			content: translate("commands.clan.search.notFound", { lng }),
 			ephemeral: true,
@@ -44,7 +42,7 @@ export const searchClan: APIMethod<
 				components: [
 					{
 						type: ComponentType.SelectMenu,
-						options: results.map((clan) => ({
+						options: results.items.map((clan) => ({
 							...translate("commands.clan.search.menu.options", {
 								lng,
 								clan,
@@ -54,7 +52,7 @@ export const searchClan: APIMethod<
 						placeholder: translate("commands.clan.search.menu.placeholder", {
 							lng,
 						}),
-						custom_id: createActionId(MenuActions.ClanInfo),
+						custom_id: createActionId("clan"),
 					},
 				],
 			},
@@ -62,20 +60,20 @@ export const searchClan: APIMethod<
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						Actions.PreviousPage,
+						"before",
 						{
 							label: translate("common.back", { lng }),
-							disabled: results.paging.cursors.before == null,
+							disabled: results.paging?.cursors.before === undefined,
 						},
-						results.paging.cursors.before ?? ""
+						results.paging?.cursors.before ?? ""
 					),
 					createActionButton(
-						Actions.NextPage,
+						"after",
 						{
 							label: translate("common.next", { lng }),
-							disabled: results.paging.cursors.after == null,
+							disabled: results.paging?.cursors.after === undefined,
 						},
-						results.paging.cursors.after ?? ""
+						results.paging?.cursors.after ?? ""
 					),
 				],
 			},

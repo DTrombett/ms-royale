@@ -47,8 +47,8 @@
 		"clanUpdate": {
 			"fields": {
 				"badgeId": {
-					"name": "Badge ID",
-					"value": "**{{old}}** => **{{new}}**"
+					"name": "Badge",
+					"value": "[Prima]({{old}}) - [Dopo]({{new}})"
 				},
 				"location": {
 					"name": "Posizione",

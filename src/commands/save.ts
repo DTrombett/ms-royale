@@ -71,7 +71,7 @@ export const command: CommandOptions = {
 							type: ComponentType.ActionRow,
 							components: [
 								createActionButton(
-									Actions.PlayerInfo,
+									"pi",
 									{
 										label: translate(
 											"commands.player.buttons.playerInfo.label",

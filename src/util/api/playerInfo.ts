@@ -1,4 +1,3 @@
-import { Player } from "apiroyale";
 import type { APIEmbed } from "discord-api-types/v10";
 import { ComponentType } from "discord-api-types/v10";
 import { Colors } from "discord.js";
@@ -35,8 +34,8 @@ export const playerInfo: APIMethod<string> = async (
 		return { content: error.message, ephemeral: true };
 	});
 
-	if (!(player instanceof Player)) return player;
-	const deck = player.deck.map((card) =>
+	if (!("tag" in player)) return player;
+	const deck = player.currentDeck.map((card) =>
 		translate("commands.player.info.fields.deck.cardDescription", {
 			lng,
 			card,
@@ -45,8 +44,8 @@ export const playerInfo: APIMethod<string> = async (
 	const embed: APIEmbed = {
 		title: translate("commands.player.info.title", { lng, player }),
 		color: Colors.Blue,
-		footer: { text: translate("common.lastUpdated", { lng }) },
-		timestamp: player.lastUpdate.toISOString(),
+		footer: { text: translate("common.footer", { lng }) },
+		timestamp: new Date(client.players.maxAges[tag]!).toISOString(),
 		url: Constants.playerLink(tag),
 		fields: [
 			{
@@ -70,15 +69,13 @@ export const playerInfo: APIMethod<string> = async (
 				}),
 				inline: true,
 			},
-			{
-				...translate("commands.player.info.fields.clan", {
-					lng,
-					clan: player.clan,
-					clanLink: player.clan && Constants.clanLink(tag),
-					role: player.role,
-					context: typeof player.clan,
-				}),
-			},
+			translate("commands.player.info.fields.clan", {
+				lng,
+				clan: player.clan,
+				clanLink: player.clan && Constants.clanLink(tag),
+				role: player.role,
+				context: typeof player.clan,
+			}),
 			{
 				...translate("commands.player.info.fields.deck", {
 					lng,
@@ -88,9 +85,9 @@ export const playerInfo: APIMethod<string> = async (
 							deck.length === 8
 								? ` - [${translate("commands.player.info.fields.deck.copy", {
 										lng,
-								  })}](https://link.clashroyale.com/deck/it?deck=${player.deck
+								  })}](https://link.clashroyale.com/deck/it?deck=${player.currentDeck
 										.map((card) => card.id)
-										.join(";")}&id=${player.id.slice(1)}) ${
+										.join(";")}&id=${player.tag.slice(1)}) ${
 										CustomEmojis.CopyDeck
 								  }`
 								: ""
@@ -138,7 +135,10 @@ export const playerInfo: APIMethod<string> = async (
 			...translate("commands.player.info.fields.wins", {
 				lng,
 				wins: player.wins,
-				winRatio: player.winPercentage.toFixed(Constants.percentageDigits),
+				winRatio: (
+					(player.wins / (player.wins + player.losses || 1)) *
+					100
+				).toFixed(Constants.percentageDigits),
 			}),
 			inline: true,
 		},
@@ -146,9 +146,9 @@ export const playerInfo: APIMethod<string> = async (
 			...translate("commands.player.info.fields.threeCrownWins", {
 				lng,
 				threeCrownWins: player.threeCrownWins,
-				threeCrownWinRatio: player.threeCrownWinPercentage.toFixed(
-					Constants.percentageDigits
-				),
+				threeCrownWinRatio: (
+					(player.threeCrownWins / player.wins || 0) * 100
+				).toFixed(Constants.percentageDigits),
 			}),
 			inline: true,
 		},
@@ -156,9 +156,10 @@ export const playerInfo: APIMethod<string> = async (
 			...translate("commands.player.info.fields.losses", {
 				lng,
 				losses: player.losses,
-				lossesPercent: player.lossPercentage.toFixed(
-					Constants.percentageDigits
-				),
+				lossesPercent: (
+					(player.losses / (player.wins + player.losses || 1)) *
+					100
+				).toFixed(Constants.percentageDigits),
 			}),
 			inline: true,
 		},
@@ -179,21 +180,21 @@ export const playerInfo: APIMethod<string> = async (
 		{
 			...translate("commands.player.info.fields.cardCount", {
 				lng,
-				cardCount: player.cards.size,
+				cardCount: player.cards.length,
 			}),
 			inline: true,
 		},
 		{
 			...translate("commands.player.info.fields.weeklyDonations", {
 				lng,
-				weeklyDonations: player.donationsPerWeek,
+				weeklyDonations: player.donations,
 			}),
 			inline: true,
 		},
 		{
 			...translate("commands.player.info.fields.weeklyDonationsReceived", {
 				lng,
-				weeklyDonationsReceived: player.donationsReceivedPerWeek,
+				weeklyDonationsReceived: player.donationsReceived,
 			}),
 			inline: true,
 		},
@@ -205,21 +206,19 @@ export const playerInfo: APIMethod<string> = async (
 			inline: true,
 		}
 	);
-	if (player.favouriteCard !== undefined)
+	if (player.currentFavouriteCard !== undefined)
 		embed.fields!.push({
 			...translate("commands.player.info.fields.currentFavouriteCard", {
 				lng,
-				favouriteCard: player.favouriteCard,
+				favouriteCard: player.currentFavouriteCard,
 			}),
 			inline: true,
 		});
 	embed.fields!.push(
-		{
-			...translate("commands.player.info.fields.clanWarsVeteran", {
-				lng,
-				player,
-			}),
-		},
+		translate("commands.player.info.fields.clanWarsVeteran", {
+			lng,
+			player,
+		}),
 		{
 			...translate("commands.player.info.fields.challengeStatistics", {
 				lng,
@@ -243,7 +242,7 @@ export const playerInfo: APIMethod<string> = async (
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						Actions.PlayerAchievements,
+						"ai",
 						{
 							label: translate("commands.player.buttons.achievements.label", {
 								lng,
@@ -252,7 +251,7 @@ export const playerInfo: APIMethod<string> = async (
 						tag
 					),
 					createActionButton(
-						Actions.PlayerUpcomingChests,
+						"uc",
 						{
 							label: translate("commands.player.buttons.upcomingChests.label", {
 								lng,
@@ -261,7 +260,7 @@ export const playerInfo: APIMethod<string> = async (
 						tag
 					),
 					createActionButton(
-						Actions.ClanInfo,
+						"ci",
 						{
 							label: translate("commands.clan.buttons.clanInfo.label", { lng }),
 							disabled: player.clan === undefined,

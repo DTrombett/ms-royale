@@ -1,5 +1,5 @@
 import type {
-	ApplicationCommandOptionChoice,
+	ApplicationCommandOptionChoiceData,
 	AutocompleteInteraction,
 } from "discord.js";
 import type { APIClan, APIPlayer } from "royale-api-types";
@@ -19,7 +19,7 @@ import { MatchLevel } from "./types";
  */
 export const autocompleteClanTag = (
 	client: CustomClient,
-	option: ApplicationCommandOptionChoice,
+	option: ApplicationCommandOptionChoiceData,
 	interaction: AutocompleteInteraction
 ) => {
 	const lng = getInteractionLocale(interaction);
@@ -59,7 +59,7 @@ export const autocompleteClanTag = (
  */
 export const autocompletePlayerTag = (
 	client: CustomClient,
-	option: ApplicationCommandOptionChoice,
+	option: ApplicationCommandOptionChoiceData,
 	interaction: AutocompleteInteraction
 ) => {
 	const lng = getInteractionLocale(interaction);
@@ -97,7 +97,7 @@ export const autocompletePlayerTag = (
  * @param interaction - The interaction to use
  */
 export const autocompleteSort = (
-	option: ApplicationCommandOptionChoice,
+	option: ApplicationCommandOptionChoiceData,
 	interaction: AutocompleteInteraction
 ) => {
 	const lng = getInteractionLocale(interaction);
