@@ -1,4 +1,4 @@
-import type { APIEmbed, Snowflake } from "discord-api-types/v10";
+import type { Snowflake } from "discord-api-types/v10";
 import { ComponentType } from "discord-api-types/v10";
 import { Colors } from "discord.js";
 import type { APIMethod } from "..";
@@ -19,14 +19,14 @@ import validateTag from "../validateTag";
  * @param options - Additional options
  * @returns A promise that resolves with the message options
  */
-// TODO: Use cursors
 export const riverRaceLog: APIMethod<
 	string,
 	{
-		index?: number;
+		after?: string;
+		before?: string;
 		id: Snowflake;
 	}
-> = async (client, tag, { ephemeral, lng, index, id }) => {
+> = async (client, tag, { ephemeral, lng, after, before, id }) => {
 	tag = normalizeTag(tag);
 	if (!validateTag(tag))
 		return {
@@ -34,16 +34,17 @@ export const riverRaceLog: APIMethod<
 			ephemeral: true,
 		};
 
-	const log = await client.riverRaceLogs.fetch(tag).catch((error: Error) => {
-		void CustomClient.printToStderr(error);
-		return { content: error.message, ephemeral: true };
-	});
+	const log = await client.riverRaceLogs
+		.fetch(tag, { after, before, limit: 1 })
+		.catch((error: Error) => {
+			void CustomClient.printToStderr(error);
+			return { content: error.message, ephemeral: true };
+		});
 
 	if (!("items" in log)) return log;
-	const race = log.items.at(index ?? 0);
-	const disabled = index === log.items.length - 1;
+	const [race] = log.items;
 
-	if (race === undefined)
+	if (!log.items.length)
 		return {
 			content: translate("commands.clan.riverRaceLog.notFound", { lng }),
 			ephemeral: true,
@@ -51,32 +52,35 @@ export const riverRaceLog: APIMethod<
 	const { clan } = race.standings.find(
 		(standing) => standing.clan.tag === tag
 	)!;
-	const embed: APIEmbed = {
-		title: translate("commands.clan.riverRaceLog.title", { lng, race }),
-		color: Colors.Blurple,
-		thumbnail: { url: Constants.clanBadgeUrl(clan.badgeId) },
-		footer: {
-			text: translate("commands.clan.riverRaceLog.footer", { lng }),
-		},
-		timestamp: transformDate(race.createdDate),
-		fields: race.standings.map((standing) => {
-			const finishTime =
-				standing.clan.finishTime !== undefined
-					? convertDate(standing.clan.finishTime)
-					: undefined;
-			return translate("commands.clan.riverRaceLog.field", {
-				lng,
-				standing,
-				finishedAt: finishTime ? Math.round(finishTime.getTime() / 1000) : "",
-				finished: finishTime !== undefined,
-				participants: standing.clan.participants.filter((p) => p.decksUsed)
-					.length,
-			});
-		}),
-	};
 
 	return {
-		embeds: [embed],
+		embeds: [
+			{
+				title: translate("commands.clan.riverRaceLog.title", { lng, race }),
+				color: Colors.Blurple,
+				thumbnail: { url: Constants.clanBadgeUrl(clan.badgeId) },
+				footer: {
+					text: translate("commands.clan.riverRaceLog.footer", { lng }),
+				},
+				timestamp: transformDate(race.createdDate),
+				fields: race.standings.map((standing) => {
+					const finishTime =
+						standing.clan.finishTime !== undefined
+							? convertDate(standing.clan.finishTime)
+							: undefined;
+					return translate("commands.clan.riverRaceLog.field", {
+						lng,
+						standing,
+						finishedAt: finishTime
+							? Math.round(finishTime.getTime() / 1000)
+							: "",
+						finished: finishTime !== undefined,
+						participants: standing.clan.participants.filter((p) => p.decksUsed)
+							.length,
+					});
+				}),
+			},
+		],
 		components: [
 			{
 				type: ComponentType.ActionRow,
@@ -134,22 +138,24 @@ export const riverRaceLog: APIMethod<
 						{
 							emoji: Emojis.BackArrow,
 							label: translate("common.back", { lng }),
-							disabled,
+							disabled: after === undefined,
 						},
 						tag,
-						`${index !== undefined ? index + 1 : 1}`,
-						id
+						id,
+						after,
+						before
 					),
 					createActionButton(
 						"rl",
 						{
 							emoji: Emojis.ForwardArrow,
 							label: translate("common.next", { lng }),
-							disabled: index === undefined || index === 0,
+							disabled: before === undefined,
 						},
 						tag,
-						`${index !== undefined ? index - 1 : 0}`,
-						id
+						id,
+						after,
+						before
 					),
 				],
 			},

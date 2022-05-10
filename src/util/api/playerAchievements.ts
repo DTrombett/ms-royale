@@ -45,7 +45,10 @@ export const playerAchievements: APIMethod<string> = async (
 					}),
 					url: Constants.playerLink(tag),
 				},
-				title: translate("commands.player.achievements.title", { lng }),
+				title: translate("commands.player.achievements.title", {
+					lng,
+					count: player.achievements.length,
+				}),
 				color: Colors.Green,
 				footer: { text: translate("common.footer", { lng }) },
 				timestamp: new Date(client.players.maxAges[tag]!).toISOString(),
@@ -86,6 +89,15 @@ export const playerAchievements: APIMethod<string> = async (
 						"uc",
 						{
 							label: translate("commands.player.buttons.upcomingChests.label", {
+								lng,
+							}),
+						},
+						tag
+					),
+					createActionButton(
+						"pb",
+						{
+							label: translate("commands.player.buttons.badges.label", {
 								lng,
 							}),
 						},

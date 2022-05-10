@@ -240,7 +240,11 @@
 				}
 			},
 			"achievements": {
-				"title": "Achievements",
+				"title": "Achievements ({{count}})",
+				"author": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })"
+			},
+			"badges": {
+				"title": "Badges ({{count}})",
 				"author": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{player.name}}\", \"tag\": \"{{player.tag}}\" } })"
 			},
 			"upcomingChests": {

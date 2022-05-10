@@ -260,6 +260,15 @@ export const playerInfo: APIMethod<string> = async (
 						tag
 					),
 					createActionButton(
+						"pb",
+						{
+							label: translate("commands.player.buttons.badges.label", {
+								lng,
+							}),
+						},
+						tag
+					),
+					createActionButton(
 						"ci",
 						{
 							label: translate("commands.clan.buttons.clanInfo.label", { lng }),

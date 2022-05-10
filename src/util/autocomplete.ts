@@ -73,7 +73,6 @@ export const autocompletePlayerTag = (
 		// Take the first 25 players as only 25 options are allowed
 		(value.length
 			? client.players
-					.clone()
 					.filter(
 						(p) =>
 							(matches[p.tag] =
@@ -112,5 +111,45 @@ export const autocompleteSort = (
 				value: sort,
 			}))
 			.filter(({ name }) => name.toLowerCase().includes(value))
+	);
+};
+
+/**
+ * Autocomplete a location option.
+ * @param client - The client to use
+ * @param option - The option provided by the user
+ * @param interaction - The interaction to use
+ */
+export const autocompleteLocation = (
+	client: CustomClient,
+	option: ApplicationCommandOptionChoiceData,
+	interaction: AutocompleteInteraction
+) => {
+	const lng = getInteractionLocale(interaction);
+	const value = option.value as string;
+	/**
+	 * A record of locations with their respective match level with the value provided
+	 */
+	const matches: Record<number, MatchLevel> = {};
+
+	return interaction.respond(
+		(value.length
+			? client.locations
+					.filter(
+						(p) =>
+							(matches[p.id] = matchStrings(p.name, value, true)) !==
+							MatchLevel.None
+					)
+					.sort((a, b) => matches[b.id] - matches[a.id] || 0)
+			: client.locations
+		)
+			.first(25)
+			.map((location) => ({
+				name: translate("common.tagPreview", {
+					lng,
+					structure: { name: location.name, tag: location.id },
+				}),
+				value: location.id,
+			}))
 	);
 };

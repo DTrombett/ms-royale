@@ -3,6 +3,7 @@ import type { SearchClanOptions } from "apiroyale";
 import type { CommandOptions } from "../util";
 import Constants, {
 	autocompleteClanTag,
+	autocompleteLocation,
 	autocompleteSort,
 	cast,
 	clanInfo,
@@ -44,22 +45,11 @@ enum ClanMembersOptions {
 	Tag = "tag",
 	Sort = "ordine",
 }
-enum AutoCompletableSearchOptions {
+enum AutoCompletableOptions {
 	Location = "posizione",
-}
-enum AutoCompletableInfoOptions {
-	Tag = "tag",
-}
-enum AutoCompletableRiverRaceLogOptions {
-	Tag = "tag",
-}
-enum AutoCompletableRiverRaceOptions {
-	Tag = "tag",
-}
-enum AutoCompletableClanMembersOptions {
-	Tag = "tag",
 	Sort = "ordine",
-} // TODO: Use only one enum
+	Tag = "tag",
+}
 
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder()
@@ -391,24 +381,18 @@ export const command: CommandOptions = {
 	async autocomplete(interaction) {
 		const option = interaction.options.getFocused(true);
 
-		switch (
-			option.name as
-				| AutoCompletableClanMembersOptions
-				| AutoCompletableInfoOptions
-				| AutoCompletableRiverRaceLogOptions
-				| AutoCompletableRiverRaceOptions
-				| AutoCompletableSearchOptions
-		) {
-			case AutoCompletableInfoOptions.Tag:
+		switch (option.name as AutoCompletableOptions) {
+			case AutoCompletableOptions.Tag:
 				// Autocomplete the clan tag
 				await autocompleteClanTag(this.client, option, interaction);
 				break;
-			case AutoCompletableClanMembersOptions.Sort:
+			case AutoCompletableOptions.Sort:
 				// Autocomplete the sort method
 				await autocompleteSort(option, interaction);
 				break;
-			case AutoCompletableSearchOptions.Location:
-				// TODO
+			case AutoCompletableOptions.Location:
+				// Autocomplete the location
+				await autocompleteLocation(this.client, option, interaction);
 				break;
 			default:
 				void CustomClient.printToStderr(

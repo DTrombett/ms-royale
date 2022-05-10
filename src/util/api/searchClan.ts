@@ -1,18 +1,19 @@
 import type { ClientRoyale, SearchClanOptions } from "apiroyale";
+import type { Snowflake } from "discord-api-types/v10";
 import { ComponentType } from "discord-api-types/v10";
-import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
 import type { APIMethod } from "..";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import { createActionId } from "../customId";
 import translate from "../translate";
+import { Emojis } from "../types";
 
 /**
  * Search a clan.
  * @param client - The client
- * @param tag - The options for the search
- * @param options - Additional options
+ * @param options - The options for the search
+ * @param otherOptions - Additional options
  * @returns A promise that resolves with the message options
  */
 export const searchClan: APIMethod<
@@ -60,25 +61,28 @@ export const searchClan: APIMethod<
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						"before",
+						"sc",
 						{
 							label: translate("common.back", { lng }),
 							disabled: results.paging?.cursors.before === undefined,
+							emoji: Emojis.BackArrow,
 						},
+						undefined,
 						results.paging?.cursors.before ?? ""
 					),
 					createActionButton(
-						"after",
+						"sc",
 						{
 							label: translate("common.next", { lng }),
 							disabled: results.paging?.cursors.after === undefined,
+							emoji: Emojis.ForwardArrow,
 						},
 						results.paging?.cursors.after ?? ""
 					),
 				],
 			},
 		],
-		content: ` Risultati per la seguente ricerca richiesta da <@${id}>:\n\n**Nome**: ${
+		content: `Risultati per la seguente ricerca richiesta da <@${id}>:\n\n**Nome**: ${
 			options.name != null ? Util.escapeMarkdown(options.name) : "-"
 		}\n**Id posizione**: ${
 			options.location?.toString() ?? "-"

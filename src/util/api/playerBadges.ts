@@ -44,7 +44,7 @@ export const playerBadges: APIMethod<string> = async (
 					}),
 					url: Constants.playerLink(tag),
 				},
-				title: translate("commands.player.badges.title", { lng }),
+				title: translate("commands.player.badges.title", { lng, count: player.badges.length }),
 				color: Colors.Green,
 				footer: { text: translate("common.footer", { lng }) },
 				timestamp: new Date(client.players.maxAges[tag]!).toISOString(),
@@ -53,22 +53,26 @@ export const playerBadges: APIMethod<string> = async (
 					.fill(undefined)
 					.map((_, index) => index * 4)
 					.map((begin) => player.badges.slice(begin, begin + 4))
-					.map((badges) =>
-						badges
-							.map(
-								(badge) =>
-									`**${badge.name}** (Liv. ${badge.level}/${badge.maxLevel} - ${
-										badge.progress
-									}/${badge.target}${
-										badge.level === badge.maxLevel
-											? ""
-											: ` - (${((badge.progress / badge.target) * 100).toFixed(
-													Constants.percentageDigits
-											  )}%)`
-									})` // TODO: move this to locales
-							)
-							.join(", ")
+					.map((badges, i) =>
+						i < 15
+							? badges
+									.map(
+										(badge) =>
+											`**${badge.name}** (Lvl. ${badge.level}/${
+												badge.maxLevel
+											} - ${badge.progress}/${badge.target}${
+												badge.level === badge.maxLevel
+													? ""
+													: ` - (${(
+															(badge.progress / badge.target) *
+															100
+													  ).toFixed(Constants.percentageDigits)}%)`
+											})`
+									)
+									.join(", ")
+							: undefined
 					)
+					.slice(0, 15)
 					.join("\n"),
 			},
 		],

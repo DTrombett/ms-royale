@@ -1,8 +1,7 @@
-import { UpcomingChestManager } from "apiroyale";
-import type { APIEmbed } from "discord-api-types/v10";
 import { ComponentType } from "discord-api-types/v10";
 import { Colors } from "discord.js";
 import type { APIMethod } from "..";
+import Constants from "../Constants";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import normalizeTag from "../normalizeTag";
@@ -28,39 +27,42 @@ export const playerUpcomingChests: APIMethod<string> = async (
 			ephemeral: true,
 		};
 
-	const chests = await client
-		.fetchPlayerUpcomingChests({ tag })
+	const chests = await client.upcomingChests
+		.fetch(tag)
 		.catch((error: Error) => {
 			void CustomClient.printToStderr(error);
 			return { content: error.message, ephemeral: true };
 		});
 
-	if (!(chests instanceof UpcomingChestManager)) return chests;
-	const chestNames = translate("chests", { lng });
-	const embed: APIEmbed = {
-		title: translate("commands.player.upcomingChests.title", { lng }),
-		color: Colors.Blurple,
-		footer: { text: translate("common.lastUpdated", { lng }) },
-		timestamp: chests.first()!.lastUpdate.toISOString(),
-		url: `https://royaleapi.com/player/${tag.slice(1)}`,
-		description: chests
-			.map(
-				(c, i) =>
-					`• **${chestNames[c.name] || c.name}** (${Number(i) + 1})${
-						i === "8" ? "\n" : ""
-					}`
-			)
-			.join("\n"),
-	};
+	if ("content" in chests) return chests;
+	const chestNames: Record<string, string | undefined> = translate("chests", {
+		lng,
+	});
 
 	return {
-		embeds: [embed],
+		embeds: [
+			{
+				title: translate("commands.player.upcomingChests.title", { lng }),
+				color: Colors.Blurple,
+				footer: { text: translate("common.footer", { lng }) },
+				timestamp: new Date(client.upcomingChests.maxAges[tag]!).toISOString(),
+				url: Constants.playerLink(tag),
+				description: chests
+					.map(
+						(c) =>
+							`• **${chestNames[c.name] ?? c.name}** (${Number(c.index) + 1})${
+								c.index === 8 ? "\n" : ""
+							}`
+					)
+					.join("\n"),
+			},
+		],
 		components: [
 			{
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						Actions.PlayerInfo,
+						"pi",
 						{
 							label: translate("commands.player.buttons.playerInfo.label", {
 								lng,

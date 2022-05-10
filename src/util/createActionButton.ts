@@ -13,8 +13,6 @@ import { CustomEmojis, Emojis } from "./types";
  */
 export const ButtonEmojis: Record<keyof ButtonActions, CustomEmojis | Emojis> =
 	{
-		after: Emojis.ForwardArrow,
-		before: Emojis.BackArrow,
 		rl: Emojis.Log,
 		cr: CustomEmojis.ClanWar,
 		ci: Emojis.CrossedSwords,
@@ -22,6 +20,8 @@ export const ButtonEmojis: Record<keyof ButtonActions, CustomEmojis | Emojis> =
 		ai: CustomEmojis.Achievement,
 		uc: CustomEmojis.Chest,
 		cm: CustomEmojis.ClanMembers,
+		sc: CustomEmojis.Search,
+		pb: CustomEmojis.Badges,
 	};
 
 /**

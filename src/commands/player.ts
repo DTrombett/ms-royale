@@ -27,6 +27,7 @@ enum AutoCompletableUpcomingChestsOptions {
 	Tag = "tag",
 }
 
+// TODO: Add achievements and badges commands
 export const command: CommandOptions = {
 	data: new SlashCommandBuilder()
 		.setName("player")

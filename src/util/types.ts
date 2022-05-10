@@ -20,15 +20,6 @@ import type { Command, Event } from ".";
 import type LocalesIt from "../../locales/it.json";
 
 /**
- * An action row to be sent to Discord
- */
-export type ActionRowType = NonNullable<
-	MessageOptions["components"]
-> extends (infer T)[]
-	? T
-	: never;
-
-/**
  * A function to interact with the API.
  * @param client - The client
  * @param id - The id to fetch
@@ -51,19 +42,9 @@ export type APIMethod<
  */
 export type ButtonActions = {
 	/**
-	 * Show the next page
-	 */
-	after: [cursor: string];
-
-	/**
-	 * Show the previous page
-	 */
-	before: [cursor: string];
-
-	/**
 	 * Show the river race log of a clan
 	 */
-	rl: [clan: string, index?: `${number}`, userId?: Snowflake];
+	rl: [clan: string, userId?: Snowflake, after?: string, before?: string];
 
 	/**
 	 * Show clan's info
@@ -81,7 +62,7 @@ export type ButtonActions = {
 	pi: [player: string];
 
 	/**
-	 * Show a player achievement's info
+	 * Show a player achievements' info
 	 */
 	ai: [player: string];
 
@@ -94,6 +75,16 @@ export type ButtonActions = {
 	 * Show a clan's members
 	 */
 	cm: [clan: string, id?: Snowflake, index?: `${number}`, sort?: SortMethod];
+
+	/**
+	 * Search for clans after or before a cursor
+	 */
+	sc: [after?: string, before?: string];
+
+	/**
+	 * Show a player badges' info
+	 */
+	pb: [player: string];
 };
 
 /**
@@ -250,6 +241,16 @@ export enum CustomEmojis {
 	 * The emoji for received donations
 	 */
 	DonationsReceived = "<:donationsreceived:935866046815014952>",
+
+	/**
+	 * The emoji for a search
+	 */
+	Search = "<:search:973631177619546213>",
+
+	/**
+	 * The emoji for badges
+	 */
+	Badges = "<:badges:973643567836844062>",
 }
 
 /**
