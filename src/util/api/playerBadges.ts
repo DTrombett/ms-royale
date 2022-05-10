@@ -44,7 +44,10 @@ export const playerBadges: APIMethod<string> = async (
 					}),
 					url: Constants.playerLink(tag),
 				},
-				title: translate("commands.player.badges.title", { lng, count: player.badges.length }),
+				title: translate("commands.player.badges.title", {
+					lng,
+					count: player.badges.length,
+				}),
 				color: Colors.Green,
 				footer: { text: translate("common.footer", { lng }) },
 				timestamp: new Date(client.players.maxAges[tag]!).toISOString(),
