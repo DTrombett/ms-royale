@@ -8,7 +8,7 @@
     "build": "tsup",
     "commands": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings dist/registerCommands.js",
     "lint": "eslint src --fix",
-    "prepare": "npm run build && npm run commands",
+    "prepare": "npm test && husky install",
     "prettier": "prettier --write src/**/*.ts",
     "start": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings ./dist/index.js",
     "test": "eslint src && tsc --noEmit"
