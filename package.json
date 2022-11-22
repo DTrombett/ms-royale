@@ -33,7 +33,7 @@
     "apiroyale": "github:DTrombett/apiroyale",
     "cron-parser": "^4.4.0",
     "discord-api-types": "*",
-    "discord.js": "^14.0.0-dev.1649937833-b01f414",
+    "discord.js": "^14.6.0",
     "dotenv": "^16.0.0",
     "express": "^4.18.1",
     "i18next": "^21.7.1",
