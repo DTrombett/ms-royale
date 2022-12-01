@@ -1,20 +1,19 @@
 import type { ClientRoyale, SearchClanOptions } from "apiroyale";
-import { ClanSearchResults } from "apiroyale";
+import type { Snowflake } from "discord-api-types/v10";
 import { ComponentType } from "discord-api-types/v10";
-import type { Snowflake } from "discord.js";
 import { Util } from "discord.js";
 import type { APIMethod } from "..";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
-import { buildCustomMenuId } from "../customId";
+import { createActionId } from "../customId";
 import translate from "../translate";
-import { ButtonActions, MenuActions } from "../types";
+import { Emojis } from "../types";
 
 /**
  * Search a clan.
  * @param client - The client
- * @param tag - The options for the search
- * @param options - Additional options
+ * @param options - The options for the search
+ * @param otherOptions - Additional options
  * @returns A promise that resolves with the message options
  */
 export const searchClan: APIMethod<
@@ -30,8 +29,8 @@ export const searchClan: APIMethod<
 		return { content: error.message, ephemeral: true };
 	});
 
-	if (!(results instanceof ClanSearchResults)) return results;
-	if (!results.size)
+	if (!("items" in results)) return results;
+	if (!results.items.length)
 		return {
 			content: translate("commands.clan.search.notFound", { lng }),
 			ephemeral: true,
@@ -44,17 +43,23 @@ export const searchClan: APIMethod<
 				components: [
 					{
 						type: ComponentType.SelectMenu,
-						options: results.map((clan) => ({
+						options: results.items.map((clan) => ({
 							...translate("commands.clan.search.menu.options", {
 								lng,
-								clan,
+								members: clan.members,
+								name: clan.name,
+								tag: clan.tag,
+								score: clan.clanScore,
+								donations: clan.donationsPerWeek,
+								requiredTrophies: clan.requiredTrophies,
+								location: clan.location.name,
 							}),
 							value: clan.tag,
 						})),
 						placeholder: translate("commands.clan.search.menu.placeholder", {
 							lng,
 						}),
-						custom_id: buildCustomMenuId(MenuActions.ClanInfo),
+						custom_id: createActionId("clan"),
 					},
 				],
 			},
@@ -62,25 +67,28 @@ export const searchClan: APIMethod<
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						ButtonActions.PreviousPage,
+						"sc",
 						{
 							label: translate("common.back", { lng }),
-							disabled: results.paging.cursors.before == null,
+							disabled: results.paging?.cursors.before === undefined,
+							emoji: Emojis.BackArrow,
 						},
-						results.paging.cursors.before ?? ""
+						undefined,
+						results.paging?.cursors.before ?? ""
 					),
 					createActionButton(
-						ButtonActions.NextPage,
+						"sc",
 						{
 							label: translate("common.next", { lng }),
-							disabled: results.paging.cursors.after == null,
+							disabled: results.paging?.cursors.after === undefined,
+							emoji: Emojis.ForwardArrow,
 						},
-						results.paging.cursors.after ?? ""
+						results.paging?.cursors.after ?? ""
 					),
 				],
 			},
 		],
-		content: ` Risultati per la seguente ricerca richiesta da <@${id}>:\n\n**Nome**: ${
+		content: `Risultati per la seguente ricerca richiesta da <@${id}>:\n\n**Nome**: ${
 			options.name != null ? Util.escapeMarkdown(options.name) : "-"
 		}\n**Id posizione**: ${
 			options.location?.toString() ?? "-"

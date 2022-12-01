@@ -1,66 +1,43 @@
-import type {
-	ButtonActions,
-	ButtonActionsTypes,
-	MenuActions,
-	MenuActionsTypes,
-} from ".";
+import type { ButtonActions, MenuActions } from "./types";
 
 /**
- * Build a custom button id.
- * @param action - The action to perform
+ * Create an action id.
+ * @param action - The action to do
  * @param args - The arguments to pass to the action
- * @returns The custom button id
+ * @returns The id of the action
  */
-export const buildCustomButtonId = <T extends ButtonActions>(
-	action: T,
-	...args: ButtonActionsTypes[T]
-) => `${action}${args.length > 0 ? `-${args.join("-")}` : ""}`;
+export const createActionId: {
+	<T extends keyof ButtonActions>(action: T, ...args: ButtonActions[T]): string;
+	<T extends keyof MenuActions>(action: T, ...args: MenuActions[T]): string;
+	<_ extends keyof (ButtonActions | MenuActions)>(
+		action: never,
+		...args: string[]
+	): string;
+} = (action: string, ...args: string[]) => `${action}-${args.join("-")}`;
 
 /**
- * Build a custom menu id.
- * @param action - The action to perform
- * @param args - The arguments to pass to the action
- * @returns The custom menu id
+ * Parse an action id.
+ * @param id - The id to parse
+ * @returns The action and arguments of the action
  */
-export const buildCustomMenuId = <T extends MenuActions>(
-	action: T,
-	...args: MenuActionsTypes[T]
-) => `${action}${(args.length as number) > 0 ? `-${args.join("-")}` : ""}`;
-
-/**
- * Destructure a custom button id.
- * @param id - The custom button id
- * @returns The action and arguments
- */
-export const destructureCustomButtonId = <T extends ButtonActions>(
-	id: string
-): {
-	action: T;
-	args: ButtonActionsTypes[T];
-} => {
-	const args = id.split("-") as ButtonActionsTypes[T];
-
-	return {
-		action: args.splice(0, 1)[0] as T,
-		args,
+export const parseActionId: {
+	<T extends keyof ButtonActions>(id: string): {
+		action: T;
+		args: ButtonActions[T];
 	};
-};
-
-/**
- * Destructure a custom menu id.
- * @param id - The custom menu id
- * @returns The action and arguments
- */
-export const destructureCustomMenuId = <T extends MenuActions>(
-	id: string
-): {
-	action: T;
-	args: MenuActionsTypes[T];
-} => {
-	const [action, ...args] = id.split("-") as [T, ...MenuActionsTypes[T]];
+	<T extends keyof MenuActions>(id: string): {
+		action: T;
+		args: MenuActions[T];
+	};
+	<_ extends keyof (ButtonActions | MenuActions)>(id: never): {
+		action: string;
+		args: string[];
+	};
+} = (id: string) => {
+	const args = id.split("-");
 
 	return {
-		action,
-		args,
+		action: args[0],
+		args: args.slice(1),
 	};
 };

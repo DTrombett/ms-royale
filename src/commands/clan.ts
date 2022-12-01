@@ -3,6 +3,7 @@ import type { SearchClanOptions } from "apiroyale";
 import type { CommandOptions } from "../util";
 import Constants, {
 	autocompleteClanTag,
+	autocompleteLocation,
 	autocompleteSort,
 	cast,
 	clanInfo,
@@ -44,18 +45,10 @@ enum ClanMembersOptions {
 	Tag = "tag",
 	Sort = "ordine",
 }
-enum AutoCompletableInfoOptions {
-	Tag = "tag",
-}
-enum AutoCompletableRiverRaceLogOptions {
-	Tag = "tag",
-}
-enum AutoCompletableRiverRaceOptions {
-	Tag = "tag",
-}
-enum AutoCompletableClanMembersOptions {
-	Tag = "tag",
+enum AutoCompletableOptions {
+	Location = "posizione",
 	Sort = "ordine",
+	Tag = "tag",
 }
 
 export const command: CommandOptions = {
@@ -203,14 +196,10 @@ export const command: CommandOptions = {
 				 */
 				const location =
 					locationProvided != null
-						? this.client.locations.find(
-								(l) =>
-									l.id === locationProvided ||
-									l.name.toLowerCase() === locationProvided
-						  )?.id ??
-						  (!Number.isNaN(Number(locationProvided))
-								? (locationProvided as `${number}`)
-								: undefined)
+						? Number(locationProvided) ||
+						  this.client.locations.find(
+								(l) => l.name.toLowerCase() === locationProvided
+						  )?.id
 						: undefined;
 				/**
 				 * The max members option provided
@@ -392,20 +381,18 @@ export const command: CommandOptions = {
 	async autocomplete(interaction) {
 		const option = interaction.options.getFocused(true);
 
-		switch (
-			option.name as
-				| AutoCompletableClanMembersOptions
-				| AutoCompletableInfoOptions
-				| AutoCompletableRiverRaceLogOptions
-				| AutoCompletableRiverRaceOptions
-		) {
-			case AutoCompletableInfoOptions.Tag:
+		switch (option.name as AutoCompletableOptions) {
+			case AutoCompletableOptions.Tag:
 				// Autocomplete the clan tag
 				await autocompleteClanTag(this.client, option, interaction);
 				break;
-			case AutoCompletableClanMembersOptions.Sort:
+			case AutoCompletableOptions.Sort:
 				// Autocomplete the sort method
 				await autocompleteSort(option, interaction);
+				break;
+			case AutoCompletableOptions.Location:
+				// Autocomplete the location
+				await autocompleteLocation(this.client, option, interaction);
 				break;
 			default:
 				void CustomClient.printToStderr(

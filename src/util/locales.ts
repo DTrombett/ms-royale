@@ -1,6 +1,6 @@
-import type { Location } from "apiroyale";
 import type { AutocompleteInteraction } from "discord.js";
-import type { ReplyableInteraction } from "./types";
+import type { APILocation } from "royale-api-types";
+import type { ReplyableInteraction } from ".";
 import { LocaleCodes } from "./types";
 
 /**
@@ -8,10 +8,13 @@ import { LocaleCodes } from "./types";
  * @param location - A Clash Royale location
  */
 export const isSupportedLocation = (
-	location: Location
-): location is Location & { countryCode: keyof typeof LocaleCodes } =>
-	location.isCountry() &&
-	Object.keys(LocaleCodes).includes(location.countryCode);
+	location: APILocation
+): location is APILocation & {
+	countryCode: keyof typeof LocaleCodes;
+	isCountry: true;
+} =>
+	location.isCountry &&
+	Object.keys(LocaleCodes).includes(location.countryCode!);
 
 /**
  * Get the locale for a discord interaction, or the default locale if it's not supported.
@@ -27,5 +30,7 @@ export const getInteractionLocale = (
  * @param location - The location to get the locale for
  * @returns The Clash Royale locale for the location
  */
-export const locationToLocale = (location: Location): LocaleCodes | undefined =>
+export const locationToLocale = (
+	location: APILocation
+): LocaleCodes | undefined =>
 	isSupportedLocation(location) ? LocaleCodes[location.countryCode] : undefined;

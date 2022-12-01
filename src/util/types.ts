@@ -3,7 +3,7 @@ import type {
 	SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
 import type { RestEvents } from "@discordjs/rest";
-import type { APITag, ClientEvents, ClientRoyale } from "apiroyale";
+import type { ClientEvents, ClientRoyale } from "apiroyale";
 import type { Snowflake } from "discord-api-types/v10";
 import type {
 	AutocompleteInteraction,
@@ -18,15 +18,6 @@ import type {
 } from "discord.js";
 import type { Command, Event } from ".";
 import type LocalesIt from "../../locales/it.json";
-
-/**
- * An action row to be sent to Discord
- */
-export type ActionRowType = NonNullable<
-	MessageOptions["components"]
-> extends (infer T)[]
-	? T
-	: never;
 
 /**
  * A function to interact with the API.
@@ -47,77 +38,73 @@ export type APIMethod<
 ) => Promise<InteractionReplyOptions & MessageOptions>;
 
 /**
- * Values used as custom identifiers for buttons
+ * Types of args for buttons actions
  */
-export enum ButtonActions {
-	/**
-	 * Show the next page
-	 */
-	NextPage = "after",
-
-	/**
-	 * Show the previous page
-	 */
-	PreviousPage = "before",
-
+export type ButtonActions = {
 	/**
 	 * Show the river race log of a clan
 	 */
-	RiverRaceLog = "rl",
+	rl: [clan: string, userId?: Snowflake, after?: string, before?: string];
 
 	/**
 	 * Show clan's info
 	 */
-	ClanInfo = "ci",
+	ci: [clan: string];
 
 	/**
 	 * Show the current river race of a clan
 	 */
-	CurrentRiverRace = "cr",
+	cr: [clan: string];
 
 	/**
 	 * Show player's info
 	 */
-	PlayerInfo = "pi",
+	pi: [player: string];
 
 	/**
-	 * Show a player achievement's info
+	 * Show a player achievements' info
 	 */
-	PlayerAchievements = "ai",
+	ai: [player: string];
 
 	/**
 	 * Show a player's upcoming chests
 	 */
-	PlayerUpcomingChests = "uc",
+	uc: [player: string];
 
 	/**
 	 * Show a clan's members
 	 */
-	ClanMembers = "cm",
-}
+	cm: [clan: string, id?: Snowflake, index?: `${number}`, sort?: SortMethod];
+
+	/**
+	 * Search for clans after or before a cursor
+	 */
+	sc: [after?: string, before?: string];
+
+	/**
+	 * Show a player badges' info
+	 */
+	pb: [player: string];
+};
 
 /**
- * Types of other arguments for button actions
+ * Types of args for menu actions
  */
-export type ButtonActionsTypes = {
-	[ButtonActions.NextPage]: [cursor: string];
-	[ButtonActions.PreviousPage]: [cursor: string];
-	[ButtonActions.RiverRaceLog]: [
-		clan: APITag,
-		index?: `${number}`,
-		userId?: Snowflake
-	];
-	[ButtonActions.ClanInfo]: [clan: APITag];
-	[ButtonActions.CurrentRiverRace]: [clan: APITag];
-	[ButtonActions.PlayerInfo]: [player: APITag];
-	[ButtonActions.PlayerAchievements]: [player: APITag];
-	[ButtonActions.PlayerUpcomingChests]: [player: APITag];
-	[ButtonActions.ClanMembers]: [
-		clan: APITag,
-		id?: Snowflake,
-		index?: `${number}`,
-		sort?: SortMethod
-	];
+export type MenuActions = {
+	/**
+	 * Show info about a player
+	 */
+	player: [];
+
+	/**
+	 * Show info about a clan
+	 */
+	clan: [];
+
+	/**
+	 * Show info about a clan's members
+	 */
+	members: [tag: string, id?: Snowflake];
 };
 
 /**
@@ -254,6 +241,16 @@ export enum CustomEmojis {
 	 * The emoji for received donations
 	 */
 	DonationsReceived = "<:donationsreceived:935866046815014952>",
+
+	/**
+	 * The emoji for a search
+	 */
+	Search = "<:search:973631177619546213>",
+
+	/**
+	 * The emoji for badges
+	 */
+	Badges = "<:badges:973643567836844062>",
 }
 
 /**
@@ -506,25 +503,6 @@ export enum EventType {
 }
 
 /**
- * All the face emojis
- */
-export enum FaceEmojis {
-	":)" = "😊",
-	":D" = "😀",
-	":P" = "😛",
-	":O" = "😮",
-	":*" = "😗",
-	";)" = "😉",
-	":|" = "😐",
-	":/" = "😕",
-	":S" = "😖",
-	":$" = "😳",
-	":@" = "😡",
-	":^)" = "😛",
-	":\\" = "😕",
-}
-
-/**
  * A list of locale codes
  */
 export enum LocaleCodes {
@@ -572,35 +550,6 @@ export enum MatchLevel {
 	 */
 	Full,
 }
-
-/**
- * Values used as custom identifiers for select menus
- */
-export enum MenuActions {
-	/**
-	 * Show info about a player
-	 */
-	PlayerInfo = "player",
-
-	/**
-	 * Show info about a clan
-	 */
-	ClanInfo = "clan",
-
-	/**
-	 * Show info about a clan's members
-	 */
-	ClanMembers = "members",
-}
-
-/**
- * Types of other arguments for button actions
- */
-export type MenuActionsTypes = {
-	[MenuActions.PlayerInfo]: [];
-	[MenuActions.ClanInfo]: [];
-	[MenuActions.ClanMembers]: [tag: APITag, id?: Snowflake];
-};
 
 /**
  * An interaction that can be replied to
@@ -664,5 +613,5 @@ export type TranslationSample = typeof LocalesIt;
  * A list of all the variables
  */
 export type Variables = {
-	players: Record<Snowflake, APITag | undefined>;
+	players: Record<Snowflake, string | undefined>;
 };

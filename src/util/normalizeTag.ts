@@ -1,5 +1,3 @@
-import type { APITag } from "apiroyale";
-
 /**
  * Normalize a tag.
  * @param tag - Tag to normalize
@@ -8,7 +6,7 @@ import type { APITag } from "apiroyale";
 export const normalizeTag = (tag: string) => {
 	tag = tag.toUpperCase();
 	if (!tag.startsWith("#")) tag = `#${tag}`;
-	return tag as APITag;
+	return tag;
 };
 
 export default normalizeTag;

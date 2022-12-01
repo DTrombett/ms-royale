@@ -4,24 +4,25 @@ import type {
 } from "discord-api-types/v10";
 import { ComponentType } from "discord-api-types/v10";
 import { ButtonStyle } from "discord.js";
-import { buildCustomButtonId } from "./customId";
-import type { ButtonActionsTypes } from "./types";
-import { ButtonActions, CustomEmojis, Emojis } from "./types";
+import { createActionId } from "./customId";
+import type { ButtonActions } from "./types";
+import { CustomEmojis, Emojis } from "./types";
 
 /**
  * Emojis used for the buttons
  */
-export const ButtonEmojis: Record<ButtonActions, CustomEmojis | Emojis> = {
-	[ButtonActions.NextPage]: Emojis.ForwardArrow,
-	[ButtonActions.PreviousPage]: Emojis.BackArrow,
-	[ButtonActions.RiverRaceLog]: Emojis.Log,
-	[ButtonActions.CurrentRiverRace]: CustomEmojis.ClanWar,
-	[ButtonActions.ClanInfo]: Emojis.CrossedSwords,
-	[ButtonActions.PlayerInfo]: CustomEmojis.User,
-	[ButtonActions.PlayerAchievements]: CustomEmojis.Achievement,
-	[ButtonActions.PlayerUpcomingChests]: CustomEmojis.Chest,
-	[ButtonActions.ClanMembers]: CustomEmojis.ClanMembers,
-};
+export const ButtonEmojis: Record<keyof ButtonActions, CustomEmojis | Emojis> =
+	{
+		rl: Emojis.Log,
+		cr: CustomEmojis.ClanWar,
+		ci: Emojis.CrossedSwords,
+		pi: CustomEmojis.User,
+		ai: CustomEmojis.Achievement,
+		uc: CustomEmojis.Chest,
+		cm: CustomEmojis.ClanMembers,
+		sc: CustomEmojis.Search,
+		pb: CustomEmojis.Badges,
+	};
 
 /**
  * Resolve an emoji identifier to a component emoji object.
@@ -46,7 +47,7 @@ export const resolveEmojiIdentifier = (
  * @param args - The arguments to be passed to the action
  * @returns A MessageButton with the given action and arguments
  */
-export const createActionButton = <T extends ButtonActions>(
+export const createActionButton = <T extends keyof ButtonActions>(
 	action: T,
 	{
 		emoji,
@@ -59,10 +60,10 @@ export const createActionButton = <T extends ButtonActions>(
 		label: string;
 		disabled?: boolean;
 	},
-	...args: ButtonActionsTypes[T]
+	...args: ButtonActions[T]
 ): APIButtonComponentWithCustomId => ({
 	type: ComponentType.Button,
-	custom_id: buildCustomButtonId(action, ...args),
+	custom_id: createActionId(action, ...args),
 	emoji: resolveEmojiIdentifier(emoji ?? ButtonEmojis[action]),
 	style: style ?? ButtonStyle.Primary,
 	label,

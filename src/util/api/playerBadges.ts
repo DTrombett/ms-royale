@@ -6,17 +6,16 @@ import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
-import { Emojis } from "../types";
 import validateTag from "../validateTag";
 
 /**
- * Displays information about a player's achievements.
+ * Displays information about a player's badges.
  * @param client - The client
  * @param tag - The tag of the player
  * @param options - Additional options
  * @returns A promise that resolves with the message options
  */
-export const playerAchievements: APIMethod<string> = async (
+export const playerBadges: APIMethod<string> = async (
 	client,
 	tag,
 	{ ephemeral, lng }
@@ -39,36 +38,44 @@ export const playerAchievements: APIMethod<string> = async (
 		embeds: [
 			{
 				author: {
-					name: translate("commands.player.achievements.author", {
+					name: translate("commands.player.badges.author", {
 						lng,
 						player,
 					}),
 					url: Constants.playerLink(tag),
 				},
-				title: translate("commands.player.achievements.title", {
+				title: translate("commands.player.badges.title", {
 					lng,
-					count: player.achievements.length,
+					count: player.badges.length,
 				}),
 				color: Colors.Green,
 				footer: { text: translate("common.footer", { lng }) },
 				timestamp: new Date(client.players.maxAges[tag]!).toISOString(),
 				url: Constants.playerLink(tag),
-				description: player.achievements
-					.map(
-						(achievement) =>
-							`• **${achievement.name}**: ${achievement.info}${
-								achievement.stars
-									? ` ${Emojis.Star.repeat(achievement.stars)}`
-									: ""
-							} - ${achievement.value}/${achievement.target}${
-								achievement.value >= achievement.target
-									? ""
-									: ` (${(
-											(achievement.value / achievement.target) *
-											100
-									  ).toFixed(Constants.percentageDigits)}%)`
-							}`
+				description: Array(Math.ceil(player.badges.length / 4))
+					.fill(undefined)
+					.map((_, index) => index * 4)
+					.map((begin) => player.badges.slice(begin, begin + 4))
+					.map((badges, i) =>
+						i < 15
+							? badges
+									.map(
+										(badge) =>
+											`**${badge.name}** (Lvl. ${badge.level}/${
+												badge.maxLevel
+											} - ${badge.progress}/${badge.target}${
+												badge.level === badge.maxLevel
+													? ""
+													: ` - (${(
+															(badge.progress / badge.target) *
+															100
+													  ).toFixed(Constants.percentageDigits)}%)`
+											})`
+									)
+									.join(", ")
+							: undefined
 					)
+					.slice(0, 15)
 					.join("\n"),
 			},
 		],
@@ -89,15 +96,6 @@ export const playerAchievements: APIMethod<string> = async (
 						"uc",
 						{
 							label: translate("commands.player.buttons.upcomingChests.label", {
-								lng,
-							}),
-						},
-						tag
-					),
-					createActionButton(
-						"pb",
-						{
-							label: translate("commands.player.buttons.badges.label", {
 								lng,
 							}),
 						},

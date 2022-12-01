@@ -7,7 +7,7 @@ export const command: CommandOptions = {
 	async run(interaction) {
 		const lng = getInteractionLocale(interaction);
 
-		return interaction.reply({
+		await interaction.reply({
 			content: translate("commands.ping.content", {
 				lng,
 				ws: interaction.client.ws.ping,

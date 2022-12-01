@@ -1,15 +1,12 @@
-import { CurrentRiverRace } from "apiroyale";
-import type { APIEmbed } from "discord-api-types/v10";
 import { ComponentType } from "discord-api-types/v10";
 import { Colors } from "discord.js";
 import type { APIMethod } from "..";
 import Constants from "../Constants";
 import createActionButton from "../createActionButton";
 import CustomClient from "../CustomClient";
-import { buildCustomMenuId } from "../customId";
+import { createActionId } from "../customId";
 import normalizeTag from "../normalizeTag";
 import translate from "../translate";
-import { ButtonActions, MenuActions } from "../types";
 import validateTag from "../validateTag";
 
 /**
@@ -31,82 +28,101 @@ export const currentRiverRace: APIMethod<string> = async (
 			ephemeral: true,
 		};
 
-	const race = await client.races.fetch(tag).catch((error: Error) => {
-		void CustomClient.printToStderr(error);
-		return { content: error.message, ephemeral: true };
-	});
+	const race = await client.currentRiverRaces
+		.fetch(tag)
+		.catch((error: Error) => {
+			void CustomClient.printToStderr(error);
+			return { content: error.message, ephemeral: true };
+		});
 
-	if (!(race instanceof CurrentRiverRace)) return race;
-	const training = race.type.toLowerCase() === "training";
-	const participants = race.clan.participants.filter((p) =>
-		Boolean(p.decksUsed)
-	);
-	const embed: APIEmbed = {
-		title: translate("commands.clan.currentRiverRace.title", {
-			lng,
-			race,
-			day: training ? race.day : race.day - 3,
-			training,
-		}),
-		color: training ? Colors.Green : Colors.DarkPurple,
-		footer: { text: translate("common.lastUpdated", { lng }) },
-		timestamp: race.lastUpdate.toISOString(),
-		thumbnail: { url: race.clan.badgeUrl },
-		url: Constants.clanLink(tag),
-		description: race.leaderboard
-			.map((standing) =>
-				translate("commands.clan.currentRiverRace.description", {
+	if (!("clan" in race)) return race;
+	const training = race.periodType === "training";
+	const weekDay = (race.periodIndex + 1) % 7;
+	const week = Math.ceil(race.periodIndex / 7);
+
+	return {
+		embeds: [
+			{
+				title: translate("commands.clan.currentRiverRace.title", {
 					lng,
-					standing,
-					participants: (race.warDays.size
-						? standing.participants.filter((p) => Boolean(p.medals))
-						: standing.participants
-					).size,
-					context: training.toString(),
-				})
-			)
-			.join("\n"),
-		fields: race.warDays
-			.filter((period) => period.week === race.week)
-			.map((period) => ({
-				name: translate("commands.clan.currentRiverRace.field.name", {
-					lng,
-					period,
-					p: period,
+					week,
+					day: weekDay ? (training ? weekDay : weekDay - 3) : 4,
+					training,
 				}),
-				value: period.leaderboard
+				color: training ? Colors.Green : Colors.DarkPurple,
+				footer: { text: translate("common.footer", { lng }) },
+				timestamp: new Date(
+					client.currentRiverRaces.maxAges[tag]!
+				).toISOString(),
+				thumbnail: {
+					url: Constants.clanBadgeUrl(race.clan.badgeId),
+				},
+				url: Constants.clanLink(tag),
+				description: race.clans
 					.map((standing) =>
-						translate("commands.clan.currentRiverRace.field.value", {
+						translate("commands.clan.currentRiverRace.description", {
 							lng,
 							standing,
-							clanName: race.leaderboard.get(standing.clanTag)!.name,
+							participants: (race.periodLogs.length
+								? standing.participants.filter((p) => p.fame)
+								: standing.participants
+							).length,
+							context: training.toString(),
 						})
 					)
 					.join("\n"),
-			})),
-	};
-
-	return {
-		embeds: [embed],
+				fields: race.periodLogs
+					.filter((period) => Math.ceil(period.periodIndex / 7) === week)
+					.map(
+						(period) => (
+							translate("commands.clan.currentRiverRace.field", {
+								lng,
+								day: period.periodIndex % 7,
+							}),
+							{
+								name: translate("commands.clan.currentRiverRace.field.name", {
+									lng,
+									period,
+									p: period,
+								}),
+								value: period.items
+									.map((standing) =>
+										translate("commands.clan.currentRiverRace.field.value", {
+											lng,
+											standing,
+											clanName: race.clans.find(
+												(clan) => clan.tag === standing.clan.tag
+											)!.name,
+										})
+									)
+									.join("\n"),
+							}
+						)
+					),
+			},
+		],
 		components: [
 			{
 				type: ComponentType.ActionRow,
 				components: [
 					{
 						type: ComponentType.SelectMenu,
-						options: participants.first(25).map((participant, i) => ({
-							...translate("commands.clan.currentRiverRace.menu.options", {
-								lng,
-								participant,
-								rank: i + 1,
-							}),
-							value: participant.tag,
-						})),
+						options: race.clan.participants
+							.filter((p) => p.decksUsed)
+							.slice(0, 25)
+							.map((participant, i) => ({
+								...translate("commands.clan.currentRiverRace.menu.options", {
+									lng,
+									participant,
+									rank: i + 1,
+								}),
+								value: participant.tag,
+							})),
 						placeholder: translate(
 							"commands.clan.currentRiverRace.menu.placeholder",
 							{ lng }
 						),
-						custom_id: buildCustomMenuId(MenuActions.PlayerInfo),
+						custom_id: createActionId("player"),
 					},
 				],
 			},
@@ -114,7 +130,7 @@ export const currentRiverRace: APIMethod<string> = async (
 				type: ComponentType.ActionRow,
 				components: [
 					createActionButton(
-						ButtonActions.ClanInfo,
+						"ci",
 						{
 							label: translate("commands.clan.buttons.clanInfo.label", {
 								lng,
@@ -123,7 +139,7 @@ export const currentRiverRace: APIMethod<string> = async (
 						tag
 					),
 					createActionButton(
-						ButtonActions.RiverRaceLog,
+						"rl",
 						{
 							label: translate("commands.clan.buttons.riverRaceLog.label", {
 								lng,

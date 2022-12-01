@@ -3,7 +3,6 @@ import { ComponentType } from "discord-api-types/v10";
 import type { CommandOptions } from "../util";
 import {
 	autocompletePlayerTag,
-	ButtonActions,
 	Constants,
 	createActionButton,
 	CustomClient,
@@ -51,11 +50,13 @@ export const command: CommandOptions = {
 			interaction.deferReply(),
 		]);
 
-		if (player instanceof Error)
+		if (player instanceof Error) {
 			await interaction.reply({
 				content: player.message,
 				ephemeral: true,
 			});
+			return;
+		}
 		await importJson("players")
 			.catch(() => ({}))
 			.then((json) =>
@@ -66,13 +67,17 @@ export const command: CommandOptions = {
 			)
 			.then(() =>
 				interaction.editReply({
-					content: translate("commands.save.content", { lng, player }),
+					content: translate("commands.save.content", {
+						lng,
+						name: player.name,
+						tag: player.tag,
+					}),
 					components: [
 						{
 							type: ComponentType.ActionRow,
 							components: [
 								createActionButton(
-									ButtonActions.PlayerInfo,
+									"pi",
 									{
 										label: translate(
 											"commands.player.buttons.playerInfo.label",

@@ -8,7 +8,7 @@
     "build": "tsup",
     "commands": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings dist/registerCommands.js",
     "lint": "eslint src --fix",
-    "prepare": "npm run build && npm run commands",
+    "prepare": "npm test && husky install",
     "prettier": "prettier --write src/**/*.ts",
     "start": "node --experimental-specifier-resolution=node --enable-source-maps --trace-warnings ./dist/index.js",
     "test": "eslint src && tsc --noEmit"
@@ -29,17 +29,18 @@
   },
   "dependencies": {
     "@discordjs/builders": "^0.14.0-dev.1651493044-4ba0f56",
-    "@discordjs/rest": "^0.4.0-dev.1649937819-b01f414",
-    "apiroyale": "github:DTrombett/apiroyale",
+    "@discordjs/rest": "^0.5.0-dev.1651493333-4ba0f56",
+    "apiroyale": "^2.0.0",
     "cron-parser": "^4.4.0",
     "discord-api-types": "*",
-    "discord.js": "^14.0.0-dev.1649937833-b01f414",
+    "discord.js": "^14.0.0-dev.1651493371-4ba0f56",
     "dotenv": "^16.0.0",
     "express": "^4.18.1",
     "i18next": "^21.7.1",
     "i18next-fs-backend": "^1.1.4",
     "node": "^17.7.2",
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "royale-api-types": "^1.1.0"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.6",

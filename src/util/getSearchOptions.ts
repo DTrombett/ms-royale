@@ -27,7 +27,7 @@ export const getSearchOptions = (
 		before,
 		limit: 25,
 		name: name === "-" ? undefined : name.replaceAll("\\", ""),
-		location: location === "-" ? undefined : location,
+		location: location === "-" ? undefined : Number(location),
 		maxMembers: maxMembers === "-" ? undefined : parseInt(maxMembers),
 		minMembers: minMembers === "-" ? undefined : parseInt(minMembers),
 		minScore: minScore === "-" ? undefined : parseInt(minScore),

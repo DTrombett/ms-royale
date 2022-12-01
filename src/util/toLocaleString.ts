@@ -7,7 +7,7 @@
 export const toLocaleString = (element: Date | number, lng?: string) => {
 	try {
 		return element.toLocaleString(lng);
-	} catch (error) {
+	} catch (_) {
 		return element.toLocaleString();
 	}
 };

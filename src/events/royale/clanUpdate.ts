@@ -1,7 +1,7 @@
-import type { Clan } from "apiroyale";
 import type { APIEmbed } from "discord-api-types/v10";
 import { Colors } from "discord.js";
 import { env } from "node:process";
+import type { APIClan } from "royale-api-types";
 import type { EventOptions } from "../../util";
 import Constants, {
 	CustomClient,
@@ -11,15 +11,15 @@ import Constants, {
 } from "../../util";
 
 const constructClanUpdateEmbed = (
-	newClan: Clan,
-	oldClan: Clan,
+	newClan: APIClan,
+	oldClan: APIClan,
 	lng?: string
 ) => {
 	const embed: APIEmbed = {
 		title: translate("events.clanUpdate.title", { lng }),
 		url: Constants.clanLink(newClan.tag),
 		author: { name: newClan.name },
-		thumbnail: { url: newClan.badgeUrl },
+		thumbnail: { url: Constants.clanBadgeUrl(newClan.badgeId) },
 		color: Colors.Blurple,
 		fields: [],
 	};
@@ -44,16 +44,16 @@ const constructClanUpdateEmbed = (
 		embed.fields!.push(
 			translate("events.clanUpdate.fields.badgeId", {
 				lng,
-				old: oldClan.badgeId,
-				new: newClan.badgeId,
+				old: Constants.clanBadgeUrl(oldClan.badgeId),
+				new: Constants.clanBadgeUrl(newClan.badgeId),
 			})
 		);
-	if (oldClan.locationName !== newClan.locationName)
+	if (oldClan.location.name !== newClan.location.name)
 		embed.fields!.push(
 			translate("events.clanUpdate.fields.location", {
 				lng,
-				old: oldClan.locationName,
-				new: newClan.locationName,
+				old: oldClan.location.name,
+				new: newClan.location.name,
 			})
 		);
 	if (oldClan.requiredTrophies !== newClan.requiredTrophies)
@@ -73,20 +73,32 @@ const constructClanUpdateEmbed = (
 			})
 		);
 	embed.fields!.push(
-		...oldClan.members
-			.filter(({ tag }) => !newClan.members.has(tag))
+		...oldClan.memberList
+			.filter(
+				({ tag }) =>
+					!newClan.memberList.find(({ tag: newTag }) => newTag === tag)
+			)
 			.map((member) =>
 				translate("events.clanUpdate.fields.memberLeft", {
 					lng,
-					member,
+					rank: member.clanRank,
+					name: member.name,
+					tag: member.tag,
+					trophies: member.trophies,
 				})
 			),
-		...newClan.members
-			.filter(({ tag }) => !oldClan.members.has(tag))
+		...newClan.memberList
+			.filter(
+				({ tag }) =>
+					!oldClan.memberList.find(({ tag: oldTag }) => oldTag === tag)
+			)
 			.map((member) =>
 				translate("events.clanUpdate.fields.memberJoined", {
 					lng,
-					member,
+					rank: member.clanRank,
+					name: member.name,
+					tag: member.tag,
+					trophies: member.trophies,
 				})
 			)
 	);

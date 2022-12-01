@@ -1,5 +1,3 @@
-import { bold } from "@discordjs/builders";
-import type { APITag, PlayerBadge, PlayerBadgeManager } from "apiroyale";
 import type { Snowflake } from "discord-api-types/v10";
 import type { ClientApplication } from "discord.js";
 import { env } from "node:process";
@@ -33,14 +31,14 @@ export const RoyaleUrls = {
 	 * The url for clan info.
 	 * @param tag - The tag of the clan
 	 */
-	clanInfo: (tag: APITag) =>
+	clanInfo: (tag: string) =>
 		RoyaleUrls.build(`${RoyaleUrls.clanInfoPath}?id=${tag.slice(1)}`),
 
 	/**
 	 * The url for player info.
 	 * @param tag - The tag of the player
 	 */
-	playerInfo: (tag: APITag) =>
+	playerInfo: (tag: string) =>
 		RoyaleUrls.build(`${RoyaleUrls.playerInfoPath}?id=${tag.slice(1)}`),
 };
 
@@ -191,7 +189,7 @@ export const Constants = {
 	 * The url of the clan info embed.
 	 * @param tag - The clan tag
 	 */
-	clanLink: (tag: APITag) =>
+	clanLink: (tag: string) =>
 		prod
 			? Constants.website(`${RoyaleUrls.clanInfoPath}?tag=${tag.slice(1)}`)
 			: (`https://royaleapi.com/clan/${tag.slice(1)}` as const),
@@ -200,23 +198,10 @@ export const Constants = {
 	 * The link for player info.
 	 * @param tag - The player tag
 	 */
-	playerLink: (tag: APITag) =>
+	playerLink: (tag: string) =>
 		prod
 			? Constants.website(`${RoyaleUrls.playerInfoPath}?tag=${tag.slice(1)}`)
 			: (`https://royaleapi.com/player/${tag.slice(1)}` as const),
-
-	/**
-	 * The embed field value for the player's badges.
-	 * @param badges - The player's badges
-	 */
-	playerInfoBadgesFieldValue: (badges: PlayerBadgeManager) =>
-		badges.size
-			? badges.map(Constants.playerBadgeDescription).join(", ")
-			: "None",
-	playerBadgeDescription: (badge: PlayerBadge) =>
-		`${bold(badge.name)}${
-			badge.isMultipleLevels() ? ` (Liv. ${badge.level}/${badge.levels})` : ""
-		}` as const,
 
 	/**
 	 * The invite URL for the bot.
@@ -246,6 +231,13 @@ export const Constants = {
 	 */
 	website: (...path: string[]) =>
 		`https://${name}.${author}.repl.co/${path.join("/")}` as const,
+
+	/**
+	 * The badge url for a badge id.
+	 * @param badgeId - The badge id
+	 */
+	clanBadgeUrl: (badgeId: number) =>
+		`https://www.deckshop.pro/img/badges/${badgeId}.png` as const,
 } as const;
 
 export default Constants;

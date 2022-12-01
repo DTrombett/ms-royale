@@ -390,7 +390,7 @@ export const command: CommandOptions = {
 					restart(this.client);
 				} else {
 					this.client.bot.destroy();
-					this.client.token = env.DISCORD_TOKEN!;
+					this.client.bot.token = env.DISCORD_TOKEN!;
 					await this.client.bot.login();
 					await interaction.editReply({
 						content: `Ricollegato in ${Date.now() - now}ms.`,

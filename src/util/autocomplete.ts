@@ -1,8 +1,8 @@
-import type { Clan, Player } from "apiroyale";
 import type {
-	ApplicationCommandOptionChoice,
+	ApplicationCommandOptionChoiceData,
 	AutocompleteInteraction,
 } from "discord.js";
+import type { APIClan, APIPlayer } from "royale-api-types";
 import { SortMethod } from ".";
 import type CustomClient from "./CustomClient";
 import { getInteractionLocale } from "./locales";
@@ -19,7 +19,7 @@ import { MatchLevel } from "./types";
  */
 export const autocompleteClanTag = (
 	client: CustomClient,
-	option: ApplicationCommandOptionChoice,
+	option: ApplicationCommandOptionChoiceData,
 	interaction: AutocompleteInteraction
 ) => {
 	const lng = getInteractionLocale(interaction);
@@ -27,30 +27,27 @@ export const autocompleteClanTag = (
 	/**
 	 * A record of clan tags with their respective match level with the value provided
 	 */
-	const matches: Record<Clan["tag"], MatchLevel> = {};
-	/**
-	 * A collection of all cached clans
-	 */
-	const clans = client.allClans;
+	const matches: Record<APIClan["tag"], MatchLevel> = {};
 
-	// If a value was provided, search for clans with a tag or a name that contains the value
-	if (value.length) {
-		// Remove any clan that doesn't match the value
-		clans.sweep(
-			(c) =>
-				(matches[c.tag] =
-					matchStrings(normalizeTag(c.tag), value, true) ||
-					matchStrings(c.name, value)) === MatchLevel.None
-		);
-		// Sort the clans by their match level
-		clans.sort((a, b) => matches[b.tag] - matches[a.tag] || 0);
-	}
 	return interaction.respond(
 		// Take the first 25 clans as only 25 options are allowed
-		clans.first(25).map((structure) => ({
-			name: translate("common.tagPreview", { lng, structure }),
-			value: structure.tag,
-		}))
+		(value.length
+			? client.clans
+					.clone()
+					.filter(
+						(c) =>
+							(matches[c.tag] =
+								matchStrings(normalizeTag(c.tag), value, true) ||
+								matchStrings(c.name, value)) !== MatchLevel.None
+					)
+					.sort((a, b) => matches[b.tag] - matches[a.tag] || 0)
+			: client.clans
+		)
+			.first(25)
+			.map((clan) => ({
+				name: translate("common.tagPreview", { lng, tag: clan.tag, name: clan.name }),
+				value: clan.tag,
+			}))
 	);
 };
 
@@ -62,7 +59,7 @@ export const autocompleteClanTag = (
  */
 export const autocompletePlayerTag = (
 	client: CustomClient,
-	option: ApplicationCommandOptionChoice,
+	option: ApplicationCommandOptionChoiceData,
 	interaction: AutocompleteInteraction
 ) => {
 	const lng = getInteractionLocale(interaction);
@@ -70,30 +67,26 @@ export const autocompletePlayerTag = (
 	/**
 	 * A record of player tags with their respective match level with the value provided
 	 */
-	const matches: Record<Player["tag"], MatchLevel> = {};
-	/**
-	 * A collection of all cached players
-	 */
-	const players = client.allPlayers;
+	const matches: Record<APIPlayer["tag"], MatchLevel> = {};
 
-	// If a value was provided, search for players with a tag or a name that contains the value
-	if (value.length) {
-		// Remove any player that doesn't match the value
-		players.sweep(
-			(c) =>
-				(matches[c.tag] =
-					matchStrings(normalizeTag(c.tag), value, true) ||
-					matchStrings(c.name, value)) === MatchLevel.None
-		);
-		// Sort the players by their match level
-		players.sort((a, b) => matches[b.tag] - matches[a.tag] || 0);
-	}
 	return interaction.respond(
 		// Take the first 25 players as only 25 options are allowed
-		players.first(25).map((structure) => ({
-			name: translate("common.tagPreview", { lng, structure }),
-			value: structure.tag,
-		}))
+		(value.length
+			? client.players
+					.filter(
+						(p) =>
+							(matches[p.tag] =
+								matchStrings(normalizeTag(p.tag), value, true) ||
+								matchStrings(p.name, value)) !== MatchLevel.None
+					)
+					.sort((a, b) => matches[b.tag] - matches[a.tag] || 0)
+			: client.players
+		)
+			.first(25)
+			.map((player) => ({
+				name: translate("common.tagPreview", { lng, tag: player.tag, name: player.name }),
+				value: player.tag,
+			}))
 	);
 };
 
@@ -103,7 +96,7 @@ export const autocompletePlayerTag = (
  * @param interaction - The interaction to use
  */
 export const autocompleteSort = (
-	option: ApplicationCommandOptionChoice,
+	option: ApplicationCommandOptionChoiceData,
 	interaction: AutocompleteInteraction
 ) => {
 	const lng = getInteractionLocale(interaction);
@@ -118,5 +111,45 @@ export const autocompleteSort = (
 				value: sort,
 			}))
 			.filter(({ name }) => name.toLowerCase().includes(value))
+	);
+};
+
+/**
+ * Autocomplete a location option.
+ * @param client - The client to use
+ * @param option - The option provided by the user
+ * @param interaction - The interaction to use
+ */
+export const autocompleteLocation = (
+	client: CustomClient,
+	option: ApplicationCommandOptionChoiceData,
+	interaction: AutocompleteInteraction
+) => {
+	const lng = getInteractionLocale(interaction);
+	const value = option.value as string;
+	/**
+	 * A record of locations with their respective match level with the value provided
+	 */
+	const matches: Record<number, MatchLevel> = {};
+
+	return interaction.respond(
+		(value.length
+			? client.locations
+					.filter(
+						(p) =>
+							(matches[p.id] = matchStrings(p.name, value, true)) !==
+							MatchLevel.None
+					)
+					.sort((a, b) => matches[b.id] - matches[a.id] || 0)
+			: client.locations
+		)
+			.first(25)
+			.map((location) => ({
+				name: translate("common.tagPreview", {
+					lng,
+					structure: { name: location.name, tag: location.id },
+				}),
+				value: location.id,
+			}))
 	);
 };
