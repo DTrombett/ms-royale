@@ -121,7 +121,8 @@ export const clanMembers: APIMethod<
 						return {
 							name: `${i + 1 + 10 * index}) ${translate("common.tagPreview", {
 								lng,
-								structure: member,
+								tag: member.tag,
+								name: member.name,
 							})}`,
 							value: `${capitalize(member.role)} - ${CustomEmojis.Donations} ${
 								member.donations

@@ -81,7 +81,10 @@ const constructClanUpdateEmbed = (
 			.map((member) =>
 				translate("events.clanUpdate.fields.memberLeft", {
 					lng,
-					member,
+					rank: member.clanRank,
+					name: member.name,
+					tag: member.tag,
+					trophies: member.trophies,
 				})
 			),
 		...newClan.memberList
@@ -92,7 +95,10 @@ const constructClanUpdateEmbed = (
 			.map((member) =>
 				translate("events.clanUpdate.fields.memberJoined", {
 					lng,
-					member,
+					rank: member.clanRank,
+					name: member.name,
+					tag: member.tag,
+					trophies: member.trophies,
 				})
 			)
 	);

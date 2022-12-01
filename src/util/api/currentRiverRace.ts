@@ -37,15 +37,16 @@ export const currentRiverRace: APIMethod<string> = async (
 
 	if (!("clan" in race)) return race;
 	const training = race.periodType === "training";
-	const monthDay = (race.periodIndex + 1) % 7;
+	const weekDay = (race.periodIndex + 1) % 7;
+	const week = Math.ceil(race.periodIndex / 7);
 
 	return {
 		embeds: [
 			{
 				title: translate("commands.clan.currentRiverRace.title", {
 					lng,
-					race,
-					day: monthDay ? (training ? monthDay : monthDay - 3) : 4,
+					week,
+					day: weekDay ? (training ? weekDay : weekDay - 3) : 4,
 					training,
 				}),
 				color: training ? Colors.Green : Colors.DarkPurple,
@@ -71,29 +72,33 @@ export const currentRiverRace: APIMethod<string> = async (
 					)
 					.join("\n"),
 				fields: race.periodLogs
-					.filter(
-						(period) =>
-							Math.ceil(period.periodIndex / 7) ===
-							Math.ceil(race.periodIndex / 7)
-					)
-					.map((period) => ({
-						name: translate("commands.clan.currentRiverRace.field.name", {
-							lng,
-							period,
-							p: period,
-						}),
-						value: period.items
-							.map((standing) =>
-								translate("commands.clan.currentRiverRace.field.value", {
+					.filter((period) => Math.ceil(period.periodIndex / 7) === week)
+					.map(
+						(period) => (
+							translate("commands.clan.currentRiverRace.field", {
+								lng,
+								day: period.periodIndex % 7,
+							}),
+							{
+								name: translate("commands.clan.currentRiverRace.field.name", {
 									lng,
-									standing,
-									clanName: race.clans.find(
-										(clan) => clan.tag === standing.clan.tag
-									)!.name,
-								})
-							)
-							.join("\n"),
-					})),
+									period,
+									p: period,
+								}),
+								value: period.items
+									.map((standing) =>
+										translate("commands.clan.currentRiverRace.field.value", {
+											lng,
+											standing,
+											clanName: race.clans.find(
+												(clan) => clan.tag === standing.clan.tag
+											)!.name,
+										})
+									)
+									.join("\n"),
+							}
+						)
+					),
 			},
 		],
 		components: [

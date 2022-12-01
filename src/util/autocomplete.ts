@@ -44,9 +44,9 @@ export const autocompleteClanTag = (
 			: client.clans
 		)
 			.first(25)
-			.map((structure) => ({
-				name: translate("common.tagPreview", { lng, structure }),
-				value: structure.tag,
+			.map((clan) => ({
+				name: translate("common.tagPreview", { lng, tag: clan.tag, name: clan.name }),
+				value: clan.tag,
 			}))
 	);
 };
@@ -83,9 +83,9 @@ export const autocompletePlayerTag = (
 			: client.players
 		)
 			.first(25)
-			.map((structure) => ({
-				name: translate("common.tagPreview", { lng, structure }),
-				value: structure.tag,
+			.map((player) => ({
+				name: translate("common.tagPreview", { lng, tag: player.tag, name: player.name }),
+				value: player.tag,
 			}))
 	);
 };

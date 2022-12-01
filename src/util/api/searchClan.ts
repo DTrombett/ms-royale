@@ -46,7 +46,13 @@ export const searchClan: APIMethod<
 						options: results.items.map((clan) => ({
 							...translate("commands.clan.search.menu.options", {
 								lng,
-								clan,
+								members: clan.members,
+								name: clan.name,
+								tag: clan.tag,
+								score: clan.clanScore,
+								donations: clan.donationsPerWeek,
+								requiredTrophies: clan.requiredTrophies,
+								location: clan.location.name,
 							}),
 							value: clan.tag,
 						})),

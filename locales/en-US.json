@@ -2,7 +2,7 @@
 	"common": {
 		"back": "Previous",
 		"next": "Next",
-		"tagPreview": "{{structure.name}} ({{structure.tag}})",
+		"tagPreview": "{{name}} ({{tag}})",
 		"invalidCommand": "Command not recognized!",
 		"invalidTag": "An invalid tag was provided!\nThese are the valid characters for a tag: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V",
 		"footer": "Next update",
@@ -64,11 +64,11 @@
 				},
 				"memberLeft": {
 					"name": "A member left",
-					"value": "#{{member.rank}} **{{member.name}}** ({{member.tag}}) - 🏆 {{member.trophies}}"
+					"value": "#{{rank}} **{{name}}** ({{tag}}) - 🏆 {{trophies}}"
 				},
 				"memberJoined": {
 					"name": "A member joined",
-					"value": "#{{member.rank}} **{{member.name}}** ({{member.tag}}) - 🏆 {{member.trophies}}"
+					"value": "#{{rank}} **{{name}}** ({{tag}}) - 🏆 {{trophies}}"
 				},
 				"description": {
 					"name": "Description",
@@ -87,7 +87,7 @@
 			"content": "🏓 Pong! (**{{ws}}ms**)"
 		},
 		"save": {
-			"content": "Successfully saved profile $t(common.tagPreview, { \"structure\": { \"name\": \"**{{player.name}}**\", \"tag\": \"{{player.tag}}\" } })!"
+			"content": "Successfully saved profile $t(common.tagPreview)!"
 		},
 		"clan": {
 			"noTag": "You didn't save any profile or you're not part of any clan. Try the `/save` command to save your tag or use the `tag` option to see the info of a specific clan.",
@@ -142,8 +142,8 @@
 				"menu": {
 					"placeholder": "Choose a clan...",
 					"options": {
-						"description": "👥{{clan.memberCount}}/50 - 💯{{clan.score}} - 💸{{clan.donationsPerWeek}} - 🏆{{clan.requiredTrophies}} - 📍{{clan.locationName}}",
-						"label": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{clan.name}}\", \"tag\": \"{{clan.tag}}\" } })"
+						"description": "👥{{members}}/50 - 💯{{score}} - 💸{{donations}} - 🏆{{requiredTrophies}} - 📍{{location}}",
+						"label": "$t(common.tagPreview)"
 					}
 				},
 				"notFound": "No clan was found!"
@@ -151,10 +151,10 @@
 			"riverRaceLog": {
 				"footer": "War ended on",
 				"notFound": "No war was found!",
-				"title": "Season {{race.seasonId}} - Week {{race.weekNumber}}",
+				"title": "Season {{seasonId}} - Week {{weekNumber}}",
 				"field": {
-					"name": "{{standing.rank}}. $t(common.tagPreview, { \"structure\": { \"name\": \"{{standing.clan.name}}\", \"tag\": \"{{standing.clan.tag}}\" } })",
-					"value": "**Points**: $t(emojis.warPoint) {{standing.clan.points}}\n**Trophies won/lost**: $t(emojis.warTrophy) {{standing.trophyChange}}$t(commands.clan.riverRaceLog.pointsToOvertake, { \"pointsToOvertake\": \"{{standing.pointsToOvertake}}\", \"count\": {{standing.rank}} })$t(commands.clan.riverRaceLog.finishedAt, { \"finishedAt\": \"{{finishedAt}}\", \"context\": \"{{finished}}\" })\n**Clan score**: 💯 {{standing.clan.score}}\n**Participants**: $t(emojis.members) {{participants}}"
+					"name": "{{rank}}. $t(common.tagPreview)",
+					"value": "**Points**: $t(emojis.warPoint) {{points}}\n**Trophies won/lost**: $t(emojis.warTrophy) {{trophyChange}}$t(commands.clan.riverRaceLog.pointsToOvertake, { \"count\": {{rank}} })$t(commands.clan.riverRaceLog.finishedAt, { \"context\": \"{{finished}}\" })\n**Clan score**: 💯 {{score}}\n**Participants**: $t(emojis.members) {{participants}}"
 				},
 				"pointsToOvertake_one": "$t(common.zeroWidthSpace)",
 				"pointsToOvertake_other": "\n**Points difference with next clan**: $t(emojis.warPoint) {{pointsToOvertake}}",
@@ -162,8 +162,8 @@
 				"finishedAt_false": "$t(common.zeroWidthSpace)",
 				"menu": {
 					"options": {
-						"description": "🏅 {{participant.medals}} - ⛵🗡 {{participant.boatAttacks}} - 🎴 {{participant.decksUsed}}",
-						"label": "#{{rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{participant.name}}\", \"tag\": \"{{participant.tag}}\" } })"
+						"description": "🏅 {{medals}} - ⛵🗡 {{boatAttacks}} - 🎴 {{decksUsed}}",
+						"label": "#{{rank}} $t(common.tagPreview)"
 					},
 					"placeholder": "Participants list"
 				}
@@ -191,7 +191,7 @@
 				"menu": {
 					"options": {
 						"description": "{{role}} - 💸{{member.donationsPerWeek}} - 🏆{{member.trophies}} - Last seen: {{- lastSeen}}",
-						"label": "#{{member.rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{member.name}}\", \"tag\": \"{{member.tag}}\" } })"
+						"label": "#{{member.clanRank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{member.name}}\", \"tag\": \"{{member.tag}}\" } })"
 					},
 					"placeholder": "Clan members"
 				},

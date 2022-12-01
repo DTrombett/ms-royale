@@ -2,7 +2,7 @@
 	"common": {
 		"back": "Precedente",
 		"next": "Successivo",
-		"tagPreview": "{{structure.name}} ({{structure.tag}})",
+		"tagPreview": "{{name}} ({{tag}})",
 		"invalidCommand": "Comando non riconosciuto!",
 		"invalidTag": "Hai inserito un tag non valido!\nI caratteri validi nei tag sono: 0, 2, 8, 9, P, Y, L, Q, G, R, J, C, U, V",
 		"footer": "Prossimo aggiornamento",
@@ -64,11 +64,11 @@
 				},
 				"memberLeft": {
 					"name": "Un membro è uscito",
-					"value": "#{{member.rank}} **{{member.name}}** ({{member.tag}}) - 🏆 {{member.trophies}}"
+					"value": "#{{rank}} **{{name}}** ({{tag}}) - 🏆 {{trophies}}"
 				},
 				"memberJoined": {
 					"name": "Un membro è entrato",
-					"value": "#{{member.rank}} **{{member.name}}** ({{member.tag}}) - 🏆 {{member.trophies}}"
+					"value": "#{{rank}} **{{name}}** ({{tag}}) - 🏆 {{trophies}}"
 				},
 				"description": {
 					"name": "Descrizione",
@@ -87,7 +87,7 @@
 			"content": "🏓 Pong! (**{{ws}}ms**)"
 		},
 		"save": {
-			"content": "Profilo di $t(common.tagPreview, { \"structure\": { \"name\": \"**{{player.name}}**\", \"tag\": \"{{player.tag}}\" } }) salvato con successo!"
+			"content": "Profilo di $t(common.tagPreview) salvato con successo!"
 		},
 		"clan": {
 			"noTag": "Non hai nessun profilo salvato o non fai parte di alcun clan. Usa il comando `/save` per salvare il tuo tag o utilizza l'opzione `tag` per vedere le info di un clan specifico.",
@@ -142,8 +142,8 @@
 				"menu": {
 					"placeholder": "Scegli un clan...",
 					"options": {
-						"description": "👥{{clan.memberCount}}/50 - 💯{{clan.score}} - 💸{{clan.donationsPerWeek}} - 🏆{{clan.requiredTrophies}} - 📍{{clan.locationName}}",
-						"label": "$t(common.tagPreview, { \"structure\": { \"name\": \"{{clan.name}}\", \"tag\": \"{{clan.tag}}\" } })"
+						"description": "👥{{members}}/50 - 💯{{score}} - 💸{{donations}} - 🏆{{requiredTrophies}} - 📍{{location}}",
+						"label": "$t(common.tagPreview)"
 					}
 				},
 				"notFound": "Nessun clan trovato!"
@@ -151,10 +151,10 @@
 			"riverRaceLog": {
 				"footer": "Guerra terminata il",
 				"notFound": "Nessuna guerra trovata!",
-				"title": "Stagione {{race.seasonId}} - Settimana {{race.weekNumber}}",
+				"title": "Stagione {{seasonId}} - Settimana {{weekNumber}}",
 				"field": {
-					"name": "{{standing.rank}}. $t(common.tagPreview, { \"structure\": { \"name\": \"{{standing.clan.name}}\", \"tag\": \"{{standing.clan.tag}}\" } })",
-					"value": "**Punti**: $t(emojis.warPoint) {{standing.clan.points}}\n**Trofei guadagnati/persi**: $t(emojis.warTrophy) {{standing.trophyChange}}$t(commands.clan.riverRaceLog.pointsToOvertake, { \"pointsToOvertake\": \"{{standing.pointsToOvertake}}\", \"count\": {{standing.rank}} })$t(commands.clan.riverRaceLog.finishedAt, { \"finishedAt\": \"{{finishedAt}}\", \"context\": \"{{finished}}\" })\n**Punteggio del clan**: 💯 {{standing.clan.score}}\n**Partecipanti**: $t(emojis.members) {{participants}}"
+					"name": "{{rank}}. $t(common.tagPreview)",
+					"value": "**Punti**: $t(emojis.warPoint) {{points}}\n**Trofei guadagnati/persi**: $t(emojis.warTrophy) {{trophyChange}}$t(commands.clan.riverRaceLog.pointsToOvertake, { \"count\": {{rank}} })$t(commands.clan.riverRaceLog.finishedAt, { \"context\": \"{{finished}}\" })\n**Punteggio del clan**: 💯 {{score}}\n**Partecipanti**: $t(emojis.members) {{participants}}"
 				},
 				"pointsToOvertake_one": "$t(common.zeroWidthSpace)",
 				"pointsToOvertake_other": "\n**Differenza punti con clan successivo**: $t(emojis.warPoint) {{pointsToOvertake}}",
@@ -162,18 +162,18 @@
 				"finishedAt_false": "$t(common.zeroWidthSpace)",
 				"menu": {
 					"options": {
-						"description": "🏅 {{participant.medals}} - ⛵🗡 {{participant.boatAttacks}} - 🎴 {{participant.decksUsed}}",
-						"label": "#{{rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{participant.name}}\", \"tag\": \"{{participant.tag}}\" } })"
+						"description": "🏅 {{medals}} - ⛵🗡 {{boatAttacks}} - 🎴 {{decksUsed}}",
+						"label": "#{{rank}} $t(common.tagPreview)"
 					},
 					"placeholder": "Lista partecipanti"
 				}
 			},
 			"currentRiverRace": {
-				"title": "Settimana {{race.week}} - {{day}}° $t(commands.clan.currentRiverRace.day, { \"context\": \"{{training}}\" })",
+				"title": "Settimana {{week}} - {{day}}° $t(commands.clan.currentRiverRace.day, { \"context\": \"{{training}}\" })",
 				"day_true": "giorno allenamento",
 				"day_false": "giorno battaglia",
 				"field": {
-					"name": "{{period.day}}° giorno battaglia",
+					"name": "{{day}}° giorno battaglia",
 					"value": "{{standing.rank}}) **$t(common.tagPreview, { \"structure\": { \"name\": \"{{clanName}}\", \"tag\": \"{{standing.clanTag}}\" } })**\n$t(emojis.medal) {{standing.medals}} - $t(emojis.warPoint) +{{standing.pointsEarned}} - $t(emojis.boatAttack) {{standing.defensesRemaining}}/15 ($t(emojis.warPoint) {{standing.pointsEarnedFromDefenses}})"
 				},
 				"menu": {
@@ -191,7 +191,7 @@
 				"menu": {
 					"options": {
 						"description": "{{role}} - 💸{{member.donationsPerWeek}} - 🏆{{member.trophies}} - Ultimo accesso: {{- lastSeen}}",
-						"label": "#{{member.rank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{member.name}}\", \"tag\": \"{{member.tag}}\" } })"
+						"label": "#{{member.clanRank}} $t(common.tagPreview, { \"structure\": { \"name\": \"{{member.name}}\", \"tag\": \"{{member.tag}}\" } })"
 					},
 					"placeholder": "Membri del clan"
 				},
@@ -235,7 +235,7 @@
 				"achievements": {
 					"label": "Obiettivi"
 				},
-				"badges":{
+				"badges": {
 					"label": "Emblemi"
 				},
 				"upcomingChests": {

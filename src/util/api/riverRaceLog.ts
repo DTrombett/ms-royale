@@ -56,21 +56,32 @@ export const riverRaceLog: APIMethod<
 	return {
 		embeds: [
 			{
-				title: translate("commands.clan.riverRaceLog.title", { lng, race }),
+				title: translate("commands.clan.riverRaceLog.title", {
+					lng,
+					seasonId: race.seasonId,
+					weekNumber: race.sectionIndex + 1,
+				}),
 				color: Colors.Blurple,
 				thumbnail: { url: Constants.clanBadgeUrl(clan.badgeId) },
 				footer: {
 					text: translate("commands.clan.riverRaceLog.footer", { lng }),
 				},
 				timestamp: transformDate(race.createdDate),
-				fields: race.standings.map((standing) => {
+				fields: race.standings.map((standing, i) => {
 					const finishTime =
 						standing.clan.finishTime !== undefined
 							? convertDate(standing.clan.finishTime)
 							: undefined;
 					return translate("commands.clan.riverRaceLog.field", {
 						lng,
-						standing,
+						rank: standing.rank,
+						name: standing.clan.name,
+						tag: standing.clan.tag,
+						points: standing.clan.fame,
+						trophyChange: standing.trophyChange,
+						pointsToOvertake:
+							race.standings[i - 1]?.clan.fame - standing.clan.fame,
+						score: standing.clan.clanScore,
 						finishedAt: finishTime
 							? Math.round(finishTime.getTime() / 1000)
 							: "",
@@ -94,7 +105,11 @@ export const riverRaceLog: APIMethod<
 							.map((participant, i) => ({
 								...translate("commands.clan.riverRaceLog.menu.options", {
 									lng,
-									participant,
+									medals: participant.fame,
+									boatAttacks: participant.boatAttacks,
+									decksUsed: participant.decksUsed,
+									name: participant.name,
+									tag: participant.tag,
 									rank: i + 1,
 								}),
 								value: participant.tag,
