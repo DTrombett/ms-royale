@@ -28,7 +28,7 @@
     "url": "https://github.com/DTrombett/ms-royale/issues"
   },
   "dependencies": {
-    "@discordjs/builders": "^1.4.0",
+    "@discordjs/builders": "^1.6.3",
     "@discordjs/rest": "^1.7.1",
     "apiroyale": "github:DTrombett/apiroyale",
     "cron-parser": "^4.8.1",
