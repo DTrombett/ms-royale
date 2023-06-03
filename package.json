@@ -45,7 +45,7 @@
     "bufferutil": "^4.0.6",
     "erlpack": "github:discord/erlpack",
     "utf-8-validate": "^6.0.3",
-    "zlib-sync": "^0.1.7"
+    "zlib-sync": "^0.1.8"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.2",
