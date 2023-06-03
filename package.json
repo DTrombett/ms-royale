@@ -48,7 +48,7 @@
     "zlib-sync": "^0.1.8"
   },
   "devDependencies": {
-    "@tsconfig/node16": "^1.0.2",
+    "@tsconfig/node16": "^1.0.4",
     "@types/express": "^4.17.17",
     "@types/i18next-fs-backend": "^1.1.2",
     "@types/node": "^17.0.9",
